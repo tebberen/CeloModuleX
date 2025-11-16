@@ -1,42 +1,40 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import logo from '../../assets/logo.svg';
-import { useWallet } from '../hooks/useWallet.js';
-import '../styles/navbar.css';
+import { NavLink } from 'react-router-dom'
+import logo from '../assets/logo.svg'
+import '../styles/navbar.css'
+import { useWallet } from '../hooks/useWallet'
 
-const Navbar = ({ onConnectClick }) => {
-  const { address, disconnect } = useWallet();
+const Navbar = ({ onOpenWallet }) => {
+  const { address, isConnected } = useWallet()
 
   return (
-    <nav className="navbar">
-      <div className="navbar__brand">
-        <img src={logo} alt="CeloModuleX" className="navbar__logo" />
-        <span className="navbar__title">CeloModuleX</span>
+    <header className="navbar">
+      <div className="navbar-inner">
+        <div className="brand">
+          <img src={logo} alt="Celo Module X" width={36} height={36} />
+          <span>Celo Module X</span>
+        </div>
+        <nav className="nav-links">
+          <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+            Home
+          </NavLink>
+          <NavLink to="/nft" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+            NFT
+          </NavLink>
+          <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+            Profile
+          </NavLink>
+          <div className="wallet-button">
+            {isConnected && address ? (
+              <span className="address-pill">{address.slice(0, 6)}...{address.slice(-4)}</span>
+            ) : null}
+            <button className="primary-btn" onClick={onOpenWallet}>
+              {isConnected ? 'Manage Wallet' : 'Connect Wallet'}
+            </button>
+          </div>
+        </nav>
       </div>
-      <div className="navbar__links">
-        <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Home
-        </NavLink>
-        <NavLink to="/nft" className={({ isActive }) => (isActive ? 'active' : '')}>
-          NFT
-        </NavLink>
-        <NavLink to="/profile" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Profile
-        </NavLink>
-      </div>
-      <div className="navbar__actions">
-        {address ? (
-          <button className="secondary" onClick={disconnect}>
-            Disconnect
-          </button>
-        ) : (
-          <button className="primary" onClick={onConnectClick}>
-            Connect Wallet
-          </button>
-        )}
-      </div>
-    </nav>
-  );
-};
+    </header>
+  )
+}
 
-export default Navbar;
+export default Navbar

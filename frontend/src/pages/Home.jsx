@@ -1,75 +1,93 @@
-import React, { useEffect, useState } from 'react';
-import { useWallet } from '../hooks/useWallet.js';
-import { getUserProfile, getUserStats } from '../services/blockchain.js';
-import { formatAddress, formatNumber, formatEther } from '../utils/format.js';
-import Loader from '../components/Loader.jsx';
-import '../styles/home.css';
+import { useEffect, useState } from 'react'
+import '../styles/home.css'
+import '../styles/global.css'
+import Loader from '../components/Loader'
+import Alert from '../components/Alert'
+import { useWallet } from '../hooks/useWallet'
+import { getMainHubContract, getRpcProvider } from '../services/blockchain'
+import { shortenAddress } from '../utils/format'
+import { getAccessNftContract } from '../services/blockchain'
 
 const Home = () => {
-  const { address, provider } = useWallet();
-  const [profile, setProfile] = useState(null);
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { address, signer, isConnected } = useWallet()
+  const [profile, setProfile] = useState({ username: 'Guest', totalActions: 0, hasPremium: false })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const loadProfile = async () => {
+    try {
+      setError('')
+      const provider = signer || getRpcProvider()
+      const contract = getMainHubContract(provider)
+      const [username, totalActions, hasPremium] = await contract.getUserProfile(address || '0x0000000000000000000000000000000000000000')
+      setProfile({ username: username || 'Guest', totalActions: Number(totalActions), hasPremium })
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const ensurePassStatus = async () => {
+    try {
+      const provider = signer || getRpcProvider()
+      const contract = getAccessNftContract(provider)
+      const owns = address ? await contract.hasNFT(address) : false
+      setProfile((p) => ({ ...p, hasPremium: owns }))
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   useEffect(() => {
-    const loadData = async () => {
-      if (!address || !provider) return;
-      setLoading(true);
-      try {
-        const [userProfile, globalStats] = await Promise.all([
-          getUserProfile(provider, address),
-          getUserStats(provider),
-        ]);
-        setProfile(userProfile);
-        setStats(globalStats);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, [address, provider]);
+    loadProfile()
+    ensurePassStatus()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address])
+
+  if (loading) return <Loader label="Loading dashboard" />
 
   return (
-    <section className="home">
-      <div className="hero">
+    <div className="main-container">
+      <div className="hero card">
         <div>
-          <p className="eyebrow">CeloModuleX</p>
-          <h1>Launch and monitor your on-chain modules</h1>
-          <p className="subtitle">
-            Connect your wallet to start executing modules, mint your access NFT, and manage your Celo profile.
-          </p>
-          <button className="primary">Start Using Modules</button>
+          <div className="badge">Connected {isConnected ? shortenAddress(address) : 'Guest'}</div>
+          <h1>Welcome back{profile.username ? `, ${profile.username}` : ''}.</h1>
+          <p>Track your module usage, manage your access NFT, and keep your profile synced on-chain.</p>
+          <div className="action-row">
+            <a className="primary-btn" href="/CeloModuleX/#/profile">Manage Profile</a>
+            <a className="secondary-btn" href="/CeloModuleX/#/nft">Mint Access NFT</a>
+          </div>
+        </div>
+        <div className="card module-card">
+          <strong>Module Highlights</strong>
+          <ul>
+            <li>Wallet-aware navigation</li>
+            <li>On-chain profiles via MainHub</li>
+            <li>Premium access NFT minting</li>
+          </ul>
+          <button className="primary-btn" style={{ alignSelf: 'flex-start' }}>Start Using Modules</button>
         </div>
       </div>
 
-      {loading && <Loader />}
-
-      {address && profile && !loading && (
-        <div className="cards">
-          <div className="card">
-            <p className="label">Connected Wallet</p>
-            <p className="value">{formatAddress(address)}</p>
-          </div>
-          <div className="card">
-            <p className="label">Score</p>
-            <p className="value">{formatNumber(profile.score)}</p>
-          </div>
-          <div className="card">
-            <p className="label">Premium</p>
-            <p className={`value ${profile.premium ? 'positive' : ''}`}>{profile.premium ? 'Yes' : 'No'}</p>
-          </div>
-          <div className="card">
-            <p className="label">Total Actions</p>
-            <p className="value">{formatNumber(stats?.totalGlobalActions)}</p>
-          </div>
-          <div className="card">
-            <p className="label">Fees</p>
-            <p className="value">Basic {formatEther(stats?.basicFee)} CELO · Premium {formatEther(stats?.premiumFee)} CELO</p>
-          </div>
+      <div className="kpi-grid" style={{ marginTop: 16 }}>
+        <div className="kpi">
+          <small>Total Actions</small>
+          <strong style={{ fontSize: 24 }}>{profile.totalActions}</strong>
         </div>
-      )}
-    </section>
-  );
-};
+        <div className="kpi">
+          <small>Premium Status</small>
+          <strong style={{ fontSize: 24 }}>{profile.hasPremium ? 'NFT Holder' : 'Free User'}</strong>
+        </div>
+        <div className="kpi">
+          <small>Username</small>
+          <strong style={{ fontSize: 24 }}>{profile.username || 'Not set'}</strong>
+        </div>
+      </div>
 
-export default Home;
+      {error ? <Alert type="error" message={error} /> : null}
+    </div>
+  )
+}
+
+export default Home

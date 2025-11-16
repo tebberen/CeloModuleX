@@ -1,12 +1,10 @@
-export const formatAddress = (addr = '') =>
-  addr ? `${addr.slice(0, 6)}...${addr.slice(addr.length - 4)}` : '';
+export const shortenAddress = (addr) => {
+  if (!addr) return ''
+  return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+}
 
-export const formatNumber = (num) => {
-  if (num === undefined || num === null) return '0';
-  return Number(num).toLocaleString();
-};
-
-export const formatEther = (value) => {
-  if (!value) return '0';
-  return Number(value).toLocaleString(undefined, { maximumFractionDigits: 4 });
-};
+export const formatCelo = (weiValue) => {
+  if (!weiValue) return '0'
+  const asNumber = typeof weiValue === 'bigint' ? weiValue : BigInt(weiValue)
+  return Number(asNumber) / 1e18
+}

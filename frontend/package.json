@@ -1,19 +1,20 @@
 {
   "name": "celomodulex-frontend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "echo \"No lint configured\""
   },
   "dependencies": {
-    "@walletconnect/ethereum-provider": "^2.11.2",
+    "@walletconnect/ethereum-provider": "^2.12.2",
     "ethers": "^6.11.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.2"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",

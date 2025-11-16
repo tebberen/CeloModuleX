@@ -1,41 +1,58 @@
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  background: rgba(247, 253, 250, 0.82);
+  border-bottom: 1px solid #d9efe5;
+}
+
+.navbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
-  background: var(--white);
+  width: min(1100px, 100%);
+  margin: 0 auto;
 }
 
-.navbar__brand {
+.brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: 0.3px;
 }
 
-.navbar__logo {
-  width: 32px;
-  height: 32px;
-}
-
-.navbar__links {
+.nav-links {
   display: flex;
+  align-items: center;
   gap: 16px;
-}
-
-.navbar__links a {
-  padding: 8px 12px;
-  border-radius: 10px;
-  color: var(--gray);
   font-weight: 600;
 }
 
-.navbar__links a.active {
-  background: var(--celo-yellow);
-  color: var(--black);
+.nav-link {
+  padding: 10px 12px;
+  border-radius: 12px;
+  transition: background 120ms ease;
 }
 
-.navbar__actions button {
-  min-width: 140px;
+.nav-link.active,
+.nav-link:hover {
+  background: #e7fbf1;
+}
+
+.wallet-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.address-pill {
+  background: #0b1f15;
+  color: #f7fdfa;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 14px;
 }

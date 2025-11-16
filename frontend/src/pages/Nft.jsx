@@ -1,46 +1,71 @@
-import React from 'react';
-import { useAccessPass } from '../hooks/useAccessPass.js';
-import Loader from '../components/Loader.jsx';
-import { formatEther } from '../utils/format.js';
-import '../styles/nft.css';
+import { useEffect, useState } from 'react'
+import '../styles/nft.css'
+import '../styles/global.css'
+import Loader from '../components/Loader'
+import Alert from '../components/Alert'
+import { useWallet } from '../hooks/useWallet'
+import { useAccessPass } from '../hooks/useAccessPass'
+import { formatCelo } from '../utils/format'
 
 const Nft = () => {
-  const { price, ownsPass, mint, loading } = useAccessPass();
+  const { isConnected } = useWallet()
+  const { price, hasPass, metadata, mint } = useAccessPass()
+  const [status, setStatus] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    setStatus('')
+  }, [isConnected])
+
+  const handleMint = async () => {
+    setStatus('')
+    setLoading(true)
+    try {
+      await mint()
+      setStatus('Mint successful! Access granted.')
+    } catch (err) {
+      setStatus(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <section className="nft-page">
-      <div className="nft-card">
-        <div>
-          <p className="eyebrow">Access NFT</p>
-          <h2>Mint your ModuleX Access Pass</h2>
-          <p className="subtitle">Required to execute premium modules and unlock advanced analytics.</p>
-          <ul className="nft-meta">
-            <li>
-              <span>Price</span>
-              <strong>{price ? `${formatEther(price)} CELO` : '—'}</strong>
-            </li>
-            <li>
-              <span>Status</span>
-              <strong className={ownsPass ? 'positive' : ''}>{ownsPass ? 'Owned' : 'Not owned'}</strong>
-            </li>
-            <li>
-              <span>Metadata</span>
-              <strong>IPFS-hosted JSON with on-chain proof</strong>
-            </li>
-          </ul>
-          <button className="primary" onClick={mint} disabled={loading || ownsPass}>
-            {loading ? 'Minting...' : ownsPass ? 'Already minted' : 'Mint NFT'}
-          </button>
+    <div className="main-container">
+      <div className="section-title">
+        <h2>NFT Access Pass</h2>
+        <span className="badge">Chain: CELO</span>
+      </div>
+      <div className="nft-grid">
+        <div className="card nft-card">
+          <strong>Premium Access NFT</strong>
+          <p>Prove membership to unlock premium modules. Mint on Celo mainnet.</p>
+          <div className="nft-meta">
+            <p>Price: {price ? `${formatCelo(price)} CELO` : 'Loading...'}</p>
+            <p>Status: {hasPass ? 'Already minted' : 'Not minted'}</p>
+          </div>
+          <div className="action-row">
+            <button className="primary-btn" disabled={loading || hasPass || !isConnected} onClick={handleMint}>
+              {loading ? 'Minting...' : hasPass ? 'Minted' : 'Mint NFT'}
+            </button>
+            {!isConnected ? <span>Connect wallet to mint</span> : null}
+          </div>
         </div>
-        <div className="nft-preview">
-          <div className="badge">CeloModuleX</div>
-          <p className="title">Access NFT</p>
-          <p className="meta">Chain: Celo Mainnet</p>
+
+        <div className="card">
+          <strong>NFT Metadata</strong>
+          {metadata ? (
+            <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(metadata, null, 2)}</pre>
+          ) : (
+            <p>Loading metadata...</p>
+          )}
         </div>
       </div>
-      {loading && <Loader />}
-    </section>
-  );
-};
 
-export default Nft;
+      {status ? <Alert type={status.includes('success') ? 'success' : 'error'} message={status} /> : null}
+      {loading ? <Loader label="Processing mint" /> : null}
+    </div>
+  )
+}
+
+export default Nft

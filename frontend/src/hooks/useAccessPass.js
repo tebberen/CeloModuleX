@@ -1,37 +1,64 @@
-import { useEffect, useState } from 'react';
-import { getNFTPrice, hasNFT, mintNFT } from '../services/blockchain.js';
-import { useWallet } from './useWallet.js';
+import { useCallback, useEffect, useState } from 'react'
+import { getAccessNftContract, getRpcProvider } from '../services/blockchain'
+import { useWallet } from './useWallet'
 
 export const useAccessPass = () => {
-  const { provider, signer, address } = useWallet();
-  const [price, setPrice] = useState(null);
-  const [ownsPass, setOwnsPass] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { signer, address, isConnected } = useWallet()
+  const [price, setPrice] = useState(null)
+  const [hasPass, setHasPass] = useState(false)
+  const [metadata, setMetadata] = useState(null)
+  const [loading, setLoading] = useState(false)
 
-  const refresh = async () => {
-    if (!provider || !address) return;
-    const [nextPrice, owns] = await Promise.all([getNFTPrice(provider), hasNFT(provider, address)]);
-    setPrice(nextPrice);
-    setOwnsPass(owns);
-  };
+  const loadPrice = useCallback(async () => {
+    const provider = signer || getRpcProvider()
+    const contract = getAccessNftContract(provider)
+    const value = await contract.getNFTPrice()
+    setPrice(value)
+  }, [signer])
 
-  const mint = async () => {
-    if (!signer) throw new Error('Connect your wallet first.');
-    setLoading(true);
+  const loadOwnership = useCallback(async () => {
+    if (!address) return
+    const provider = signer || getRpcProvider()
+    const contract = getAccessNftContract(provider)
+    const owns = await contract.hasNFT(address)
+    setHasPass(owns)
+  }, [address, signer])
+
+  const fetchMetadata = useCallback(async () => {
     try {
-      await mintNFT(signer);
-      await refresh();
-    } finally {
-      setLoading(false);
+      const provider = signer || getRpcProvider()
+      const contract = getAccessNftContract(provider)
+      const uri = await contract.tokenURI(1)
+      const res = await fetch(uri)
+      const data = await res.json()
+      setMetadata(data)
+    } catch (err) {
+      console.error('metadata fetch failed', err)
     }
-  };
+  }, [signer])
+
+  const mint = useCallback(async () => {
+    if (!signer) throw new Error('Connect wallet to mint')
+    const contract = getAccessNftContract(signer)
+    const currentPrice = price || (await contract.getNFTPrice())
+    const tx = await contract.mintNFT({ value: currentPrice })
+    await tx.wait()
+    await loadOwnership()
+  }, [signer, price, loadOwnership])
 
   useEffect(() => {
-    refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, provider]);
+    loadPrice()
+  }, [loadPrice])
 
-  return { price, ownsPass, mint, loading, refresh };
-};
+  useEffect(() => {
+    if (isConnected) {
+      loadOwnership()
+    }
+  }, [isConnected, loadOwnership])
 
-export default useAccessPass;
+  useEffect(() => {
+    fetchMetadata()
+  }, [fetchMetadata])
+
+  return { price, hasPass, metadata, loading, setLoading, mint }
+}
