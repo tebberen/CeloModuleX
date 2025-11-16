@@ -1,0 +1,52 @@
+{
+  "version": "1.0.0",
+  "chains": [
+    {
+      "name": "celo",
+      "chainId": 42220,
+      "rpcEnv": "CELO_RPC_URL",
+      "explorer": "https://celoscan.io",
+      "sequence": [
+        "deploy:contracts/libraries/FeeMath.sol",
+        "deploy:contracts/core/MainHub.sol",
+        "deploy:contracts/nft/PremiumAccessPass.sol",
+        "deploy:modules/*",
+        "register:modules",
+        "verify:all"
+      ]
+    },
+    {
+      "name": "base",
+      "chainId": 8453,
+      "rpcEnv": "BASE_RPC_URL",
+      "explorer": "https://basescan.org",
+      "sequence": [
+        "deploy:libraries",
+        "deploy:core",
+        "deploy:nft",
+        "deploy:modules",
+        "register:modules",
+        "verify:all"
+      ]
+    },
+    {
+      "name": "jello",
+      "chainId": 7777777,
+      "rpcEnv": "JELLO_RPC_URL",
+      "explorer": "https://jelloscan.io",
+      "sequence": [
+        "deploy:libraries",
+        "deploy:core",
+        "deploy:modules",
+        "register:modules",
+        "verify:all"
+      ]
+    }
+  ],
+  "artifacts": {
+    "mainHub": "contracts/core/MainHub.sol",
+    "premiumPass": "contracts/nft/PremiumAccessPass.sol",
+    "modules": "contracts/modules"
+  },
+  "notes": "Follow docs/CeloModuleX-DEPLOY-SPEC.md for pre-flight steps and scripts/deploy for automation."
+}
