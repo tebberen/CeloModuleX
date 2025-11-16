@@ -4,6 +4,7 @@ import EthereumProvider from '@walletconnect/ethereum-provider';
 import { CELO_MAINNET } from '../utils/networks.js';
 
 const WalletContext = createContext(null);
+const WALLETCONNECT_PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || '';
 
 export const WalletProvider = ({ children }) => {
   const [provider, setProvider] = useState(null);
@@ -38,8 +39,9 @@ export const WalletProvider = ({ children }) => {
       return;
     }
     setLoading(true);
+    setError('');
     try {
-      const browserProvider = new ethers.BrowserProvider(window.ethereum);
+      const browserProvider = new ethers.BrowserProvider(window.ethereum, 'any');
       await browserProvider.send('eth_requestAccounts', []);
       await handleChainValidation(browserProvider);
       const signerInstance = await browserProvider.getSigner();
@@ -56,16 +58,30 @@ export const WalletProvider = ({ children }) => {
   }, [handleChainValidation]);
 
   const connectWalletConnect = useCallback(async () => {
+    if (!WALLETCONNECT_PROJECT_ID) {
+      setError('WalletConnect project ID is not configured.');
+      return;
+    }
     setLoading(true);
+    setError('');
     try {
       const wcProvider = await EthereumProvider.init({
-        projectId: 'YOUR_PROJECT_ID',
+        projectId: WALLETCONNECT_PROJECT_ID,
         chains: [CELO_MAINNET.chainId],
         optionalChains: [CELO_MAINNET.chainId],
         showQrModal: true,
+        rpcMap: {
+          [CELO_MAINNET.chainId]: CELO_MAINNET.rpcUrls[0],
+        },
+        metadata: {
+          name: 'CeloModuleX',
+          description: 'Celo module launcher and NFT access portal',
+          url: 'https://tebberen.github.io/CeloModuleX/',
+          icons: ['https://tebberen.github.io/CeloModuleX/assets/logo.svg'],
+        },
       });
       await wcProvider.enable();
-      const web3Provider = new ethers.BrowserProvider(wcProvider);
+      const web3Provider = new ethers.BrowserProvider(wcProvider, 'any');
       await handleChainValidation(web3Provider);
       const signerInstance = await web3Provider.getSigner();
       const signerAddress = await signerInstance.getAddress();
