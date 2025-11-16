@@ -1,10 +1,9 @@
-import React from 'react';
-
-const Loader = ({ label = 'Loading...' }) => (
-  <div className="loader">
-    <div className="spinner" />
-    <span>{label}</span>
-  </div>
-);
+function Loader() {
+  return (
+    <div className="loader">
+      <div className="spinner" />
+    </div>
+  );
+}
 
 export default Loader;
