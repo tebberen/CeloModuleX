@@ -1,13 +1,10 @@
-export const CELO_MAINNET = {
-  chainId: 42220,
-  name: 'Celo Mainnet',
-  rpcUrls: ['https://forno.celo.org'],
-  nativeCurrency: {
-    name: 'CELO',
-    symbol: 'CELO',
-    decimals: 18,
-  },
-  blockExplorerUrls: ['https://explorer.celo.org/mainnet'],
-};
+export const CELO_CHAIN_ID_HEX = '0xA4CE'
+export const CELO_CHAIN_ID_DECIMAL = 42220
 
-export default { CELO_MAINNET };
+export const CELO_PARAMS = {
+  chainId: CELO_CHAIN_ID_HEX,
+  chainName: 'Celo Mainnet',
+  nativeCurrency: { name: 'Celo', symbol: 'CELO', decimals: 18 },
+  rpcUrls: ['https://forno.celo.org'],
+  blockExplorerUrls: ['https://explorer.celo.org/mainnet/'],
+}

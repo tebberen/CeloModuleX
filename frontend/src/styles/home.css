@@ -1,23 +1,47 @@
-.home .hero {
-  background: linear-gradient(120deg, #fbcc5c, #ffe9a0);
-  border-radius: 16px;
-  padding: 32px;
-  color: #1f2937;
-  display: flex;
-  justify-content: space-between;
+.hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
   align-items: center;
-  gap: 20px;
 }
 
-.home .hero h1 {
-  font-size: 32px;
-  margin-bottom: 8px;
+.hero h1 {
+  font-size: clamp(28px, 4vw, 36px);
+  margin: 0;
 }
 
-.home .hero .subtitle {
-  max-width: 560px;
+.hero p {
+  color: #2f5b46;
+  margin: 10px 0 20px;
 }
 
-.home .cards {
-  margin-top: 24px;
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.kpi {
+  padding: 16px;
+  background: linear-gradient(120deg, #e7fbf1, #ffffff);
+  border: 1px solid #d9efe5;
+  border-radius: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.module-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.module-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #2f5b46;
+}
+
+.module-card li + li {
+  margin-top: 6px;
 }

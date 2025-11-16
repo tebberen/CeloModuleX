@@ -1,32 +1,25 @@
-import React, { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from './components/Navbar.jsx';
-import WalletModal from './components/WalletModal.jsx';
-import Alert from './components/Alert.jsx';
-import Home from './pages/Home.jsx';
-import Nft from './pages/Nft.jsx';
-import Profile from './pages/Profile.jsx';
-import { useWallet } from './hooks/useWallet.js';
+import { Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import Nft from './pages/Nft'
+import Profile from './pages/Profile'
+import Navbar from './components/Navbar'
+import WalletModal from './components/WalletModal'
+import { useState } from 'react'
 
-function App() {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const { error, clearError } = useWallet();
+const App = () => {
+  const [walletOpen, setWalletOpen] = useState(false)
 
   return (
-    <div className="app-shell">
-      <Navbar onConnectClick={() => setModalOpen(true)} />
-      <main className="page-container">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/nft" element={<Nft />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
-      <WalletModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
-      {error && <Alert message={error} onDismiss={clearError} />}
-    </div>
-  );
+    <>
+      <Navbar onOpenWallet={() => setWalletOpen(true)} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/nft" element={<Nft />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+      <WalletModal isOpen={walletOpen} onClose={() => setWalletOpen(false)} />
+    </>
+  )
 }
 
-export default App;
+export default App

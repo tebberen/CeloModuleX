@@ -1,154 +1,116 @@
-import React, { useEffect, useState } from 'react';
-import { useWallet } from '../hooks/useWallet.js';
-import { createProfile, updateProfile, getUserProfile } from '../services/blockchain.js';
-import { formatNumber } from '../utils/format.js';
-import Loader from '../components/Loader.jsx';
-import '../styles/profile.css';
+import { useEffect, useState } from 'react'
+import '../styles/profile.css'
+import '../styles/global.css'
+import Loader from '../components/Loader'
+import Alert from '../components/Alert'
+import { useWallet } from '../hooks/useWallet'
+import { getMainHubContract, getRpcProvider } from '../services/blockchain'
 
 const Profile = () => {
-  const { address, provider, signer } = useWallet();
-  const [form, setForm] = useState({ username: '', twitter: '', github: '', talent: '', selfID: '' });
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState('');
+  const { signer, address, isConnected } = useWallet()
+  const [profile, setProfile] = useState({ username: '', totalActions: 0, hasPremium: false })
+  const [formValue, setFormValue] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('')
 
   const fetchProfile = async () => {
-    if (!provider || !address) return;
-    const data = await getUserProfile(provider, address);
-    setProfile(data);
-    setForm({
-      username: data.username,
-      twitter: data.twitter,
-      github: data.github,
-      talent: data.talent,
-      selfID: data.selfID,
-    });
-  };
+    try {
+      setLoading(true)
+      const provider = signer || getRpcProvider()
+      const contract = getMainHubContract(provider)
+      const [username, totalActions, hasPremium] = await contract.getUserProfile(address || '0x0000000000000000000000000000000000000000')
+      setProfile({ username, totalActions: Number(totalActions), hasPremium })
+      setFormValue(username)
+    } catch (err) {
+      setMessage(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    fetchProfile();
+    fetchProfile()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, provider]);
+  }, [address])
 
-  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const getUserProfile = fetchProfile
 
-  const handleCreate = async () => {
-    if (!signer) return setStatus('Connect your wallet to create a profile.');
-    setLoading(true);
+  const createProfile = async () => {
+    if (!signer) return setMessage('Connect wallet to create profile')
     try {
-      await createProfile(signer, form);
-      setStatus('Profile created successfully.');
-      await fetchProfile();
+      setLoading(true)
+      setMessage('')
+      const contract = getMainHubContract(signer)
+      const tx = await contract.createProfile(formValue || 'User')
+      await tx.wait()
+      await fetchProfile()
+      setMessage('Profile created successfully')
+    } catch (err) {
+      setMessage(err.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const handleUpdate = async () => {
-    if (!signer) return setStatus('Connect your wallet to update your profile.');
-    setLoading(true);
+  const updateProfile = async () => {
+    if (!signer) return setMessage('Connect wallet to update profile')
     try {
-      await updateProfile(signer, form);
-      setStatus('Profile updated.');
-      await fetchProfile();
+      setLoading(true)
+      setMessage('')
+      const contract = getMainHubContract(signer)
+      const tx = await contract.updateProfile(formValue || 'User')
+      await tx.wait()
+      await fetchProfile()
+      setMessage('Profile updated successfully')
+    } catch (err) {
+      setMessage(err.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  if (loading) return <Loader label="Syncing profile" />
 
   return (
-    <section className="profile-page">
-      <header className="profile-header">
-        <div>
-          <p className="eyebrow">Identity</p>
-          <h2>Manage your on-chain profile</h2>
-          <p className="subtitle">Set your social handles and talents for module attribution.</p>
-        </div>
-        <div className="profile-card">
-          <p className="label">Wallet</p>
-          <p className="value">{address || 'Connect to view profile'}</p>
-          {profile && (
-            <>
-              <p className="label">Score</p>
-              <p className="value">{formatNumber(profile.score)}</p>
-            </>
-          )}
-        </div>
-      </header>
+    <div className="main-container">
+      <div className="section-title">
+        <h2>Profile</h2>
+        <span className="badge">{isConnected ? 'On-chain' : 'Connect wallet'}</span>
+      </div>
 
       <div className="profile-grid">
-        <div className="panel">
-          <h3>Profile Details</h3>
-          <div className="form-grid">
-            <label>
-              <span>Username</span>
-              <input name="username" value={form.username} onChange={handleChange} placeholder="ModuleX builder" />
-            </label>
-            <label>
-              <span>Twitter</span>
-              <input name="twitter" value={form.twitter} onChange={handleChange} placeholder="@celo" />
-            </label>
-            <label>
-              <span>GitHub</span>
-              <input name="github" value={form.github} onChange={handleChange} placeholder="celo-org" />
-            </label>
-            <label>
-              <span>Talent</span>
-              <input name="talent" value={form.talent} onChange={handleChange} placeholder="Smart contract dev" />
-            </label>
-            <label>
-              <span>Self ID</span>
-              <input name="selfID" value={form.selfID} onChange={handleChange} placeholder="Did:celo:..." />
-            </label>
-          </div>
-          <div className="actions">
-            <button className="primary" onClick={handleCreate} disabled={loading}>
-              {loading ? 'Submitting...' : 'Create Profile'}
-            </button>
-            <button className="secondary" onClick={handleUpdate} disabled={loading}>
-              {loading ? 'Submitting...' : 'Update Profile'}
-            </button>
-          </div>
-          {status && <p className="status">{status}</p>}
+        <div className="card profile-summary">
+          <h2>{profile.username || 'No username set'}</h2>
+          <p>Total Actions: {profile.totalActions}</p>
+          <p>Premium: {profile.hasPremium ? 'Yes' : 'No'}</p>
+          <button className="secondary-btn" onClick={getUserProfile}>Refresh</button>
         </div>
 
-        <div className="panel">
-          <h3>Current On-chain Data</h3>
-          {loading && <Loader />}
-          {profile ? (
-            <ul className="profile-summary">
-              <li>
-                <span>Username</span>
-                <strong>{profile.username || '—'}</strong>
-              </li>
-              <li>
-                <span>Twitter</span>
-                <strong>{profile.twitter || '—'}</strong>
-              </li>
-              <li>
-                <span>GitHub</span>
-                <strong>{profile.github || '—'}</strong>
-              </li>
-              <li>
-                <span>Talent</span>
-                <strong>{profile.talent || '—'}</strong>
-              </li>
-              <li>
-                <span>Self ID</span>
-                <strong>{profile.selfID || '—'}</strong>
-              </li>
-              <li>
-                <span>Premium</span>
-                <strong className={profile.premium ? 'positive' : ''}>{profile.premium ? 'Yes' : 'No'}</strong>
-              </li>
-            </ul>
-          ) : (
-            <p className="muted">Connect your wallet to load profile.</p>
-          )}
+        <div className="card">
+          <div className="profile-form">
+            <label htmlFor="username">Username</label>
+            <input
+              id="username"
+              className="input"
+              value={formValue}
+              placeholder="Your on-chain handle"
+              onChange={(e) => setFormValue(e.target.value)}
+            />
+            <div className="action-row">
+              <button className="primary-btn" onClick={createProfile} disabled={!isConnected}>
+                Create Profile
+              </button>
+              <button className="secondary-btn" onClick={updateProfile} disabled={!isConnected}>
+                Update Profile
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
-  );
-};
 
-export default Profile;
+      {message ? <Alert type={message.includes('success') ? 'success' : 'info'} message={message} /> : null}
+    </div>
+  )
+}
+
+export default Profile

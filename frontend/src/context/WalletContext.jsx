@@ -1,144 +1,126 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ethers } from 'ethers';
-import EthereumProvider from '@walletconnect/ethereum-provider';
-import { CELO_MAINNET } from '../utils/networks.js';
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
+import { BrowserProvider } from 'ethers'
+import { EthereumProvider } from '@walletconnect/ethereum-provider'
+import { CELO_CHAIN_ID_DECIMAL, CELO_CHAIN_ID_HEX, CELO_PARAMS } from '../utils/networks'
 
-const WalletContext = createContext(null);
-const WALLETCONNECT_PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || '';
+export const WalletContext = createContext(null)
+
+const WALLETCONNECT_PROJECT_ID = '94fdbe0207d7430aaf0e9a5699a23a89'
 
 export const WalletProvider = ({ children }) => {
-  const [provider, setProvider] = useState(null);
-  const [signer, setSigner] = useState(null);
-  const [address, setAddress] = useState('');
-  const [chainId, setChainId] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [provider, setProvider] = useState(null)
+  const [signer, setSigner] = useState(null)
+  const [address, setAddress] = useState('')
+  const [isConnected, setIsConnected] = useState(false)
+  const [chainError, setChainError] = useState('')
+  const [wcProvider, setWcProvider] = useState(null)
 
-  const resetState = () => {
-    setProvider(null);
-    setSigner(null);
-    setAddress('');
-    setChainId(null);
-  };
+  const resetState = useCallback(() => {
+    setProvider(null)
+    setSigner(null)
+    setAddress('')
+    setIsConnected(false)
+  }, [])
 
-  const handleChainValidation = useCallback(
-    async (nextProvider) => {
-      const network = await nextProvider.getNetwork();
-      const id = Number(network.chainId);
-      setChainId(id);
-      if (id !== CELO_MAINNET.chainId) {
-        throw new Error(`Please switch to ${CELO_MAINNET.name} (chain ${CELO_MAINNET.chainId}).`);
+  const ensureCeloNetwork = useCallback(async (ethProvider) => {
+    const currentChain = await ethProvider.request({ method: 'eth_chainId' })
+    if (parseInt(currentChain, 16) !== CELO_CHAIN_ID_DECIMAL) {
+      try {
+        await ethProvider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: CELO_CHAIN_ID_HEX }],
+        })
+      } catch (switchErr) {
+        await ethProvider.request({
+          method: 'wallet_addEthereumChain',
+          params: [CELO_PARAMS],
+        })
       }
-    },
-    [],
-  );
+    }
+  }, [])
 
-  const connectMetamask = useCallback(async () => {
+  const connectMetaMask = useCallback(async () => {
+    setChainError('')
     if (!window.ethereum) {
-      setError('MetaMask not detected. Please install it.');
-      return;
+      setChainError('MetaMask not detected in this browser.')
+      return
     }
-    setLoading(true);
-    setError('');
     try {
-      const browserProvider = new ethers.BrowserProvider(window.ethereum, 'any');
-      await browserProvider.send('eth_requestAccounts', []);
-      await handleChainValidation(browserProvider);
-      const signerInstance = await browserProvider.getSigner();
-      const signerAddress = await signerInstance.getAddress();
-      setProvider(browserProvider);
-      setSigner(signerInstance);
-      setAddress(signerAddress);
+      await ensureCeloNetwork(window.ethereum)
+      const browserProvider = new BrowserProvider(window.ethereum)
+      await browserProvider.send('eth_requestAccounts', [])
+      const signerInstance = await browserProvider.getSigner()
+      const userAddress = await signerInstance.getAddress()
+
+      setProvider(browserProvider)
+      setSigner(signerInstance)
+      setAddress(userAddress)
+      setIsConnected(true)
     } catch (err) {
-      setError(err.message || 'Failed to connect MetaMask');
-      resetState();
-    } finally {
-      setLoading(false);
+      setChainError(err.message)
     }
-  }, [handleChainValidation]);
+  }, [ensureCeloNetwork])
 
   const connectWalletConnect = useCallback(async () => {
-    if (!WALLETCONNECT_PROJECT_ID) {
-      setError('WalletConnect project ID is not configured.');
-      return;
-    }
-    setLoading(true);
-    setError('');
+    setChainError('')
     try {
-      const wcProvider = await EthereumProvider.init({
+      const ethProvider = await EthereumProvider.init({
         projectId: WALLETCONNECT_PROJECT_ID,
-        chains: [CELO_MAINNET.chainId],
-        optionalChains: [CELO_MAINNET.chainId],
+        chains: [CELO_CHAIN_ID_DECIMAL],
+        optionalChains: [CELO_CHAIN_ID_DECIMAL],
         showQrModal: true,
-        rpcMap: {
-          [CELO_MAINNET.chainId]: CELO_MAINNET.rpcUrls[0],
-        },
-        metadata: {
-          name: 'CeloModuleX',
-          description: 'Celo module launcher and NFT access portal',
-          url: 'https://tebberen.github.io/CeloModuleX/',
-          icons: ['https://tebberen.github.io/CeloModuleX/assets/logo.svg'],
-        },
-      });
-      await wcProvider.enable();
-      const web3Provider = new ethers.BrowserProvider(wcProvider, 'any');
-      await handleChainValidation(web3Provider);
-      const signerInstance = await web3Provider.getSigner();
-      const signerAddress = await signerInstance.getAddress();
-      setProvider(web3Provider);
-      setSigner(signerInstance);
-      setAddress(signerAddress);
+      })
+      await ethProvider.enable()
+      await ensureCeloNetwork(ethProvider)
+
+      const browserProvider = new BrowserProvider(ethProvider)
+      const signerInstance = await browserProvider.getSigner()
+      const userAddress = await signerInstance.getAddress()
+
+      setProvider(browserProvider)
+      setSigner(signerInstance)
+      setAddress(userAddress)
+      setIsConnected(true)
+      setWcProvider(ethProvider)
     } catch (err) {
-      setError(err.message || 'Failed to connect WalletConnect');
-      resetState();
-    } finally {
-      setLoading(false);
+      setChainError(err.message)
     }
-  }, [handleChainValidation]);
+  }, [ensureCeloNetwork])
 
-  const disconnect = useCallback(() => {
-    resetState();
-  }, []);
-
-  const clearError = () => setError('');
+  const disconnect = useCallback(async () => {
+    try {
+      if (wcProvider) {
+        await wcProvider.disconnect()
+      }
+    } catch (err) {
+      console.error('wallet disconnect error', err)
+    } finally {
+      resetState()
+    }
+  }, [wcProvider, resetState])
 
   useEffect(() => {
-    if (!window.ethereum) return undefined;
+    if (!window.ethereum) return
+
     const handleAccountsChanged = (accounts) => {
-      if (accounts.length === 0) {
-        resetState();
-      } else {
-        setAddress(accounts[0]);
+      if (!accounts || accounts.length === 0) {
+        resetState()
+        return
       }
-    };
-    const handleChainChanged = () => {
-      window.location.reload();
-    };
-    window.ethereum.on('accountsChanged', handleAccountsChanged);
-    window.ethereum.on('chainChanged', handleChainChanged);
+      setAddress(accounts[0])
+      setIsConnected(true)
+    }
+
+    window.ethereum.on?.('accountsChanged', handleAccountsChanged)
     return () => {
-      window.ethereum?.removeListener('accountsChanged', handleAccountsChanged);
-      window.ethereum?.removeListener('chainChanged', handleChainChanged);
-    };
-  }, []);
+      window.ethereum.removeListener?.('accountsChanged', handleAccountsChanged)
+    }
+  }, [resetState])
 
   const value = useMemo(
-    () => ({
-      provider,
-      signer,
-      address,
-      chainId,
-      loading,
-      error,
-      connectMetamask,
-      connectWalletConnect,
-      disconnect,
-      clearError,
-    }),
-    [provider, signer, address, chainId, loading, error, connectMetamask, connectWalletConnect, disconnect],
-  );
+    () => ({ provider, signer, address, isConnected, chainError, connectMetaMask, connectWalletConnect, disconnect }),
+    [provider, signer, address, isConnected, chainError, connectMetaMask, connectWalletConnect, disconnect]
+  )
 
-  return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
-};
-
-export const useWalletContext = () => useContext(WalletContext);
+  return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
+}
