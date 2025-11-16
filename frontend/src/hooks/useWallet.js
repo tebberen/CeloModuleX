@@ -1,6 +1,6 @@
-import { useContext } from 'react';
-import { WalletContext } from '../context/WalletContext';
+import { useContext } from "react";
+import { WalletContext } from "../context/WalletContext.jsx";
 
-export const useWallet = () => {
+export function useWallet() {
   return useContext(WalletContext);
-};
+}

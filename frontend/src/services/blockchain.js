@@ -1,36 +1,70 @@
-import { ethers } from 'ethers';
-import {
-  ACCESS_PASS_ABI,
-  ACCESS_PASS_ADDRESS,
-  MAIN_HUB_ABI,
-  MAIN_HUB_ADDRESS,
-} from '../constants/contracts';
+import { ethers } from "ethers";
+import { MAINHUB_ABI, MAINHUB_ADDRESS, NFT_ABI, NFT_ADDRESS } from "../constants/contracts.js";
 
-const celoRpc = 'https://forno.celo.org';
+const getHubContract = (providerOrSigner) =>
+  new ethers.Contract(MAINHUB_ADDRESS, MAINHUB_ABI, providerOrSigner);
 
-export const getReadProvider = () => new ethers.providers.JsonRpcProvider(celoRpc);
+const getNftContract = (providerOrSigner) =>
+  new ethers.Contract(NFT_ADDRESS, NFT_ABI, providerOrSigner);
 
-export const getAccessPassContract = (signerOrProvider) =>
-  new ethers.Contract(ACCESS_PASS_ADDRESS, ACCESS_PASS_ABI, signerOrProvider ?? getReadProvider());
-
-export const getMainHubContract = (signerOrProvider) =>
-  new ethers.Contract(MAIN_HUB_ADDRESS, MAIN_HUB_ABI, signerOrProvider ?? getReadProvider());
-
-export const fetchNftPrice = async (provider) => {
-  const contract = getAccessPassContract(provider);
-  return contract.getNFTPrice();
+export const createProfile = async (signer, profile) => {
+  const contract = getHubContract(signer);
+  return contract.createProfile(
+    profile.username || "",
+    profile.twitter || "",
+    profile.github || "",
+    profile.talent || "",
+    profile.selfID || ""
+  );
 };
 
-export const fetchHasNft = async (address, provider) => {
-  if (!address) return false;
-  const contract = getAccessPassContract(provider);
+export const updateProfile = async (signer, profile) => {
+  const contract = getHubContract(signer);
+  return contract.updateProfile(
+    profile.twitter || "",
+    profile.github || "",
+    profile.talent || "",
+    profile.selfID || ""
+  );
+};
+
+export const getUserProfile = async (provider, address) => {
+  const contract = getHubContract(provider);
+  const [username, createdAt, twitter, github, talent, selfID, hasNFT] = await contract.getUserProfile(address);
+  return { username, createdAt: createdAt.toNumber ? createdAt.toNumber() : Number(createdAt), twitter, github, talent, selfID, hasNFT };
+};
+
+export const executeModule = async (signer, moduleId, data = "0x", premium = false) => {
+  const contract = getHubContract(signer);
+  const fee = premium ? await contract.premiumFee() : await contract.basicFee();
+  return contract.executeModule(moduleId, data, { value: fee });
+};
+
+export const getUserStats = async (provider) => {
+  const contract = getHubContract(provider);
+  const [totalActionsBN, moduleIds] = await Promise.all([
+    contract.totalGlobalActions(),
+    contract.getAllModuleIds(),
+  ]);
+  const totalActions = totalActionsBN.toNumber ? totalActionsBN.toNumber() : Number(totalActionsBN);
+  const uniqueModules = moduleIds.length;
+  const score = totalActions;
+  return { totalActions, uniqueModules, score };
+};
+
+export const getNFTPrice = async (provider) => {
+  const contract = getNftContract(provider);
+  const price = await contract.getNFTPrice();
+  return price;
+};
+
+export const hasNFT = async (provider, address) => {
+  const contract = getNftContract(provider);
   return contract.hasNFT(address);
 };
 
-export const mintAccessPass = async (signer) => {
-  const contract = getAccessPassContract(signer);
+export const mintNFT = async (signer) => {
+  const contract = getNftContract(signer);
   const price = await contract.getNFTPrice();
-  const tx = await contract.mintNFT({ value: price });
-  const receipt = await tx.wait();
-  return { receipt, price };
+  return contract.mintNFT({ value: price });
 };
