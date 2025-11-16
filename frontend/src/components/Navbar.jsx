@@ -1,44 +1,71 @@
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { useWallet } from '../hooks/useWallet';
-import { shortenAddress } from '../utils/format';
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useWallet } from "../hooks/useWallet.js";
+import { shortenAddress } from "../utils/format.js";
+import logo from "../../assets/logo.svg";
+import "../styles/navbar.css";
 
-const Navbar = () => {
-  const { account, openModal, disconnect, connectionType, connecting } = useWallet();
+const navItems = [
+  { path: "/", label: "Home" },
+  { path: "/nft", label: "NFT" },
+  { path: "/profile", label: "Profile" },
+];
+
+function Navbar({ onConnect, onAlert }) {
+  const location = useLocation();
+  const { address, disconnect } = useWallet();
+  const [showMenu, setShowMenu] = useState(false);
+
+  const handleDisconnect = async () => {
+    try {
+      await disconnect();
+      onAlert({ type: "success", message: "Disconnected" });
+    } catch (error) {
+      onAlert({ type: "error", message: error.message });
+    } finally {
+      setShowMenu(false);
+    }
+  };
 
   return (
     <header className="navbar">
-      <div className="navbar-left">
-        <Link to="/" className="brand">CeloModuleX</Link>
+      <div className="nav-left">
+        <Link to="/" className="brand">
+          <img src={logo} alt="CeloModuleX" />
+          <span>CeloModuleX</span>
+        </Link>
       </div>
-      <nav className="navbar-center">
-        <NavLink to="/" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-          Home
-        </NavLink>
-        <NavLink to="/nft" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-          NFT
-        </NavLink>
-        <NavLink to="/profile" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-          Profile
-        </NavLink>
+      <nav className="nav-center">
+        {navItems.map((item) => (
+          <Link
+            key={item.path}
+            to={item.path}
+            className={location.pathname === item.path ? "active" : ""}
+          >
+            {item.label}
+          </Link>
+        ))}
       </nav>
-      <div className="navbar-right">
-        {account ? (
-          <div className="wallet-chip">
-            <span className="wallet-status">{connectionType === 'walletconnect' ? 'WC' : 'MM'}</span>
-            <span className="wallet-address">{shortenAddress(account)}</span>
-            <button className="disconnect" onClick={disconnect}>
-              Disconnect
-            </button>
-          </div>
-        ) : (
-          <button className="primary" onClick={openModal} disabled={connecting}>
-            {connecting ? 'Connecting…' : 'Connect'}
+      <div className="nav-right">
+        {!address ? (
+          <button className="btn primary" onClick={onConnect}>
+            Connect Wallet
           </button>
+        ) : (
+          <div className="wallet-menu">
+            <button className="btn outline" onClick={() => setShowMenu(!showMenu)}>
+              {shortenAddress(address)}
+            </button>
+            {showMenu && (
+              <div className="wallet-dropdown">
+                <button onClick={handleDisconnect}>Disconnect</button>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </header>
   );
-};
+}
 
 export default Navbar;

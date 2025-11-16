@@ -1,187 +1,143 @@
-import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ethers } from 'ethers';
-import EthereumProvider from '@walletconnect/ethereum-provider';
-import { formatChainAsHex } from '../utils/networks';
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { ethers } from "ethers";
+import EthereumProvider from "@walletconnect/ethereum-provider";
+import { CELO_PARAMS } from "../utils/networks.js";
 
 export const WalletContext = createContext();
 
-const CELO_CHAIN_ID = 42220;
-const LOCAL_STORAGE_KEY = 'cmx-wallet-provider';
-
-export const WalletProvider = ({ children }) => {
-  const [account, setAccount] = useState(null);
+export function WalletProvider({ children }) {
+  const [address, setAddress] = useState(null);
   const [provider, setProvider] = useState(null);
-  const [connectionType, setConnectionType] = useState(null);
-  const [connecting, setConnecting] = useState(false);
-  const [error, setError] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [autoTried, setAutoTried] = useState(false);
-  const wcProviderRef = useRef(null);
+  const [signer, setSigner] = useState(null);
+  const [chainId, setChainId] = useState(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [wcProvider, setWcProvider] = useState(null);
 
-  const resetState = useCallback(() => {
-    setAccount(null);
+  const resetState = () => {
+    setAddress(null);
     setProvider(null);
-    setConnectionType(null);
+    setSigner(null);
+    setChainId(null);
+  };
+
+  const ensureCeloNetwork = async (ethProvider) => {
+    const currentChainId = await ethProvider.request({ method: "eth_chainId" });
+    if (currentChainId !== CELO_PARAMS.chainId) {
+      try {
+        await ethProvider.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: CELO_PARAMS.chainId }],
+        });
+      } catch (switchError) {
+        if (switchError.code === 4902) {
+          await ethProvider.request({
+            method: "wallet_addEthereumChain",
+            params: [CELO_PARAMS],
+          });
+        } else {
+          throw switchError;
+        }
+      }
+    }
+  };
+
+  const attachProvider = useCallback(async (ethProvider) => {
+    const web3Provider = new ethers.providers.Web3Provider(ethProvider, "any");
+    const network = await web3Provider.getNetwork();
+    if (network.chainId !== parseInt(CELO_PARAMS.chainId, 16)) {
+      throw new Error("Please switch to Celo Mainnet (42220)");
+    }
+    setProvider(web3Provider);
+    const walletSigner = web3Provider.getSigner();
+    setSigner(walletSigner);
+    const userAddress = await walletSigner.getAddress();
+    setAddress(userAddress);
+    setChainId(network.chainId);
   }, []);
 
-  const handleChain = useCallback(
-    async (nextProvider) => {
-      const chainId = await nextProvider.request({ method: 'eth_chainId' });
-      const numericChainId = Number(chainId);
-      if (numericChainId !== CELO_CHAIN_ID) {
-        try {
-          await nextProvider.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: formatChainAsHex(CELO_CHAIN_ID) }],
-          });
-        } catch (switchError) {
-          if (switchError.code === 4902) {
-            await nextProvider.request({
-              method: 'wallet_addEthereumChain',
-              params: [
-                {
-                  chainId: formatChainAsHex(CELO_CHAIN_ID),
-                  chainName: 'Celo Mainnet',
-                  nativeCurrency: { name: 'CELO', symbol: 'CELO', decimals: 18 },
-                  rpcUrls: ['https://forno.celo.org'],
-                  blockExplorerUrls: ['https://celoscan.io'],
-                },
-              ],
-            });
-          } else {
-            throw switchError;
-          }
-        }
-      }
-    },
-    []
-  );
-
-  const attachEvents = useCallback(
-    (injectedProvider) => {
-      injectedProvider.on('accountsChanged', (accounts) => {
-        setAccount(accounts?.[0] ?? null);
-        if (!accounts || accounts.length === 0) {
-          resetState();
-        }
-      });
-
-      injectedProvider.on('chainChanged', async (chainId) => {
-        const numericChainId = Number(chainId);
-        if (numericChainId !== CELO_CHAIN_ID) {
-          setError('Please switch to Celo Mainnet (42220).');
-        } else {
-          setError('');
-        }
-      });
-
-      injectedProvider.on('disconnect', () => {
-        disconnect();
-      });
-    },
-    [resetState]
-  );
-
-  const connectMetaMask = useCallback(async () => {
-    if (!window.ethereum) {
-      throw new Error('MetaMask not detected');
+  const connectMetamask = useCallback(async () => {
+    if (isConnecting) return;
+    setIsConnecting(true);
+    try {
+      const { ethereum } = window;
+      if (!ethereum) throw new Error("MetaMask not found");
+      await ensureCeloNetwork(ethereum);
+      await ethereum.request({ method: "eth_requestAccounts" });
+      await attachProvider(ethereum);
+    } finally {
+      setIsConnecting(false);
     }
-    const injectedProvider = window.ethereum;
-    await handleChain(injectedProvider);
-    const accounts = await injectedProvider.request({ method: 'eth_requestAccounts' });
-    const ethersProvider = new ethers.providers.Web3Provider(injectedProvider, 'any');
-    attachEvents(injectedProvider);
-    setAccount(accounts[0]);
-    setProvider(ethersProvider);
-    setConnectionType('metamask');
-    localStorage.setItem(LOCAL_STORAGE_KEY, 'metamask');
-  }, [attachEvents, handleChain]);
+  }, [attachProvider, isConnecting]);
 
   const connectWalletConnect = useCallback(async () => {
-    const wcProvider = await EthereumProvider.init({
-      projectId: '8b020ffbb31e5aba14160c27ca26540b',
-      chains: [CELO_CHAIN_ID],
-      optionalChains: [CELO_CHAIN_ID],
-      showQrModal: true,
-      rpcMap: { [CELO_CHAIN_ID]: 'https://forno.celo.org' },
-      metadata: {
-        name: 'CeloModuleX',
-        description: 'CeloModuleX Access Pass',
-        url: 'https://celomodulex.io',
-        icons: [],
-      },
-    });
-
-    wcProviderRef.current = wcProvider;
-    await wcProvider.connect();
-    await handleChain(wcProvider);
-    const accounts = await wcProvider.request({ method: 'eth_accounts' });
-    const ethersProvider = new ethers.providers.Web3Provider(wcProvider, 'any');
-    attachEvents(wcProvider);
-    setAccount(accounts[0]);
-    setProvider(ethersProvider);
-    setConnectionType('walletconnect');
-    localStorage.setItem(LOCAL_STORAGE_KEY, 'walletconnect');
-  }, [attachEvents, handleChain]);
-
-  const connect = useCallback(
-    async (type) => {
-      setConnecting(true);
-      setError('');
-      try {
-        if (type === 'metamask') {
-          await connectMetaMask();
-        } else {
-          await connectWalletConnect();
-        }
-        setIsModalOpen(false);
-      } catch (err) {
-        setError(err.message || 'Connection failed');
-        console.error(err);
-        resetState();
-      } finally {
-        setConnecting(false);
-      }
-    },
-    [connectMetaMask, connectWalletConnect, resetState]
-  );
+    if (isConnecting) return;
+    setIsConnecting(true);
+    try {
+      const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "demo";
+      const providerInstance = await EthereumProvider.init({
+        projectId,
+        chains: [parseInt(CELO_PARAMS.chainId, 16)],
+        optionalChains: [parseInt(CELO_PARAMS.chainId, 16)],
+        rpcMap: {
+          [parseInt(CELO_PARAMS.chainId, 16)]: CELO_PARAMS.rpcUrls[0],
+        },
+        showQrModal: true,
+      });
+      await providerInstance.enable();
+      setWcProvider(providerInstance);
+      await attachProvider(providerInstance);
+    } finally {
+      setIsConnecting(false);
+    }
+  }, [attachProvider, isConnecting]);
 
   const disconnect = useCallback(async () => {
-    if (wcProviderRef.current) {
-      try {
-        await wcProviderRef.current.disconnect();
-      } catch (err) {
-        console.warn('WalletConnect disconnect error', err);
-      }
+    if (wcProvider) {
+      await wcProvider.disconnect();
+      setWcProvider(null);
     }
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
     resetState();
-  }, [resetState]);
+  }, [wcProvider]);
 
   useEffect(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (saved && !autoTried) {
-      connect(saved).finally(() => setAutoTried(true));
-    } else {
-      setAutoTried(true);
-    }
-  }, [autoTried, connect]);
+    const { ethereum } = window;
+    if (!ethereum) return;
+
+    const handleAccountsChanged = (accounts) => {
+      if (!accounts || accounts.length === 0) {
+        resetState();
+      } else {
+        setAddress(accounts[0]);
+        setSigner((prev) => (prev ? prev : new ethers.providers.Web3Provider(ethereum).getSigner()));
+      }
+    };
+
+    const handleChainChanged = () => {
+      window.location.reload();
+    };
+
+    ethereum.on("accountsChanged", handleAccountsChanged);
+    ethereum.on("chainChanged", handleChainChanged);
+
+    return () => {
+      ethereum.removeListener("accountsChanged", handleAccountsChanged);
+      ethereum.removeListener("chainChanged", handleChainChanged);
+    };
+  }, []);
 
   const value = useMemo(
     () => ({
-      account,
+      address,
       provider,
-      connectionType,
-      connect,
+      signer,
+      chainId,
+      isConnecting,
+      connectMetamask,
+      connectWalletConnect,
       disconnect,
-      connecting,
-      error,
-      isModalOpen,
-      openModal: () => setIsModalOpen(true),
-      closeModal: () => setIsModalOpen(false),
     }),
-    [account, provider, connectionType, connect, disconnect, connecting, error, isModalOpen]
+    [address, provider, signer, chainId, isConnecting, connectMetamask, connectWalletConnect, disconnect]
   );
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
-};
+}

@@ -1,54 +1,85 @@
-import React from 'react';
-import { useWallet } from '../hooks/useWallet';
-import { useAccessPass } from '../hooks/useAccessPass';
-import Alert from '../components/Alert';
-import Loader from '../components/Loader';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Loader from "../components/Loader.jsx";
+import { useWallet } from "../hooks/useWallet.js";
+import { getUserStats } from "../services/blockchain.js";
+import "../styles/home.css";
 
-const Home = () => {
-  const { account, openModal, provider, error } = useWallet();
-  const { hasPass, loading } = useAccessPass(account, provider);
+function Home({ onAlert }) {
+  const { provider, address } = useWallet();
+  const [stats, setStats] = useState({ score: 0, totalActions: 0, uniqueModules: 0 });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!provider) return;
+      setLoading(true);
+      try {
+        const data = await getUserStats(provider);
+        setStats(data);
+      } catch (error) {
+        onAlert({ type: "error", message: error.message });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, [provider, onAlert]);
 
   return (
-    <section className="page">
-      <div className="hero">
-        <div>
-          <p className="eyebrow">Premium Celo Experience</p>
-          <h1>Welcome to CeloModuleX</h1>
-          <p className="muted">
-            Access curated modules, on-chain insights, and exclusive dashboards powered by the Celo Mainnet.
+    <div className="page home">
+      <section className="hero">
+        <div className="hero-content">
+          <p className="tag">CeloModuleX</p>
+          <h1>Start Using Modules</h1>
+          <p className="subtitle">
+            Compose powerful on-chain automations and join a thriving builder community on
+            Celo.
           </p>
-          <div className="actions">
-            <button className="primary" onClick={openModal}>
-              {account ? 'Switch Wallet' : 'Connect Wallet'}
-            </button>
+          <div className="cta">
+            <Link to="/profile" className="btn primary">
+              Create Profile
+            </Link>
+            <Link to="/nft" className="btn outline">
+              Access Pass
+            </Link>
+          </div>
+        </div>
+        <div className="hero-card">
+          <h3>Network</h3>
+          <p className="stat-value">Celo Mainnet</p>
+          <p className="stat-label">Chain ID 42220</p>
+        </div>
+      </section>
+
+      {address && (
+        <section className="stats">
+          <div className="section-header">
+            <h2>Your Activity</h2>
+            <p>Realtime metrics from MainHub</p>
           </div>
           {loading ? (
-            <Loader label="Checking premium status" />
+            <Loader />
           ) : (
-            account && (
-              <div className="status-card">
-                <span className="label">Premium status</span>
-                <span className={hasPass ? 'badge success' : 'badge error'}>
-                  {hasPass ? 'Active Access Pass' : 'Not minted yet'}
-                </span>
+            <div className="stat-grid">
+              <div className="stat-card">
+                <p className="stat-label">Score</p>
+                <p className="stat-value">{stats.score}</p>
               </div>
-            )
+              <div className="stat-card">
+                <p className="stat-label">Total Actions</p>
+                <p className="stat-value">{stats.totalActions}</p>
+              </div>
+              <div className="stat-card">
+                <p className="stat-label">Unique Modules</p>
+                <p className="stat-value">{stats.uniqueModules}</p>
+              </div>
+            </div>
           )}
-          <Alert type="error" message={error} />
-        </div>
-        <div className="hero-visual">
-          <div className="glow" />
-          <div className="card">
-            <h3>Celo Mainnet</h3>
-            <p>Chain ID: 42220</p>
-            <p>Network check enforced</p>
-            <div className="divider" />
-            <p className="muted">Mint your premium Access Pass to unlock the MainHub dashboard.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
+      )}
+    </div>
   );
-};
+}
 
 export default Home;

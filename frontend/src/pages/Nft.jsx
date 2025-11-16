@@ -1,96 +1,87 @@
-import React, { useState } from 'react';
-import { ethers } from 'ethers';
-import { useWallet } from '../hooks/useWallet';
-import { useAccessPass } from '../hooks/useAccessPass';
-import Loader from '../components/Loader';
-import Alert from '../components/Alert';
-import { shortenAddress } from '../utils/format';
+import { useEffect, useState } from "react";
+import Loader from "../components/Loader.jsx";
+import { useWallet } from "../hooks/useWallet.js";
+import { getNFTPrice, hasNFT, mintNFT } from "../services/blockchain.js";
+import { formatEth } from "../utils/format.js";
+import "../styles/nft.css";
 
-const NFT_IMAGE = 'ipfs://bafkreifshmlllxkm6qc3akstidbbbo6teqlgv3yntvi4tiyr64knr4byau';
+function Nft({ onAlert }) {
+  const { provider, signer, address } = useWallet();
+  const [price, setPrice] = useState("0");
+  const [owns, setOwns] = useState(false);
+  const [image, setImage] = useState("https://ipfs.io/ipfs/bafkreiah7zsjf7vayv3jogesplqvpz2gl9l9q40sp5m5sz5kdgx3bu6l5u");
+  const [loading, setLoading] = useState(false);
 
-const Nft = () => {
-  const { account, provider, openModal } = useWallet();
-  const { price, hasPass, loading, error, mint, refresh } = useAccessPass(account, provider);
-  const [txStatus, setTxStatus] = useState('');
-  const [txHash, setTxHash] = useState('');
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!provider || !address) return;
+      setLoading(true);
+      try {
+        const [currentPrice, hasPass] = await Promise.all([
+          getNFTPrice(provider),
+          hasNFT(provider, address),
+        ]);
+        setPrice(currentPrice);
+        setOwns(hasPass);
+      } catch (error) {
+        onAlert({ type: "error", message: error.message });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [provider, address, onAlert]);
 
   const handleMint = async () => {
-    setTxStatus('');
-    setTxHash('');
+    if (!signer) {
+      onAlert({ type: "error", message: "Connect your wallet first" });
+      return;
+    }
+    setLoading(true);
     try {
-      setTxStatus('Submitting transaction...');
-      const tx = await mint();
-      setTxHash(tx.hash);
-      setTxStatus('Mint successful! UI refreshed.');
-      await refresh();
-    } catch (err) {
-      console.error(err);
-      setTxStatus(err.message || 'Mint failed');
+      const tx = await mintNFT(signer);
+      await tx.wait();
+      onAlert({ type: "success", message: "NFT minted successfully" });
+      const hasPass = await hasNFT(provider, address);
+      setOwns(hasPass);
+    } catch (error) {
+      onAlert({ type: "error", message: error.message });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <section className="page">
-      <div className="section-header">
+    <div className="page nft">
+      <section className="nft-header">
         <div>
-          <p className="eyebrow">Premium Access Pass</p>
-          <h2>Mint your CeloModuleX Access Pass</h2>
-          <p className="muted">Secure entry to the MainHub dashboard and premium modules with your NFT.</p>
-        </div>
-        <div className="price-tag">
-          <span>Price</span>
-          {loading ? <Loader label="Loading price" /> : <strong>{price ? `${ethers.utils.formatEther(price)} CELO` : '--'}</strong>}
-        </div>
-      </div>
-
-      <div className="nft-grid">
-        <div className="nft-card">
-          <div className="nft-image">
-            <img src={NFT_IMAGE} alt="CeloModuleX Access Pass" />
-          </div>
+          <p className="tag">Access Pass</p>
+          <h1>Unlock premium modules</h1>
+          <p className="subtitle">Mint your ModuleX Access Pass to enable premium automation.</p>
           <div className="nft-details">
-            <h3>CeloModuleX Premium Pass</h3>
-            <p className="muted">Grants exclusive access to the MainHub experience on Celo.</p>
-            <ul className="nft-meta">
-              <li>
-                <span className="label">Network</span>
-                <span>Celo Mainnet</span>
-              </li>
-              <li>
-                <span className="label">Contract</span>
-                <span className="mono">CMXAccessPass.sol</span>
-              </li>
-              <li>
-                <span className="label">Holder</span>
-                <span>{account ? shortenAddress(account) : 'Connect wallet'}</span>
-              </li>
-            </ul>
-            {loading ? (
-              <Loader label="Checking access" />
-            ) : hasPass ? (
-              <div className="alert success">You already own the Premium Access Pass.</div>
-            ) : (
-              <button className="primary" onClick={account ? handleMint : openModal} disabled={!account}>
-                {account ? 'Mint NFT' : 'Connect to Mint'}
-              </button>
-            )}
-            {txStatus && <div className="notice">{txStatus}</div>}
-            {txHash && (
-              <a
-                href={`https://celoscan.io/tx/${txHash}`}
-                target="_blank"
-                rel="noreferrer"
-                className="link"
-              >
-                View on Celoscan
-              </a>
-            )}
-            <Alert type="error" message={error} />
+            <div>
+              <p className="stat-label">Current Price</p>
+              <p className="stat-value">{formatEth(price)} CELO</p>
+            </div>
+            <div>
+              <p className="stat-label">Ownership</p>
+              <p className="stat-value">{owns ? "You own the pass" : "Not minted yet"}</p>
+            </div>
           </div>
+          <button className="btn primary" onClick={handleMint} disabled={loading}>
+            {loading ? "Processing..." : owns ? "Mint Again" : "Mint NFT"}
+          </button>
         </div>
-      </div>
-    </section>
+        <div className="nft-card">
+          {loading ? (
+            <Loader />
+          ) : (
+            <img src={image} alt="ModuleX Access NFT" />
+          )}
+        </div>
+      </section>
+    </div>
   );
-};
+}
 
 export default Nft;
