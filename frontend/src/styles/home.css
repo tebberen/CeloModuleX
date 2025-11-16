@@ -1,0 +1,23 @@
+.home .hero {
+  background: linear-gradient(120deg, #fbcc5c, #ffe9a0);
+  border-radius: 16px;
+  padding: 32px;
+  color: #1f2937;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.home .hero h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.home .hero .subtitle {
+  max-width: 560px;
+}
+
+.home .cards {
+  margin-top: 24px;
+}

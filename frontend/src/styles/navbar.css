@@ -1,0 +1,41 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.navbar__logo {
+  width: 32px;
+  height: 32px;
+}
+
+.navbar__links {
+  display: flex;
+  gap: 16px;
+}
+
+.navbar__links a {
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: var(--gray);
+  font-weight: 600;
+}
+
+.navbar__links a.active {
+  background: var(--celo-yellow);
+  color: var(--black);
+}
+
+.navbar__actions button {
+  min-width: 140px;
+}
