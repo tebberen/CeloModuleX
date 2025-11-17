@@ -1,117 +1,154 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useWallet } from '../hooks/useWallet';
+import { getUserProfile, createProfile, updateProfile } from '../services/blockchain';
+import Loader from '../components/Loader';
+import Alert from '../components/Alert';
 import '../styles/profile.css';
-import Loader from '../components/Loader.jsx';
-import Alert from '../components/Alert.jsx';
-import { useWallet } from '../hooks/useWallet.js';
-import { getUserProfile, createProfile, updateProfile } from '../services/blockchain.js';
+import '../styles/global.css';
 
-const Profile = () => {
-  const { isConnected, signer } = useWallet();
-  const [profile, setProfile] = useState({ username: '', bio: '', modules: 0 });
-  const [status, setStatus] = useState('');
+const ProfilePage = () => {
+  const { address, isConnected } = useWallet();
+  const [userProfile, setUserProfile] = useState(null);
+  const [username, setUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [alert, setAlert] = useState({ type: '', message: '' });
 
   useEffect(() => {
-    const loadProfile = async () => {
-      if (!isConnected || !signer) return;
-      setIsLoading(true);
-      try {
-        const data = await getUserProfile(signer);
-        setProfile(data);
-        setStatus('Profile loaded');
-      } catch (err) {
-        setError(err.message);
+    if (isConnected && address) {
+      loadUserProfile();
+    }
+  }, [isConnected, address]);
+
+  const loadUserProfile = async () => {
+    setIsLoading(true);
+    try {
+      const profile = await getUserProfile(address);
+      setUserProfile(profile);
+      if (profile && profile.username) {
+        setUsername(profile.username);
       }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      setAlert({ type: 'error', message: 'Failed to load profile' });
+    } finally {
       setIsLoading(false);
-    };
-    loadProfile();
-  }, [isConnected, signer]);
-
-  const handleCreate = async () => {
-    if (!signer) return;
-    setIsLoading(true);
-    try {
-      const created = await createProfile(signer, profile);
-      setStatus(created);
-      setError('');
-    } catch (err) {
-      setError(err.message);
     }
-    setIsLoading(false);
   };
 
-  const handleUpdate = async () => {
-    if (!signer) return;
-    setIsLoading(true);
-    try {
-      const updated = await updateProfile(signer, profile);
-      setStatus(updated);
-      setError('');
-    } catch (err) {
-      setError(err.message);
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    
+    if (!username.trim()) {
+      setAlert({ type: 'error', message: 'Username is required' });
+      return;
     }
-    setIsLoading(false);
+
+    setIsSaving(true);
+    try {
+      const success = userProfile 
+        ? await updateProfile(username)
+        : await createProfile(username);
+
+      if (success) {
+        setAlert({ type: 'success', message: 'Profile saved successfully!' });
+        await loadUserProfile();
+      } else {
+        setAlert({ type: 'error', message: 'Failed to save profile' });
+      }
+    } catch (error) {
+      setAlert({ type: 'error', message: 'Error saving profile' });
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (!isConnected) {
+    return (
+      <div className="profile-page">
+        <div className="container">
+          <div className="profile-form">
+            <div className="card">
+              <h2>Profile</h2>
+              <p>Please connect your wallet to view and edit your profile</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="profile-grid">
-      <div className="card profile-card">
-        <h3>User Profile</h3>
-        <p className="muted">Save your on-chain presence with username, bio, and module count.</p>
-        <div className="input-row">
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              id="username"
-              value={profile.username}
-              onChange={(e) => setProfile({ ...profile, username: e.target.value })}
-              placeholder="Celo builder"
-            />
+    <div className="profile-page">
+      <div className="container">
+        <div className="profile-form">
+          <Alert 
+            type={alert.type} 
+            message={alert.message} 
+            onClose={() => setAlert({ type: '', message: '' })} 
+          />
+
+          <div className="card">
+            <h2 style={{ marginBottom: '24px' }}>Your Profile</h2>
+
+            {isLoading ? (
+              <Loader />
+            ) : (
+              <form onSubmit={handleSaveProfile}>
+                <div className="form-group">
+                  <label className="form-label">Username</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Enter your username"
+                    required
+                  />
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={isSaving}
+                  className="btn btn-primary"
+                  style={{ width: '100%' }}
+                >
+                  {isSaving ? 'Saving...' : (userProfile ? 'Update Profile' : 'Create Profile')}
+                </button>
+              </form>
+            )}
+
+            {userProfile && (
+              <div className="profile-info" style={{ marginTop: '24px' }}>
+                <h3 style={{ marginBottom: '16px' }}>Profile Information</h3>
+                <div className="info-item">
+                  <span className="info-label">Wallet:</span>
+                  <span className="info-value">{address}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Username:</span>
+                  <span className="info-value">{userProfile.username || 'Not set'}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Total Actions:</span>
+                  <span className="info-value">{userProfile.totalActions || '0'}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Premium Status:</span>
+                  <span className="info-value" style={{ 
+                    color: userProfile.hasPremium ? '#35d07f' : '#dc3545',
+                    fontWeight: 'bold'
+                  }}>
+                    {userProfile.hasPremium ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="form-group">
-            <label htmlFor="bio">Bio</label>
-            <textarea
-              id="bio"
-              rows="3"
-              value={profile.bio}
-              onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-              placeholder="Short description"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="modules">Modules Completed</label>
-            <input
-              id="modules"
-              type="number"
-              value={profile.modules}
-              onChange={(e) => setProfile({ ...profile, modules: Number(e.target.value) })}
-            />
-          </div>
-        </div>
-        <div className="meta-row" style={{ marginTop: '0.75rem' }}>
-          <button className="primary-btn" onClick={handleCreate} type="button">
-            createProfile()
-          </button>
-          <button className="primary-btn" onClick={handleUpdate} type="button">
-            updateProfile()
-          </button>
-        </div>
-        {isLoading && <Loader label="Syncing profile..." />}
-        {status && <Alert message={status} />}
-        {error && <Alert message={error} />}
-      </div>
-      <div className="card profile-card">
-        <h3>Profile Snapshot</h3>
-        <div className="profile-meta">
-          <span className="badge info">Username: {profile.username || 'Not set'}</span>
-          <span className="badge info">Bio: {profile.bio || 'Add something about you'}</span>
-          <span className="badge info">Modules: {profile.modules}</span>
-          <span className="badge info">Network: Celo Mainnet</span>
         </div>
       </div>
     </div>
   );
 };
 
-export default Profile;
+export default ProfilePage;
