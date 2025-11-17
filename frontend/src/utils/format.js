@@ -1,15 +1,15 @@
-import { ethers } from 'ethers';
-
-export const shortenAddress = (addr) => {
-  if (!addr) return '0x0';
-  return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+export const formatAddress = (address) => {
+  if (!address) return '';
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
 
-export const formatEtherDisplay = (value) => {
-  if (!value) return '0.00 CELO';
-  try {
-    return `${parseFloat(ethers.utils.formatEther(value)).toFixed(2)} CELO`;
-  } catch (err) {
-    return '0.00 CELO';
-  }
+export const formatBalance = (balance) => {
+  if (!balance) return '0';
+  return parseFloat(balance).toFixed(4);
+};
+
+export const formatPrice = (price) => {
+  if (!price) return '0';
+  const celoPrice = parseFloat(price) / 1e18;
+  return celoPrice.toFixed(4);
 };
