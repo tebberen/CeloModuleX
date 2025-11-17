@@ -1,25 +1,27 @@
-# CeloModuleX
+# CeloModuleX Frontend
 
-Frontend for CeloModuleX rebuilt with Vite + React for GitHub Pages deployment. The production build outputs to `docs/site` so GitHub Pages can serve it from the repository root without extra configuration.
+A production-ready React + Vite single-page dApp for CeloModuleX, deployable to GitHub Pages at `https://tebberen.github.io/CeloModuleX/`.
 
-## Project Structure
-
-- `frontend/` – source code for the SPA
-- `docs/site/` – Vite build output (do not edit manually)
-- `docs/` – existing documentation bundle
+## Features
+- Wallet system with MetaMask and WalletConnect v2
+- Network enforcement for Celo Mainnet (chainId 42220)
+- Profile management (create/update) through MainHub contract
+- Premium NFT dashboard with mint flow and metadata fetch
+- Responsive UI themed with Celo yellow and Inter typography
+- HashRouter + Vite `base` configured for GitHub Pages, builds to `docs/`
 
 ## Getting Started
-
 ```bash
-cd frontend
 npm install
 npm run dev
 ```
 
-To generate the static site:
-
+## Build for GitHub Pages
 ```bash
 npm run build
 ```
+The static site is emitted to `docs/` for GitHub Pages hosting.
 
-The app is preconfigured with MetaMask and WalletConnect connections, enforces Celo Mainnet (chainId 42220), and ships placeholder contracts for the provided addresses.
+## Environment
+- Node.js 18+
+- Uses ethers v6 and @walletconnect/ethereum-provider v2
