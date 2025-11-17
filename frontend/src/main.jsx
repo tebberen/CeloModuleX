@@ -1,18 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App.jsx';
-import { WalletProvider } from './context/WalletContext.jsx';
-import './styles/global.css';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
 
-const rootElement = document.getElementById('root');
+// Global error handler to prevent white screens
+window.addEventListener('error', (event) => {
+  console.error('Global error:', event.error);
+});
 
-ReactDOM.createRoot(rootElement).render(
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+});
+
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter basename="/CeloModuleX">
-      <WalletProvider>
-        <App />
-      </WalletProvider>
-    </BrowserRouter>
+    <App />
   </React.StrictMode>,
-);
+)
