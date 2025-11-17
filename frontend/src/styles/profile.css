@@ -1,0 +1,20 @@
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.profile-card h3 {
+  margin: 0 0 0.5rem;
+}
+
+.input-row {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.profile-meta {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
