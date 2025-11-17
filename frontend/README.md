@@ -1,12 +1,18 @@
 # CeloModuleX Frontend
 
-This frontend is built with Vite and React for deployment on GitHub Pages. The build output is configured to go to `../docs/site` so pages can be hosted directly from the repository.
+A Web3 learning platform built on Celo blockchain.
 
-## Available Scripts
+## Features
 
-- `npm install`
-- `npm run dev`
-- `npm run build`
-- `npm run preview`
+- 🔐 Wallet connection (MetaMask, WalletConnect)
+- 🎓 Access Pass NFT minting
+- 👤 User profiles
+- 📚 Learning modules
+- 🌱 Celo blockchain integration
 
-The wallet layer uses MetaMask or WalletConnect, enforces the Celo mainnet chain (42220), and exposes helper hooks for connecting, disconnecting, and interacting with the provided contract placeholders.
+## Development
+
+```bash
+cd frontend
+npm install
+npm run dev
