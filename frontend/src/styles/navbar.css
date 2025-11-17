@@ -1,70 +1,73 @@
 .navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.25rem;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem 0;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
 }
 
-.brand {
+.nav-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  font-weight: 700;
-  color: #0f172a;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #35d07f;
+  text-decoration: none;
 }
 
-.brand img {
-  width: 36px;
-  height: 36px;
+.logo img {
+  width: 40px;
+  height: 40px;
 }
 
 .nav-links {
   display: flex;
-  gap: 1rem;
+  gap: 32px;
   align-items: center;
 }
 
 .nav-link {
-  color: #0f172a;
-  font-weight: 600;
-  padding: 0.5rem 0.75rem;
-  border-radius: 10px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
 }
 
-.nav-link.active {
-  background: rgba(53, 208, 127, 0.14);
-  color: #208456;
-}
-
-.connect-btn, .wallet-btn {
-  padding: 0.55rem 0.95rem;
-  border-radius: 12px;
-  font-weight: 700;
-  background: #0f172a;
-  color: #fff;
+.nav-link:hover {
+  background: #35d07f;
+  color: white;
 }
 
 .wallet-btn {
+  background: #35d07f;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.wallet-btn:hover {
+  background: #2bbd72;
+  transform: translateY(-2px);
+}
+
+.wallet-connected {
+  background: #2bbd72;
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-}
-
-.wallet-indicator {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #35d07f;
-}
-
-@media (max-width: 720px) {
-  .nav-links {
-    gap: 0.5rem;
-  }
+  gap: 8px;
 }
