@@ -1,61 +1,56 @@
-import { useCallback, useState } from 'react';
-import { formatEtherDisplay } from '../utils/format.js';
-import { getAccessNFTContract } from '../services/blockchain.js';
-import { useWallet } from './useWallet.js';
+import { useState, useEffect } from 'react';
+import { hasNFT, getNFTPrice, mintNFT } from '../services/blockchain';
+import { useWallet } from './useWallet';
 
 export const useAccessPass = () => {
-  const { provider, signer, isConnected } = useWallet();
-  const [metadata] = useState({
-    name: 'Module Access Pass',
-    symbol: 'MODULE',
-    totalSupply: 'Unlimited',
-  });
-  const [error, setError] = useState('');
+  const { address, isConnected } = useWallet();
+  const [nftPrice, setNftPrice] = useState('0');
+  const [userHasNFT, setUserHasNFT] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const getNFTPrice = useCallback(async () => {
+  useEffect(() => {
+    if (isConnected && address) {
+      loadNFTData();
+    }
+  }, [isConnected, address]);
+
+  const loadNFTData = async () => {
     try {
-      const contract = getAccessNFTContract(provider || signer);
-      if (!contract) return '0.00 CELO';
-      const price = await contract.price();
-      return formatEtherDisplay(price);
-    } catch (err) {
-      setError(err.message);
-      return '0.00 CELO';
+      const [price, hasNFTStatus] = await Promise.all([
+        getNFTPrice(),
+        hasNFT(address)
+      ]);
+      setNftPrice(price);
+      setUserHasNFT(hasNFTStatus);
+    } catch (error) {
+      console.error('Error loading NFT data:', error);
     }
-  }, [provider, signer]);
+  };
 
-  const hasNFT = useCallback(async () => {
-    if (!isConnected || !signer) return false;
+  const mintAccessPass = async () => {
+    if (!isConnected) return false;
+    
+    setIsLoading(true);
     try {
-      const contract = getAccessNFTContract(signer);
-      const user = await signer.getAddress();
-      const balance = await contract.balanceOf(user);
-      return balance.gt(0);
-    } catch (err) {
-      setError(err.message);
+      const success = await mintNFT(nftPrice);
+      if (success) {
+        setUserHasNFT(true);
+        return true;
+      }
       return false;
+    } catch (error) {
+      console.error('Error minting NFT:', error);
+      return false;
+    } finally {
+      setIsLoading(false);
     }
-  }, [isConnected, signer]);
+  };
 
-  const mintNFT = useCallback(async () => {
-    if (!signer) {
-      setError('Connect your wallet to mint');
-      return false;
-    }
-    try {
-      const contract = getAccessNFTContract(signer);
-      const price = await contract.price();
-      const tx = await contract.mint({ value: price });
-      await tx.wait();
-      setError('');
-      return true;
-    } catch (err) {
-      setError(err.message);
-      return false;
-    }
-  }, [signer]);
-
-  return { getNFTPrice, hasNFT, mintNFT, metadata, error };
+  return {
+    nftPrice,
+    userHasNFT,
+    isLoading,
+    mintAccessPass,
+    refreshNFTData: loadNFTData
+  };
 };
-
-export default useAccessPass;
