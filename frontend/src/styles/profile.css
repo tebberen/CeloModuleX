@@ -1,20 +1,57 @@
-.profile-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
+.profile-page {
+  padding: 40px 0;
+  min-height: 80vh;
 }
 
-.profile-card h3 {
-  margin: 0 0 0.5rem;
+.profile-form {
+  max-width: 500px;
+  margin: 0 auto;
 }
 
-.input-row {
-  display: grid;
-  gap: 0.75rem;
+.form-group {
+  margin-bottom: 20px;
 }
 
-.profile-meta {
-  display: grid;
-  gap: 0.35rem;
-  margin-top: 0.5rem;
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #35d07f;
+}
+
+.profile-info {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: between;
+  padding: 12px 0;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #666;
+  min-width: 120px;
+}
+
+.info-value {
+  color: #333;
 }
