@@ -1,23 +1,25 @@
-import React from 'react';
+import '../styles/global.css';
 
-const Loader = ({ label = 'Loading...' }) => (
-  <div style={{ marginBottom: '1rem' }}>
-    <div
-      style={{
-        width: 36,
-        height: 36,
-        border: '4px solid #e2e8f0',
-        borderTopColor: '#35d07f',
+const Loader = () => {
+  return (
+    <div className="text-center p-4">
+      <div style={{
+        width: '40px',
+        height: '40px',
+        border: '4px solid #f3f3f3',
+        borderTop: '4px solid #35d07f',
         borderRadius: '50%',
         animation: 'spin 1s linear infinite',
-        marginBottom: '0.5rem',
-      }}
-    />
-    <div className="muted">{label}</div>
-    <style>
-      {`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}
-    </style>
-  </div>
-);
+        margin: '0 auto'
+      }}></div>
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  );
+};
 
 export default Loader;
