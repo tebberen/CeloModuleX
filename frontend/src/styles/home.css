@@ -1,0 +1,30 @@
+.hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  align-items: center;
+}
+
+.hero h1 {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.25rem;
+  background: #0f172a;
+  color: #fff;
+  border-radius: 14px;
+}
+
+.metric span {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.metric strong {
+  font-size: 1.4rem;
+}

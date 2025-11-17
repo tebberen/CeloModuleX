@@ -1,0 +1,39 @@
+.nft-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.nft-card {
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 1rem;
+  box-shadow: 0 12px 22px rgba(15, 23, 42, 0.05);
+}
+
+.nft-thumb {
+  width: 100%;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e2f9ee, #ffffff);
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #208456;
+}
+
+.meta-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.meta-list li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+}
