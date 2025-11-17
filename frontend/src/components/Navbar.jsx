@@ -1,41 +1,65 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useWallet } from '../hooks/useWallet';
+import { formatAddress } from '../utils/format';
+import WalletModal from './WalletModal';
 import '../styles/navbar.css';
-import logo from '../../assets/logo.svg';
-import { useWallet } from '../hooks/useWallet.js';
-import { shortenAddress } from '../utils/format.js';
 
-const Navbar = ({ onConnectClick }) => {
-  const { isConnected, address } = useWallet();
+const Navbar = () => {
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const { address, isConnected } = useWallet();
+  const location = useLocation();
 
   return (
-    <nav className="navbar">
-      <div className="brand">
-        <img src={logo} alt="CeloModuleX" />
-        <span>CeloModuleX</span>
-      </div>
-      <div className="nav-links">
-        <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} end>
-          Home
-        </NavLink>
-        <NavLink to="/nft" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-          NFT
-        </NavLink>
-        <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-          Profile
-        </NavLink>
-        {isConnected ? (
-          <button className="wallet-btn" onClick={onConnectClick} type="button">
-            <span className="wallet-indicator" />
-            {shortenAddress(address)}
-          </button>
-        ) : (
-          <button className="connect-btn" onClick={onConnectClick} type="button">
-            Connect Wallet
-          </button>
-        )}
-      </div>
-    </nav>
+    <>
+      <nav className="navbar">
+        <div className="container nav-content">
+          <Link to="/" className="logo">
+            <span>CeloModuleX</span>
+          </Link>
+          
+          <div className="nav-links">
+            <Link 
+              to="/" 
+              className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
+            >
+              Home
+            </Link>
+            <Link 
+              to="/nft" 
+              className={`nav-link ${location.pathname === '/nft' ? 'active' : ''}`}
+            >
+              Access Pass
+            </Link>
+            <Link 
+              to="/profile" 
+              className={`nav-link ${location.pathname === '/profile' ? 'active' : ''}`}
+            >
+              Profile
+            </Link>
+            
+            <button 
+              onClick={() => setIsWalletModalOpen(true)}
+              className={`wallet-btn ${isConnected ? 'wallet-connected' : ''}`}
+            >
+              {isConnected ? (
+                <>
+                  <span>●</span>
+                  {formatAddress(address)}
+                </>
+              ) : (
+                'Connect Wallet'
+              )}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <WalletModal 
+        isOpen={isWalletModalOpen} 
+        onClose={() => setIsWalletModalOpen(false)} 
+      />
+    </>
   );
 };
 
