@@ -3,9 +3,7 @@
 import { useState } from 'react'
 import { parseEther } from 'viem'
 import { useMainHub } from '@/hooks/use-main-hub'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { ActionCard } from '@/components/ui/action-card'
 
 const MODULE_ACTIONS = [
   {
@@ -15,6 +13,7 @@ const MODULE_ACTIONS = [
     data: '0x',
     premium: false,
     action: 'gm',
+    meta: 'No fee • Instant',
   },
   {
     id: 2,
@@ -23,6 +22,7 @@ const MODULE_ACTIONS = [
     data: '0x',
     premium: false,
     action: 'donate',
+    meta: 'Fixed 0.01 CELO',
   },
   {
     id: 3,
@@ -31,6 +31,7 @@ const MODULE_ACTIONS = [
     data: '0x',
     premium: true,
     action: 'deploy',
+    meta: 'Premium module',
   },
 ]
 
@@ -62,33 +63,23 @@ export default function ModulesPage() {
         </div>
 
         {status && (
-          <div className="glass-card p-4 text-sm text-white/80">{status}</div>
+          <div className="rounded-xl border border-[#FBCC5C]/30 bg-[#FBCC5C]/10 px-4 py-3 text-sm text-[#FBCC5C]">{status}</div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {MODULE_ACTIONS.map((module) => (
-            <Card key={module.id} className="bg-white/5 border-white/10 text-white">
-              <CardHeader className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl">{module.title}</CardTitle>
-                  {module.premium && <Badge className="bg-[#FBCC5C] text-black">Premium</Badge>}
-                </div>
-                <p className="text-sm text-white/70">{module.description}</p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between text-sm text-white/70">
-                  <span>Fee</span>
-                  <span className="font-semibold text-white">{module.premium ? 'Premium fee' : 'Basic fee'}</span>
-                </div>
-                <Button
-                  disabled={loading}
-                  onClick={() => handleExecute(module.id, module.action, module.premium)}
-                  className="w-full bg-[#FBCC5C] text-black font-semibold hover:brightness-110"
-                >
-                  {loading ? 'Executing...' : 'Execute'}
-                </Button>
-              </CardContent>
-            </Card>
+            <ActionCard
+              key={module.id}
+              title={module.title}
+              description={module.description}
+              badge={module.premium ? 'Premium' : 'Basic'}
+              accent={module.premium ? 'secondary' : 'primary'}
+              meta={module.meta}
+              onAction={() => handleExecute(module.id, module.action, module.premium)}
+              actionLabel="Execute"
+              loading={loading}
+              disabled={loading}
+            />
           ))}
         </div>
       </section>

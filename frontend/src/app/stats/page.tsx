@@ -34,19 +34,19 @@ export default function StatsPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card className="bg-white/5 border-white/10 text-white">
+          <Card className="bg-gradient-to-br from-[#161a18] to-[#0d0f0e] border-white/10 text-white">
             <CardHeader>
               <CardTitle>Total Global Actions</CardTitle>
             </CardHeader>
             <CardContent className="text-3xl font-bold">{actions}</CardContent>
           </Card>
-          <Card className="bg-white/5 border-white/10 text-white">
+          <Card className="bg-gradient-to-br from-[#161a18] to-[#0d0f0e] border-white/10 text-white">
             <CardHeader>
               <CardTitle>Total Users</CardTitle>
             </CardHeader>
             <CardContent className="text-3xl font-bold">{users}</CardContent>
           </Card>
-          <Card className="bg-white/5 border-white/10 text-white">
+          <Card className="bg-gradient-to-br from-[#161a18] to-[#0d0f0e] border-white/10 text-white">
             <CardHeader>
               <CardTitle>Registered Modules</CardTitle>
             </CardHeader>
@@ -54,7 +54,7 @@ export default function StatsPage() {
           </Card>
         </div>
 
-        <Card className="bg-white/5 border-white/10 text-white">
+        <Card className="bg-gradient-to-br from-[#151917] to-[#0d0f0e] border-white/10 text-white">
           <CardHeader>
             <CardTitle>Module Activity</CardTitle>
           </CardHeader>
@@ -63,7 +63,7 @@ export default function StatsPage() {
               <div>No modules discovered yet.</div>
             ) : (
               modules.map((id) => (
-                <div key={id} className="flex items-center justify-between border-b border-white/5 py-2 last:border-0">
+                <div key={id} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/5 px-3 py-2">
                   <span>Module #{id}</span>
                   <ModuleSummary id={id} getModule={getModule} />
                 </div>
