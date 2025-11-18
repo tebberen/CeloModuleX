@@ -25,11 +25,11 @@
           <span class="brand">CeloModuleX</span>
         </div>
         <div class="nav-center">
-          <a href="#" class="nav-link">Home</a>
-          <a href="#modules" class="nav-link">Modules</a>
-          <a href="#nft" class="nav-link">NFT</a>
-          <a href="#profile" class="nav-link">Profile</a>
-          <a href="#stats" class="nav-link">Stats</a>
+          <a href="#" class="nav-link" data-target="home">Home</a>
+          <a href="#modules" class="nav-link" data-target="modules">Modules</a>
+          <a href="#nft" class="nav-link" data-target="nft">NFT</a>
+          <a href="#profile" class="nav-link" data-target="profile">Profile</a>
+          <a href="#stats" class="nav-link" data-target="stats">Stats</a>
         </div>
         <div class="nav-right">
           <a href="#wallet-modal" class="button connect">Connect Wallet</a>
@@ -48,16 +48,16 @@
           </div>
           <span class="badge premium" aria-hidden="true">Premium Access</span>
           <nav class="side-nav">
-            <a href="#" class="side-link">Home</a>
-            <a href="#modules" class="side-link">Modules</a>
-            <a href="#nft" class="side-link">NFT</a>
-            <a href="#profile" class="side-link">Profile</a>
-            <a href="#stats" class="side-link">Stats</a>
+            <a href="#" class="side-link" data-target="home">Home</a>
+            <a href="#modules" class="side-link" data-target="modules">Modules</a>
+            <a href="#nft" class="side-link" data-target="nft">NFT</a>
+            <a href="#profile" class="side-link" data-target="profile">Profile</a>
+            <a href="#stats" class="side-link" data-target="stats">Stats</a>
           </nav>
         </aside>
 
         <main class="main-content">
-          <section class="hero" id="modules">
+          <section class="hero" id="home">
             <div class="hero__content">
               <p class="eyebrow">CeloModuleX</p>
               <h1>The modular on-chain action launcher for Celo</h1>
@@ -66,48 +66,52 @@
                 GM pings or donations directly on Celo Mainnet or Alfajores.
               </p>
               <div class="cta-row">
-                <a href="#wallet-modal" class="button primary">Start Using Modules</a>
+                <button type="button" class="button primary" id="start-modules">Start Using Modules</button>
                 <p id="connection-status" class="status muted">Not connected</p>
               </div>
             </div>
           </section>
 
-          <section class="card-grid" aria-label="Module actions">
-            <article class="card module-card">
-              <div class="card__header">
-                <h3>Say GM</h3>
-                <span class="pill">Module fee: 0 CELO</span>
-              </div>
-              <p class="card-text">Broadcast an on-chain "GM" ping with zero value and UTF-8 calldata.</p>
-              <div class="card-actions">
-                <button id="gm-button" class="button">Execute</button>
-              </div>
-              <div class="tag muted">Standard module</div>
-            </article>
+          <section class="modules" id="modules">
+            <section class="card-grid" aria-label="Module actions">
+              <article class="card module-card">
+                <div class="card__header">
+                  <h3>Say GM</h3>
+                  <span class="pill">Module fee: 0 CELO</span>
+                </div>
+                <p class="card-text">Broadcast an on-chain "GM" ping with zero value and UTF-8 calldata.</p>
+                <div class="card-actions">
+                  <button id="gm-button" class="button">Execute</button>
+                </div>
+                <div class="tag muted">Standard module</div>
+              </article>
 
-            <article class="card module-card">
-              <div class="card__header">
-                <h3>Donate</h3>
-                <span class="pill">Module fee: 0.01 CELO</span>
-              </div>
-              <p class="card-text">Send a small donation to the burn address to verify transaction flow.</p>
-              <div class="card-actions">
-                <button id="donate-button" class="button">Execute</button>
-              </div>
-              <div class="tag premium">Premium Required</div>
-            </article>
+              <article class="card module-card">
+                <div class="card__header">
+                  <h3>Donate</h3>
+                  <span class="pill">Module fee: 0.01 CELO</span>
+                </div>
+                <p class="card-text">Send a small donation to the burn address to verify transaction flow.</p>
+                <div class="card-actions">
+                  <button id="donate-button" class="button">Execute</button>
+                </div>
+                <div class="tag premium">Premium Required</div>
+              </article>
 
-            <article class="card module-card">
-              <div class="card__header">
-                <h3>Deploy</h3>
-                <span class="pill">Module fee: 0.02 CELO</span>
-              </div>
-              <p class="card-text">Fetch your cUSD balance using the on-chain ERC-20 ABI.</p>
-              <div class="card-actions">
-                <button id="load-contract" class="button">Execute</button>
-              </div>
-              <div class="tag muted">Standard module</div>
-            </article>
+              <article class="card module-card">
+                <div class="card__header">
+                  <h3>Deploy</h3>
+                  <span class="pill">Module fee: 0.02 CELO</span>
+                </div>
+                <p class="card-text">Fetch your cUSD balance using the on-chain ERC-20 ABI.</p>
+                <div class="card-actions">
+                  <button id="load-contract" class="button">Execute</button>
+                </div>
+                <div class="tag muted">Standard module</div>
+              </article>
+            </section>
+
+            <div id="action-result" class="helper"></div>
           </section>
 
           <section class="card" id="nft">
@@ -153,8 +157,7 @@
             </form>
           </section>
 
-          <div id="action-result" class="helper"></div>
-        </main>
+          </main>
 
         <aside class="stats-panel" id="stats">
           <div class="card stats-card">
