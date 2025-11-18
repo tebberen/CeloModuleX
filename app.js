@@ -5,12 +5,7 @@ import {
   getConnectionMeta,
   getCurrentNetwork,
 } from './walletService.js'
-import {
-  donateCelo,
-  fetchCeloBalance,
-  fetchCusdBalance,
-  sendGmPing,
-} from './contractService.js'
+import { deployContract, donate, fetchCeloBalance, fetchCusdBalance, sendGM } from './contractService.js'
 
 const ui = {
   connectMetaMask: document.getElementById('connect-metamask'),
@@ -21,9 +16,9 @@ const ui = {
   networkName: document.getElementById('network-name'),
   celoBalance: document.getElementById('celo-balance'),
   cusdBalance: document.getElementById('cusd-balance'),
-  gmButton: document.getElementById('gm-button'),
-  donateButton: document.getElementById('donate-button'),
-  loadContract: document.getElementById('load-contract'),
+  gmButton: document.getElementById('gmBtn'),
+  donateButton: document.getElementById('donateBtn'),
+  deployButton: document.getElementById('deployBtn'),
   actionResult: document.getElementById('action-result'),
 }
 
@@ -42,6 +37,22 @@ const heroModulesButton = document.getElementById('start-modules')
 function setStatus(message, tone = 'muted') {
   ui.status.textContent = message
   ui.status.className = `status ${tone === 'error' ? 'danger' : 'muted'}`
+}
+
+async function runWithFeedback(button, action) {
+  const targetButton = button
+  if (!targetButton) return action()
+
+  const originalText = targetButton.textContent
+  targetButton.textContent = 'Processing...'
+  targetButton.disabled = true
+
+  try {
+    await action()
+  } finally {
+    targetButton.textContent = originalText
+    targetButton.disabled = false
+  }
 }
 
 async function connect(handler) {
@@ -113,7 +124,7 @@ async function performGm() {
   if (!account) return setStatus('Connect your wallet first', 'error')
   ui.actionResult.textContent = 'Sending GM ping…'
   try {
-    const hash = await sendGmPing(account)
+    const hash = await sendGM(account)
     ui.actionResult.textContent = `GM broadcasted! Tx: ${hash}`
   } catch (err) {
     ui.actionResult.textContent = err.message || 'GM failed'
@@ -125,24 +136,22 @@ async function performDonation() {
   if (!account) return setStatus('Connect your wallet first', 'error')
   ui.actionResult.textContent = 'Submitting donation…'
   try {
-    const hash = await donateCelo('0.01')
+    const hash = await donate('0.01')
     ui.actionResult.textContent = `Donation sent! Tx: ${hash}`
   } catch (err) {
     ui.actionResult.textContent = err.message || 'Donation failed'
   }
 }
 
-async function loadContractData() {
+async function performDeploy() {
   const meta = getConnectionMeta()
-  const network = await getCurrentNetwork()
-  if (!meta.account || !network) return setStatus('Connect your wallet first', 'error')
-  ui.actionResult.textContent = 'Loading cUSD balance from contract…'
+  if (!meta.account) return setStatus('Connect your wallet first', 'error')
+  ui.actionResult.textContent = 'Deploying Hello World contract…'
   try {
-    const cusd = await fetchCusdBalance(meta.account, network.chainId)
-    ui.cusdBalance.textContent = `${Number(cusd.balance).toFixed(2)} ${cusd.symbol}`
-    ui.actionResult.textContent = 'Contract loaded successfully'
+    const address = await deployContract()
+    ui.actionResult.textContent = `Contract deployed at ${address}`
   } catch (err) {
-    ui.actionResult.textContent = err.message || 'Unable to load contract'
+    ui.actionResult.textContent = err.message || 'Unable to deploy contract'
   }
 }
 
@@ -164,6 +173,17 @@ showSection('home')
 
 ui.connectMetaMask.addEventListener('click', () => connect(connectMetaMask))
 ui.connectWalletConnect.addEventListener('click', () => connect(connectWalletConnect))
-ui.gmButton.addEventListener('click', performGm)
-ui.donateButton.addEventListener('click', performDonation)
-ui.loadContract.addEventListener('click', loadContractData)
+ui.gmButton.addEventListener('click', () => {
+  console.log('Action triggered: GM')
+  return runWithFeedback(ui.gmButton, performGm)
+})
+
+ui.donateButton.addEventListener('click', () => {
+  console.log('Action triggered: Donate')
+  return runWithFeedback(ui.donateButton, performDonation)
+})
+
+ui.deployButton.addEventListener('click', () => {
+  console.log('Action triggered: Deploy')
+  return runWithFeedback(ui.deployButton, performDeploy)
+})
