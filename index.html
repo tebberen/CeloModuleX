@@ -19,91 +19,200 @@
     <script type="module" src="app.js"></script>
   </head>
   <body>
-    <header class="hero">
-      <div class="hero__content">
-        <p class="eyebrow">CeloModuleX</p>
-        <h1>The modular on-chain action launcher for Celo</h1>
-        <p class="lede">
-          Connect your wallet, detect the current network, and trigger modular actions like
-          GM pings or donations directly on Celo Mainnet or Alfajores.
-        </p>
-        <div class="cta-row">
-          <button id="connect-metamask" class="button primary">Connect MetaMask</button>
-          <button id="connect-walletconnect" class="button ghost">WalletConnect v2</button>
+    <div class="page-shell">
+      <nav class="navbar">
+        <div class="nav-left">
+          <span class="brand">CeloModuleX</span>
         </div>
-        <p id="connection-status" class="status muted">Not connected</p>
+        <div class="nav-center">
+          <a href="#" class="nav-link">Home</a>
+          <a href="#modules" class="nav-link">Modules</a>
+          <a href="#nft" class="nav-link">NFT</a>
+          <a href="#profile" class="nav-link">Profile</a>
+          <a href="#stats" class="nav-link">Stats</a>
+        </div>
+        <div class="nav-right">
+          <a href="#wallet-modal" class="button connect">Connect Wallet</a>
+          <div class="status-dot" id="network-status"></div>
+        </div>
+      </nav>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="user-card">
+            <div class="avatar" id="avatar">C</div>
+            <div>
+              <p class="user-label">Connected Wallet</p>
+              <p class="user-address" id="walletAddressDisplay">—</p>
+            </div>
+          </div>
+          <span class="badge premium" aria-hidden="true">Premium Access</span>
+          <nav class="side-nav">
+            <a href="#" class="side-link">Home</a>
+            <a href="#modules" class="side-link">Modules</a>
+            <a href="#nft" class="side-link">NFT</a>
+            <a href="#profile" class="side-link">Profile</a>
+            <a href="#stats" class="side-link">Stats</a>
+          </nav>
+        </aside>
+
+        <main class="main-content">
+          <section class="hero" id="modules">
+            <div class="hero__content">
+              <p class="eyebrow">CeloModuleX</p>
+              <h1>The modular on-chain action launcher for Celo</h1>
+              <p class="lede">
+                Connect your wallet, detect the current network, and trigger modular actions like
+                GM pings or donations directly on Celo Mainnet or Alfajores.
+              </p>
+              <div class="cta-row">
+                <a href="#wallet-modal" class="button primary">Start Using Modules</a>
+                <p id="connection-status" class="status muted">Not connected</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="card-grid" aria-label="Module actions">
+            <article class="card module-card">
+              <div class="card__header">
+                <h3>Say GM</h3>
+                <span class="pill">Module fee: 0 CELO</span>
+              </div>
+              <p class="card-text">Broadcast an on-chain "GM" ping with zero value and UTF-8 calldata.</p>
+              <div class="card-actions">
+                <button id="gm-button" class="button">Execute</button>
+              </div>
+              <div class="tag muted">Standard module</div>
+            </article>
+
+            <article class="card module-card">
+              <div class="card__header">
+                <h3>Donate</h3>
+                <span class="pill">Module fee: 0.01 CELO</span>
+              </div>
+              <p class="card-text">Send a small donation to the burn address to verify transaction flow.</p>
+              <div class="card-actions">
+                <button id="donate-button" class="button">Execute</button>
+              </div>
+              <div class="tag premium">Premium Required</div>
+            </article>
+
+            <article class="card module-card">
+              <div class="card__header">
+                <h3>Deploy</h3>
+                <span class="pill">Module fee: 0.02 CELO</span>
+              </div>
+              <p class="card-text">Fetch your cUSD balance using the on-chain ERC-20 ABI.</p>
+              <div class="card-actions">
+                <button id="load-contract" class="button">Execute</button>
+              </div>
+              <div class="tag muted">Standard module</div>
+            </article>
+          </section>
+
+          <section class="card" id="nft">
+            <header class="card__header">
+              <div>
+                <p class="eyebrow">NFT Access</p>
+                <h2>Mint your access pass</h2>
+              </div>
+              <span class="badge" id="network-badge">Offline</span>
+            </header>
+            <div class="nft-content">
+              <div class="nft-visual">NFT Placeholder</div>
+              <div class="nft-info">
+                <p class="card-text">Unlock premium modules by minting the official access NFT.</p>
+                <p class="price">Current price: <span id="nft-price">—</span></p>
+                <button class="button primary">Mint Access NFT</button>
+                <div class="premium-banner">Premium Access Active</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card" id="profile">
+            <header class="card__header">
+              <div>
+                <p class="eyebrow">Profile</p>
+                <h2>Your preferences</h2>
+              </div>
+            </header>
+            <form class="profile-form">
+              <label>
+                Display Name
+                <input type="text" placeholder="e.g. Celo Builder" />
+              </label>
+              <label>
+                Bio
+                <textarea rows="3" placeholder="Tell the world about your on-chain journey"></textarea>
+              </label>
+              <label>
+                Notification Email
+                <input type="email" placeholder="you@example.com" />
+              </label>
+              <button type="button" class="button primary">Save Profile</button>
+            </form>
+          </section>
+
+          <div id="action-result" class="helper"></div>
+        </main>
+
+        <aside class="stats-panel" id="stats">
+          <div class="card stats-card">
+            <header class="card__header">
+              <div>
+                <p class="eyebrow">Wallet</p>
+                <h2>Live status</h2>
+              </div>
+            </header>
+            <dl class="stats">
+              <div>
+                <dt>Wallet</dt>
+                <dd id="wallet-address">—</dd>
+              </div>
+              <div>
+                <dt>Network</dt>
+                <dd id="network-name">—</dd>
+              </div>
+              <div>
+                <dt>CELO Balance</dt>
+                <dd id="celo-balance">—</dd>
+              </div>
+              <div>
+                <dt>cUSD Balance</dt>
+                <dd id="cusd-balance">—</dd>
+              </div>
+              <div>
+                <dt>Total Actions</dt>
+                <dd id="total-actions">0</dd>
+              </div>
+              <div>
+                <dt>Premium Status</dt>
+                <dd class="premium-state">Active</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="card helper-card">
+            <p>
+              Uses chain RPCs to load live balances and status. Trigger any module to see real-time
+              updates reflected here.
+            </p>
+          </div>
+        </aside>
       </div>
-    </header>
 
-    <main class="grid">
-      <section class="card">
-        <header class="card__header">
-          <div>
-            <p class="eyebrow">Network</p>
-            <h2>Connection overview</h2>
-          </div>
-          <span class="badge" id="network-badge">Offline</span>
-        </header>
-        <dl class="stats">
-          <div>
-            <dt>Wallet</dt>
-            <dd id="wallet-address">—</dd>
-          </div>
-          <div>
-            <dt>Network</dt>
-            <dd id="network-name">—</dd>
-          </div>
-          <div>
-            <dt>CELO Balance</dt>
-            <dd id="celo-balance">—</dd>
-          </div>
-          <div>
-            <dt>cUSD Balance</dt>
-            <dd id="cusd-balance">—</dd>
-          </div>
-        </dl>
-        <div class="helper">Uses chain RPCs to load live balances and status.</div>
-      </section>
+      <footer class="footer">
+        <p>Built for the Celo community — launch modular actions with confidence.</p>
+      </footer>
+    </div>
 
-      <section class="card">
-        <header class="card__header">
-          <div>
-            <p class="eyebrow">Modular actions</p>
-            <h2>Trigger on-chain actions</h2>
-          </div>
-        </header>
-        <div class="action-list">
-          <div class="action">
-            <div>
-              <h3>Say GM</h3>
-              <p>Broadcast an on-chain "GM" ping with zero value and UTF-8 calldata.</p>
-            </div>
-            <button id="gm-button" class="button">Send GM</button>
-          </div>
-          <div class="action">
-            <div>
-              <h3>Donate 0.01 CELO</h3>
-              <p>Send a small donation to the burn address to verify transaction flow.</p>
-            </div>
-            <button id="donate-button" class="button">Donate</button>
-          </div>
-          <div class="action">
-            <div>
-              <h3>Load cUSD contract</h3>
-              <p>Fetch your cUSD balance using the on-chain ERC-20 ABI.</p>
-            </div>
-            <button id="load-contract" class="button">Load Balance</button>
-          </div>
-        </div>
-        <div id="action-result" class="helper"></div>
-      </section>
-    </main>
-
-    <section class="footer">
-      <p>
-        Built for GitHub Pages deployment — index.html is now the default landing page so
-        CeloModuleX loads instead of the README.
-      </p>
-    </section>
+    <div id="wallet-modal" class="modal">
+      <div class="modal-content">
+        <a href="#" class="close">×</a>
+        <h2>Connect Wallet</h2>
+        <p class="modal-sub">Select a provider to get started.</p>
+        <button id="connect-metamask" class="button full">Connect with MetaMask</button>
+        <button id="connect-walletconnect" class="button ghost full">Connect with WalletConnect</button>
+      </div>
+    </div>
   </body>
 </html>
