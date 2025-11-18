@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CeloModuleX</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://unpkg.com/@walletconnect/ethereum-provider@2/dist/ethereum-provider.umd.min.js"></script>
+    <script type="module" src="constants.js"></script>
+    <script type="module" src="walletService.js"></script>
+    <script type="module" src="contractService.js"></script>
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero__content">
+        <p class="eyebrow">CeloModuleX</p>
+        <h1>The modular on-chain action launcher for Celo</h1>
+        <p class="lede">
+          Connect your wallet, detect the current network, and trigger modular actions like
+          GM pings or donations directly on Celo Mainnet or Alfajores.
+        </p>
+        <div class="cta-row">
+          <button id="connect-metamask" class="button primary">Connect MetaMask</button>
+          <button id="connect-walletconnect" class="button ghost">WalletConnect v2</button>
+        </div>
+        <p id="connection-status" class="status muted">Not connected</p>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <header class="card__header">
+          <div>
+            <p class="eyebrow">Network</p>
+            <h2>Connection overview</h2>
+          </div>
+          <span class="badge" id="network-badge">Offline</span>
+        </header>
+        <dl class="stats">
+          <div>
+            <dt>Wallet</dt>
+            <dd id="wallet-address">—</dd>
+          </div>
+          <div>
+            <dt>Network</dt>
+            <dd id="network-name">—</dd>
+          </div>
+          <div>
+            <dt>CELO Balance</dt>
+            <dd id="celo-balance">—</dd>
+          </div>
+          <div>
+            <dt>cUSD Balance</dt>
+            <dd id="cusd-balance">—</dd>
+          </div>
+        </dl>
+        <div class="helper">Uses chain RPCs to load live balances and status.</div>
+      </section>
+
+      <section class="card">
+        <header class="card__header">
+          <div>
+            <p class="eyebrow">Modular actions</p>
+            <h2>Trigger on-chain actions</h2>
+          </div>
+        </header>
+        <div class="action-list">
+          <div class="action">
+            <div>
+              <h3>Say GM</h3>
+              <p>Broadcast an on-chain "GM" ping with zero value and UTF-8 calldata.</p>
+            </div>
+            <button id="gm-button" class="button">Send GM</button>
+          </div>
+          <div class="action">
+            <div>
+              <h3>Donate 0.01 CELO</h3>
+              <p>Send a small donation to the burn address to verify transaction flow.</p>
+            </div>
+            <button id="donate-button" class="button">Donate</button>
+          </div>
+          <div class="action">
+            <div>
+              <h3>Load cUSD contract</h3>
+              <p>Fetch your cUSD balance using the on-chain ERC-20 ABI.</p>
+            </div>
+            <button id="load-contract" class="button">Load Balance</button>
+          </div>
+        </div>
+        <div id="action-result" class="helper"></div>
+      </section>
+    </main>
+
+    <section class="footer">
+      <p>
+        Built for GitHub Pages deployment — index.html is now the default landing page so
+        CeloModuleX loads instead of the README.
+      </p>
+    </section>
+  </body>
+</html>
