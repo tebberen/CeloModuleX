@@ -38,7 +38,7 @@ export function ConnectButton() {
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className="bg-celo-green text-white px-6 py-2 rounded-lg font-medium hover:bg-celo-green/90 transition-colors"
+                    className="bg-[#FBCC5C] text-black px-5 py-2 rounded-lg font-semibold shadow hover:brightness-110"
                   >
                     Connect Wallet
                   </button>
@@ -50,7 +50,7 @@ export function ConnectButton() {
                   <button
                     onClick={openChainModal}
                     type="button"
-                    className="bg-red-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors"
+                    className="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600"
                   >
                     Wrong network
                   </button>
@@ -62,14 +62,14 @@ export function ConnectButton() {
                   <button
                     onClick={openChainModal}
                     type="button"
-                    className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                    className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg font-semibold text-white hover:bg-white/20"
                   >
                     {chain.hasIcon && (
                       <div
                         style={{
                           background: chain.iconBackground,
-                          width: 12,
-                          height: 12,
+                          width: 18,
+                          height: 18,
                           borderRadius: 999,
                           overflow: 'hidden',
                           marginRight: 4,
@@ -79,7 +79,7 @@ export function ConnectButton() {
                           <img
                             alt={chain.name ?? 'Chain icon'}
                             src={chain.iconUrl}
-                            style={{ width: 12, height: 12 }}
+                            style={{ width: 18, height: 18 }}
                           />
                         )}
                       </div>
@@ -90,7 +90,7 @@ export function ConnectButton() {
                   <button
                     onClick={openAccountModal}
                     type="button"
-                    className="bg-celo-green text-white px-4 py-2 rounded-lg font-medium hover:bg-celo-green/90 transition-colors"
+                    className="bg-[#FBCC5C] text-black px-4 py-2 rounded-lg font-semibold hover:brightness-110"
                   >
                     {account.displayName}
                     {account.displayBalance

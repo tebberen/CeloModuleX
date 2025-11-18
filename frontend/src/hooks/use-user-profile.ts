@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import { UserProfile } from '@/types/user'
 import { useMainHub } from './use-main-hub'
+import { useNFTContract } from './use-nft-contract'
 
 export function useUserProfile() {
   const { address } = useAccount()
-  const { getUserProfile, hasNFT } = useMainHub()
+  const { getUserProfile } = useMainHub()
+  const { hasNFT } = useNFTContract()
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -33,7 +35,7 @@ export function useUserProfile() {
             github: profileData.github,
             talentProtocol: profileData.talent,
             selfID: profileData.selfID,
-            actionCount: profileData.actionCount.toNumber(),
+            actionCount: profileData.actionCount,
             hasNFT: userHasNFT,
             exists: true,
           })
