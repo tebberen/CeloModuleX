@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 158 30% 6%;
+  --foreground: 0 0% 100%;
+  --card: 160 15% 10%;
+  --card-foreground: 0 0% 100%;
+  --popover: 0 0% 9%;
+  --popover-foreground: 0 0% 100%;
+  --primary: 46 96% 67%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 160 10% 18%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 160 10% 18%;
+  --muted-foreground: 0 0% 70%;
+  --accent: 160 12% 20%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 62% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 160 10% 20%;
+  --input: 160 10% 20%;
+  --ring: 46 96% 67%;
+  --radius: 0.75rem;
+}
+
+body {
+  background: radial-gradient(circle at 20% 20%, rgba(55, 136, 100, 0.2), transparent 40%),
+    radial-gradient(circle at 80% 0%, rgba(251, 204, 92, 0.12), transparent 30%),
+    #0d1512;
+  color: #f8fafc;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+.container-layout {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.glass-card {
+  background: rgba(13, 21, 18, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+}
+
+button {
+  transition: all 0.2s ease;
+}

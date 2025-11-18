@@ -1,74 +1,85 @@
 'use client'
 
-import { useContract, useProvider, useSigner } from 'wagmi'
+import { useCallback, useMemo, useState } from 'react'
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi'
 import { NFT_ACCESS_ABI, NFT_ACCESS_ADDRESS } from '@/lib/config/contracts'
-import { useState } from 'react'
-import { ethers } from 'ethers'
+import { Address, parseEther } from 'viem'
 
 export function useNFTContract() {
-  const provider = useProvider()
-  const { data: signer } = useSigner()
-  const contract = useContract({
-    address: NFT_ACCESS_ADDRESS,
-    abi: NFT_ACCESS_ABI,
-    signerOrProvider: signer || provider,
-  })
-
+  const publicClient = usePublicClient()
+  const { data: walletClient } = useWalletClient()
+  const { address } = useAccount()
   const [loading, setLoading] = useState(false)
 
-  const mintNFT = async () => {
-    if (!contract) throw new Error('Contract not initialized')
-    
+  const isReady = useMemo(() => !!publicClient, [publicClient])
+
+  const readContract = useCallback(async <T,>(functionName: string, args: any[] = []) => {
+    if (!publicClient) return null
+    try {
+      return await publicClient.readContract({
+        address: NFT_ACCESS_ADDRESS,
+        abi: NFT_ACCESS_ABI,
+        functionName: functionName as any,
+        args,
+      }) as T
+    } catch (error) {
+      console.error('NFT read error', error)
+      return null
+    }
+  }, [publicClient])
+
+  const writeContract = useCallback(async (functionName: string, args: any[] = [], value?: bigint) => {
+    if (!walletClient || !address || !publicClient) throw new Error('Wallet not connected')
+
+    const hash = await walletClient.writeContract({
+      address: NFT_ACCESS_ADDRESS,
+      abi: NFT_ACCESS_ABI,
+      functionName: functionName as any,
+      args,
+      value,
+      chain: walletClient.chain,
+    })
+
+    return publicClient.waitForTransactionReceipt({ hash })
+  }, [walletClient, address, publicClient])
+
+  const getNFTPrice = useCallback(async () => {
+    return (await readContract<bigint>('getNFTPrice')) || 0n
+  }, [readContract])
+
+  const getCurrentPrice = useCallback(async () => {
+    return (await readContract<bigint>('currentPrice')) || 0n
+  }, [readContract])
+
+  const hasNFT = useCallback(async (user: Address) => {
+    return (await readContract<boolean>('hasNFT', [user])) || false
+  }, [readContract])
+
+  const mintNFT = useCallback(async () => {
     setLoading(true)
     try {
-      const price = await contract.getNFTPrice()
-      const tx = await contract.mintNFT({ value: price })
-      await tx.wait()
-      return tx
+      const price = (await getNFTPrice()) || parseEther('0')
+      return await writeContract('mintNFT', [], price)
     } finally {
       setLoading(false)
     }
-  }
+  }, [getNFTPrice, writeContract])
 
-  const getNFTPrice = async () => {
-    if (!contract) return ethers.BigNumber.from(0)
-    
-    try {
-      const price = await contract.getNFTPrice()
-      return price
-    } catch {
-      return ethers.BigNumber.from(0)
-    }
-  }
-
-  const hasNFT = async (address: string) => {
-    if (!contract) return false
-    
-    try {
-      const hasNFT = await contract.hasNFT(address)
-      return hasNFT
-    } catch {
-      return false
-    }
-  }
-
-  const getCurrentPrice = async () => {
-    if (!contract) return ethers.BigNumber.from(0)
-    
-    try {
-      const price = await contract.currentPrice()
-      return price
-    } catch {
-      return ethers.BigNumber.from(0)
-    }
-  }
+  const getMetadata = useCallback(async () => {
+    const [name, symbol] = await Promise.all([
+      readContract<string>('name'),
+      readContract<string>('symbol'),
+    ])
+    return { name: name || 'CeloModuleX NFT', symbol: symbol || 'CMX' }
+  }, [readContract])
 
   return {
-    contract,
     loading,
-    mintNFT,
+    isReady,
     getNFTPrice,
-    hasNFT,
     getCurrentPrice,
+    hasNFT,
+    mintNFT,
+    getMetadata,
   }
 }
