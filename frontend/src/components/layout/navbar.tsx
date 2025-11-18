@@ -2,9 +2,9 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { ConnectButton } from '@/components/wallet/connect-button'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
+import { ConnectButton } from '@/components/wallet/connect-button'
 
 const navItems = [
   { href: '/', label: 'Home' },
@@ -19,52 +19,63 @@ export function Navbar() {
   const pathname = usePathname()
 
   return (
-    <header className="w-full border-b border-white/10 bg-black/40 backdrop-blur-md sticky top-0 z-30">
+    <header className="sticky top-0 z-40 w-full border-b border-white/5 bg-[#0c0f0d]/80 backdrop-blur-xl">
       <div className="container-layout flex items-center justify-between py-4">
         <Link href="/" className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-[#FBCC5C] text-black font-black text-xl flex items-center justify-center">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FBCC5C] text-lg font-black text-[#0c0f0d] shadow-md">
             XM
           </div>
-          <div>
+          <div className="leading-tight">
             <div className="text-lg font-semibold text-white">CeloModuleX</div>
-            <div className="text-xs text-white/60">Modular On-Chain Launcher</div>
+            <div className="text-xs uppercase tracking-wide text-white/60">Celo action launcher</div>
           </div>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm">
+        <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`uppercase tracking-wide ${pathname === item.href ? 'text-[#FBCC5C]' : 'text-white/70 hover:text-white'}`}
+              className={`relative pb-1 transition-colors ${
+                pathname === item.href
+                  ? 'text-[#FBCC5C]'
+                  : 'text-white/70 hover:text-white'
+              }`}
             >
               {item.label}
+              {pathname === item.href && <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-[#FBCC5C] rounded-full"></span>}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <ConnectButton />
         </div>
 
-        <button className="md:hidden text-white" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+        <button
+          className="flex items-center justify-center rounded-full p-2 text-white/80 hover:bg-white/10 lg:hidden"
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+        >
           {open ? <X /> : <Menu />}
         </button>
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-white/10 bg-black/80 backdrop-blur-md">
-          <div className="container-layout py-4 space-y-3">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className={`block text-sm ${pathname === item.href ? 'text-[#FBCC5C]' : 'text-white/80'}`}
-              >
-                {item.label}
-              </Link>
-            ))}
+        <div className="border-t border-white/5 bg-[#0c0f0d]/95 backdrop-blur-xl lg:hidden">
+          <div className="container-layout space-y-4 py-4">
+            <nav className="grid gap-3 text-sm font-semibold">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className={`${pathname === item.href ? 'text-[#FBCC5C]' : 'text-white/80'}`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
             <div className="pt-2">
               <ConnectButton />
             </div>
