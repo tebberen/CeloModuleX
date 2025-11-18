@@ -18,7 +18,8 @@ export const NETWORKS = {
 }
 
 export const DEFAULT_NETWORK = NETWORKS.alfajores
-export const WALLET_CONNECT_PROJECT_ID = 'b2276f5e4cc8e0d21d1b086726f1a086'
+// Replace with your own WalletConnect Project ID from Cloud.WalletConnect when deploying.
+export const WALLET_CONNECT_PROJECT_ID = '4530041258341627800'
 
 export const DONATION_ADDRESS = '0x000000000000000000000000000000000000dEaD'
 

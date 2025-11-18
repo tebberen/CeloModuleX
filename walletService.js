@@ -22,6 +22,10 @@ export async function connectMetaMask() {
 
   connectionType = 'metamask'
   web3Provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+  await window.ethereum.request({
+    method: 'wallet_requestPermissions',
+    params: [{ eth_accounts: {} }],
+  })
   await window.ethereum.request({ method: 'eth_requestAccounts' })
   await ensureSupportedNetwork(web3Provider)
   signer = web3Provider.getSigner()
@@ -31,21 +35,53 @@ export async function connectMetaMask() {
 }
 
 export async function connectWalletConnect() {
-  if (!window.EthereumProvider) {
-    throw new Error('WalletConnect provider failed to load.')
+  const UniversalProvider =
+    window?.WalletConnectUniversalProvider?.default ||
+    window?.WalletConnectUniversalProvider ||
+    window?.UniversalProvider?.default ||
+    window?.UniversalProvider
+
+  if (!UniversalProvider) {
+    throw new Error('WalletConnect Universal Provider failed to load.')
   }
 
-  walletConnectProvider = await window.EthereumProvider.init({
-    projectId: WALLET_CONNECT_PROJECT_ID,
-    chains: [DEFAULT_NETWORK.chainId],
-    optionalChains: [NETWORKS.mainnet.chainId, NETWORKS.alfajores.chainId],
-    rpcMap: rpcMap(),
-    showQrModal: true,
-  })
+  try {
+    walletConnectProvider = await UniversalProvider.init({
+      projectId: WALLET_CONNECT_PROJECT_ID,
+      rpcMap: rpcMap(),
+    })
 
-  await walletConnectProvider.connect()
+    walletConnectProvider.on?.('modal_closed', error => {
+      console.error('WalletConnect modal closed before connecting', error)
+    })
+
+    await walletConnectProvider.connect({
+      namespaces: {
+        eip155: {
+          methods: [
+            'eth_sendTransaction',
+            'eth_signTransaction',
+            'eth_sign',
+            'personal_sign',
+            'eth_signTypedData',
+          ],
+          chains: [
+            `eip155:${NETWORKS.mainnet.chainId}`,
+            `eip155:${NETWORKS.alfajores.chainId}`,
+          ],
+          events: ['chainChanged', 'accountsChanged'],
+          rpcMap: rpcMap(),
+        },
+      },
+    })
+  } catch (error) {
+    console.error('WalletConnect connection failed', error)
+    throw error
+  }
+
   connectionType = 'walletconnect'
   web3Provider = new ethers.providers.Web3Provider(walletConnectProvider, 'any')
+  await ensureSupportedNetwork(web3Provider)
   signer = web3Provider.getSigner()
   connectedAccount = await signer.getAddress()
   attachEip1193Listeners(walletConnectProvider)
