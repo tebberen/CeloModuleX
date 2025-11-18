@@ -27,6 +27,18 @@ const ui = {
   actionResult: document.getElementById('action-result'),
 }
 
+const sections = {
+  home: document.getElementById('home'),
+  modules: document.getElementById('modules'),
+  nft: document.getElementById('nft'),
+  profile: document.getElementById('profile'),
+  stats: document.getElementById('stats'),
+}
+
+const navLinks = Array.from(document.querySelectorAll('.nav-link'))
+const sideLinks = Array.from(document.querySelectorAll('.side-link'))
+const heroModulesButton = document.getElementById('start-modules')
+
 function setStatus(message, tone = 'muted') {
   ui.status.textContent = message
   ui.status.className = `status ${tone === 'error' ? 'danger' : 'muted'}`
@@ -47,6 +59,25 @@ async function connect(handler) {
 function shorten(address) {
   if (!address) return '—'
   return `${address.slice(0, 6)}…${address.slice(-4)}`
+}
+
+function setActiveLink(target) {
+  ;[...navLinks, ...sideLinks].forEach((link) => {
+    const linkTarget = link.dataset.target
+    link.classList.toggle('active', linkTarget === target)
+  })
+}
+
+function showSection(target) {
+  const activeSection = sections[target]
+  if (!activeSection) return
+
+  Object.entries(sections).forEach(([key, section]) => {
+    if (!section) return
+    section.classList.toggle('hidden-section', key !== target)
+  })
+
+  setActiveLink(target)
 }
 
 async function refreshNetwork() {
@@ -114,6 +145,22 @@ async function loadContractData() {
     ui.actionResult.textContent = err.message || 'Unable to load contract'
   }
 }
+
+function handleNavigation(event) {
+  event.preventDefault()
+  const target = event.currentTarget.dataset.target
+  if (!target) return
+  showSection(target)
+}
+
+navLinks.forEach((link) => link.addEventListener('click', handleNavigation))
+sideLinks.forEach((link) => link.addEventListener('click', handleNavigation))
+
+if (heroModulesButton) {
+  heroModulesButton.addEventListener('click', () => showSection('modules'))
+}
+
+showSection('home')
 
 ui.connectMetaMask.addEventListener('click', () => connect(connectMetaMask))
 ui.connectWalletConnect.addEventListener('click', () => connect(connectWalletConnect))
