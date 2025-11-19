@@ -13,7 +13,8 @@ const MODULE_ACTIONS = [
     data: '0x',
     premium: false,
     action: 'gm',
-    meta: 'No fee • Instant',
+    meta: 'Standard Fee: 0.1 CELO',
+    premiumMeta: 'Premium Fee: 0.01 CELO',
   },
   {
     id: 2,
@@ -22,7 +23,8 @@ const MODULE_ACTIONS = [
     data: '0x',
     premium: false,
     action: 'donate',
-    meta: 'Fixed 0.01 CELO',
+    meta: 'Standard Fee: 0.1 CELO',
+    premiumMeta: 'Premium Fee: 0.01 CELO',
   },
   {
     id: 3,
@@ -31,7 +33,8 @@ const MODULE_ACTIONS = [
     data: '0x',
     premium: true,
     action: 'deploy',
-    meta: 'Premium module',
+    meta: 'Standard Fee: 0.1 CELO',
+    premiumMeta: 'Premium Fee: 0.01 CELO',
   },
 ]
 
@@ -58,8 +61,8 @@ export default function ModulesPage() {
       <section className="container-layout py-12 space-y-6">
         <div className="flex flex-col gap-2">
           <p className="text-[#FBCC5C] text-sm uppercase font-semibold">Modules</p>
-          <h1 className="text-3xl font-bold text-white">Launch modular actions</h1>
-          <p className="text-white/70 max-w-2xl">Run GM, Donate, Deploy and more through MainHub with a single click.</p>
+          <h1 className="text-3xl font-bold text-white">Explore Modular Actions</h1>
+          <p className="text-white/70 max-w-2xl">Every feature is an independent smart contract, ensuring infinite scalability and risk isolation. New modules are added weekly.</p>
         </div>
 
         {status && (
@@ -75,6 +78,7 @@ export default function ModulesPage() {
               badge={module.premium ? 'Premium' : 'Basic'}
               accent={module.premium ? 'secondary' : 'primary'}
               meta={module.meta}
+              footer={<span className="text-xs text-white/60">{module.premiumMeta}</span>}
               onAction={() => handleExecute(module.id, module.action, module.premium)}
               actionLabel="Execute"
               loading={loading}
