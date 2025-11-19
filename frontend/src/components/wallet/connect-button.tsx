@@ -1,8 +1,11 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi'
 import { X, Wallet, Power, CheckCircle2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Address } from 'viem'
+import { useMainHub } from '@/hooks/use-main-hub'
 
 function formatAddress(address?: string) {
   if (!address) return ''
@@ -16,6 +19,26 @@ export function ConnectButton() {
   const { disconnectAsync } = useDisconnect()
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState('')
+  const router = useRouter()
+  const { getUserProfile } = useMainHub()
+
+  const navigateAfterConnect = useCallback(
+    async (account?: string | null) => {
+      if (!account || !getUserProfile) return
+
+      try {
+        const profile = await getUserProfile(account as Address)
+        if (!profile || !profile.username) {
+          router.push('/profile')
+        } else {
+          router.push('/modules')
+        }
+      } catch (err) {
+        console.error('Unable to load profile after wallet connection', err)
+      }
+    },
+    [getUserProfile, router]
+  )
 
   const statusColor = useMemo(() => {
     if (!chain) return 'bg-gray-400'
@@ -38,8 +61,9 @@ export function ConnectButton() {
     const connector = visibleConnectors.find((c) => c.id === connectorId)
     if (!connector) return
     try {
-      await connectAsync({ connector })
+      const result = await connectAsync({ connector })
       setOpen(false)
+      void navigateAfterConnect(result?.account)
     } catch (err: any) {
       setMessage(err?.message || 'Failed to connect')
     }
