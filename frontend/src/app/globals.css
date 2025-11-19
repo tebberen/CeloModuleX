@@ -25,15 +25,19 @@
   --radius: 1rem;
 }
 
+html,
 body {
   background:
-    radial-gradient(circle at 12% 18%, rgba(255, 222, 170, 0.75), transparent 36%),
-    radial-gradient(circle at 88% 12%, rgba(255, 204, 92, 0.3), transparent 42%),
-    radial-gradient(circle at 46% 82%, rgba(255, 214, 138, 0.38), transparent 52%),
-    #fffdf8;
-  color: #2f1f0e;
-  min-height: 100vh;
+    radial-gradient(circle at 12% 18%, rgba(249, 198, 83, 0.82), transparent 32%),
+    radial-gradient(circle at 88% 12%, rgba(254, 221, 126, 0.7), transparent 40%),
+    radial-gradient(circle at 46% 82%, rgba(248, 202, 64, 0.75), transparent 50%),
+    linear-gradient(180deg, #ffe17c 0%, #f6c446 38%, #f2af1b 100%);
+  color: #2b1a06;
+  min-height: 100%;
+  width: 100%;
+  margin: 0;
   font-feature-settings: 'ss01' on;
+  overflow-x: hidden;
 }
 
 a {
@@ -42,9 +46,9 @@ a {
 
 .container-layout {
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.25rem;
+  max-width: 1440px;
+  padding: 0 2rem;
 }
 
 .glass-card {
