@@ -483,6 +483,18 @@
         dashboardSection.classList.toggle('hidden', !dashboard)
       }
 
+      function showConnectStep() {
+        toggleView({ connect: true })
+      }
+
+      function showProfileStep() {
+        toggleView({ profile: true })
+      }
+
+      function showDashboardStep() {
+        toggleView({ dashboard: true })
+      }
+
       async function handleConnect() {
         setStatus('Requesting wallet connection…')
         try {
@@ -491,7 +503,9 @@
             return connectWalletConnect()
           })
           currentAccount = account
+          statAddress.textContent = shorten(currentAccount)
           setStatus('Wallet connected. Checking profile…', 'success')
+          showProfileStep()
           await loadProfile()
         } catch (error) {
           console.error(error)
@@ -507,10 +521,10 @@
           hasNft = Boolean(profile?.hasNFT)
           updateStats()
           if (!profile?.username) {
-            toggleView({ profile: true })
+            showProfileStep()
             setStatus('Profile missing. Please create your profile to continue.')
           } else {
-            toggleView({ dashboard: true })
+            showDashboardStep()
             setStatus('Profile loaded. You can now run modules.', 'success')
             renderModules()
             updateNftBadge()
@@ -518,6 +532,7 @@
         } catch (error) {
           console.error('Profile load failed', error)
           setStatus(error?.message || 'Unable to load profile', 'error')
+          showProfileStep()
         }
       }
 
@@ -662,7 +677,7 @@
       connectBtn.addEventListener('click', handleConnect)
       mintBtn.addEventListener('click', handleMint)
 
-      toggleView({ connect: true })
+      showConnectStep()
     </script>
   </body>
 </html>
