@@ -1,86 +1,7 @@
+// Core contract data preserved from previous setup
 export const MAIN_HUB_ADDRESS = '0xad9801c23f3a7ebfea6c33e8575d479169881ff2'
-export const ACCESS_PASS_ADDRESS = '0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd'
-export const BASIC_TRANSACTION_FEE = '0.1'
-export const PREMIUM_TRANSACTION_FEE = '0.01'
-export const CELO_YELLOW = '#FBCC5C'
-export const THEME = { mode: 'dark', accent: CELO_YELLOW }
-export const CHAIN_ID = 42220
-
-export const NETWORKS = {
-  mainnet: {
-    chainId: 42220,
-    chainIdHex: '0xa4ec',
-    name: 'Celo Mainnet',
-    rpcUrl: 'https://forno.celo.org',
-    rpcUrls: ['https://forno.celo.org', 'https://rpc.ankr.com/celo'],
-    explorer: 'https://celoscan.io',
-    nativeCurrency: { name: 'CELO', symbol: 'CELO', decimals: 18 },
-  },
-  alfajores: {
-    chainId: 44787,
-    chainIdHex: '0xaef3',
-    name: 'Celo Alfajores',
-    rpcUrl: 'https://alfajores-forno.celo-testnet.org',
-    rpcUrls: ['https://alfajores-forno.celo-testnet.org', 'https://rpc.ankr.com/celo_testnet'],
-    explorer: 'https://alfajores.celoscan.io',
-    nativeCurrency: { name: 'CELO', symbol: 'CELO', decimals: 18 },
-  },
-}
-
-const NETWORK_BY_CHAIN_ID = {
-  [NETWORKS.mainnet.chainId]: NETWORKS.mainnet,
-  [NETWORKS.alfajores.chainId]: NETWORKS.alfajores,
-}
-
-export const DEFAULT_NETWORK = NETWORK_BY_CHAIN_ID[CHAIN_ID] || NETWORKS.alfajores
-// Replace with your own WalletConnect Project ID from Cloud.WalletConnect when deploying.
-export const WALLET_CONNECT_PROJECT_ID = '4530041258341627800'
-
-export const DONATION_ADDRESS = '0x000000000000000000000000000000000000dEaD'
-export const PROJECT_OWNER_ADDRESS = '0x09dfa0d77125978997dd9f94a0f870d3f2900da5'
-
-export const CUSD_CONTRACTS = {
-  [NETWORKS.mainnet.chainId]: '0x765DE816845861e75A25fCA122bb6898B8B1282a',
-  [NETWORKS.alfajores.chainId]: '0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1',
-}
-
-export const MODULES = [
-  {
-    id: 1,
-    name: 'GM Ping',
-    moduleAddress: '0x0000000000000000000000000000000000000000',
-    category: 'Social',
-    moduleType: 'Action',
-    premium: false,
-    version: 1,
-  },
-  {
-    id: 2,
-    name: 'Donate CELO',
-    moduleAddress: '0x0000000000000000000000000000000000000000',
-    category: 'Payments',
-    moduleType: 'ValueTransfer',
-    premium: false,
-    version: 1,
-  },
-  {
-    id: 3,
-    name: 'Deploy Hello World',
-    moduleAddress: '0x0000000000000000000000000000000000000000',
-    category: 'Developer',
-    moduleType: 'Deployment',
-    premium: true,
-    version: 1,
-  },
-]
-
-export const ERC20_ABI = [
-  'function name() view returns (string)',
-  'function symbol() view returns (string)',
-  'function decimals() view returns (uint8)',
-  'function balanceOf(address) view returns (uint256)',
-  'function transfer(address to, uint256 amount) returns (bool)',
-]
+export const NFT_ADDRESS = '0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd'
+export const OWNER_ADDRESS = '0x09dfa0d77125978997dd9f94a0f870d3f2900da5'
 
 export const MAIN_HUB_ABI = [
   {
@@ -293,7 +214,7 @@ export const MAIN_HUB_ABI = [
   { stateMutability: 'payable', type: 'receive' },
 ]
 
-export const ACCESS_PASS_ABI = [
+export const NFT_ABI = [
   {
     inputs: [
       { internalType: 'address', name: 'owner', type: 'address' },

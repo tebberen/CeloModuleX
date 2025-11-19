@@ -3,17 +3,12 @@
   "version": "1.0.0",
   "description": "Modular On-Chain Action Platform for Celo",
   "scripts": {
-    "dev": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build",
     "deploy:contracts": "cd contracts && npx hardhat run scripts/deploy.ts --network celo",
     "deploy:testnet": "cd contracts && npx hardhat run scripts/deploy.ts --network alfajores",
     "test": "cd contracts && npx hardhat test",
     "compile": "cd contracts && npx hardhat compile"
   },
-  "workspaces": [
-    "contracts",
-    "frontend"
-  ],
+  "workspaces": ["contracts"],
   "devDependencies": {
     "typescript": "^5.0.0",
     "@types/node": "^20.0.0"

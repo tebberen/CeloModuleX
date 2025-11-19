@@ -1,233 +1,79 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CeloModuleX</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="page-shell">
-      <nav class="navbar">
-        <div class="nav-inner">
-          <div class="nav-left">
-            <div class="logo-mark">XM</div>
-            <div>
-              <p class="brand">CeloModuleX</p>
-              <p class="muted">Celo action launcher</p>
-            </div>
+    <header class="nav">
+      <div class="brand">CeloModuleX</div>
+      <nav class="nav-links">
+        <button class="nav-link active" data-target="home">Home</button>
+        <button class="nav-link" data-target="nft">NFT</button>
+        <button class="nav-link" data-target="profile">Profile</button>
+      </nav>
+      <div class="wallet-actions">
+        <span id="current-address" class="pill muted">Not connected</span>
+        <button id="connect-btn" class="primary">Connect Wallet</button>
+        <button id="disconnect-btn" class="ghost">Disconnect</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="home" class="panel active">
+        <h1>Welcome to CeloModuleX</h1>
+        <p class="lede">
+          A minimal dApp experience focused on the essentials: wallet connections and
+          core contract reads on Celo Mainnet.
+        </p>
+        <div class="status-grid">
+          <div class="card">
+            <p class="label">Network</p>
+            <p id="network-label" class="value">Not connected</p>
           </div>
-          <div class="nav-center">
-            <a href="#home" class="nav-link" data-target="home">Home</a>
-            <a href="#modules" class="nav-link" data-target="modules">Modules</a>
-            <a href="#nft" class="nav-link" data-target="nft">NFT</a>
-            <a href="#profile" class="nav-link" data-target="profile">Profile</a>
-            <a href="#stats" class="nav-link" data-target="stats">Stats</a>
+          <div class="card">
+            <p class="label">MainHub total users</p>
+            <p id="total-users" class="value">—</p>
           </div>
-          <div class="nav-right">
-            <div>
-              <p class="muted">Network</p>
-              <strong id="network-badge">—</strong>
-            </div>
-            <div>
-              <p class="muted">Wallet</p>
-              <strong id="wallet-address">—</strong>
-            </div>
-            <button id="connect-metamask" class="button primary">Connect</button>
+          <div class="card">
+            <p class="label">MainHub total global actions</p>
+            <p id="total-actions" class="value">—</p>
           </div>
         </div>
-      </nav>
+        <div class="notice" id="network-warning"></div>
+      </section>
 
-      <div class="content-area">
-        <div class="layout">
-          <aside class="sidebar">
-            <div class="user-card">
-              <div class="avatar">XM</div>
-              <div>
-                <p class="user-label">Active wallet</p>
-                <p class="user-address" id="walletAddressDisplay">—</p>
-              </div>
-            </div>
-            <span id="premium-badge" class="badge premium hidden">Premium Active</span>
-            <div class="badge">
-              Status:
-            <span id="premium-status" data-premium-status class="premium-state inactive">Inactive</span>
-            </div>
-            <nav class="side-nav">
-              <a href="#home" class="side-link active" data-target="home">Overview</a>
-              <a href="#modules" class="side-link" data-target="modules">Modules</a>
-              <a href="#nft" class="side-link" data-target="nft">NFT Pass</a>
-              <a href="#profile" class="side-link" data-target="profile">Profile</a>
-              <a href="#stats" class="side-link" data-target="stats">Stats</a>
-            </nav>
-          </aside>
+      <section id="nft" class="panel">
+        <h2>Access Pass NFT</h2>
+        <p class="lede">Check the access pass price and whether your wallet already holds one.</p>
+        <div class="card">
+          <p class="label">Current price</p>
+          <p id="nft-price" class="value">—</p>
+        </div>
+        <div class="card">
+          <p class="label">Ownership</p>
+          <p id="nft-ownership" class="value">Connect wallet to check</p>
+        </div>
+        <div class="actions">
+          <button id="refresh-nft" class="primary">Refresh NFT data</button>
+        </div>
+      </section>
 
-            <main class="main-content">
-              <section id="home" class="hero hero-premium">
-                <div class="hero-shell">
-                  <div class="hero-pill">Chain diversity. Real signals.</div>
-                  <p class="hero-headline">
-                    Aren’t you tired of doing the same GM, the same Swap, the same Bridge every single day?
-                  </p>
-                  <p class="hero-lede">
-                    Blockchain is so much more than that.<br />
-                    CeloModuleX lets you execute different types of on-chain actions across multiple smart contracts, creating true
-                    chain diversity and a stronger on-chain identity.<br />
-                    Every feature runs on its own unique smart contract — meaning every click you make generates a real, meaningful
-                    on-chain signal.
-                  </p>
-                  <div class="hero-actions">
-                    <button id="start-modules" class="button primary">Explore modules</button>
-                    <button id="connect-walletconnect" class="button ghost">WalletConnect</button>
-                    <p id="connection-status" class="status">Wallet not connected.</p>
-                  </div>
-                  <div class="hero-stats">
-                    <div class="hero-stat-card">
-                      <div class="hero-stat-top">
-                        <span class="pill" id="network-name">—</span>
-                        <span class="pill soft">Network</span>
-                      </div>
-                      <div class="stat"><span>CELO</span><strong id="celo-balance">—</strong></div>
-                      <div class="stat"><span>cUSD</span><strong id="cusd-balance">—</strong></div>
-                    </div>
-                    <div class="hero-stat-card">
-                      <div class="hero-stat-top">
-                        <span class="pill">NFT Access</span>
-                        <span class="pill soft">Premium</span>
-                      </div>
-                      <p class="card-text">Unlock premium modules by minting the access NFT.</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
+      <section id="profile" class="panel">
+        <h2>Profile</h2>
+        <p class="lede">Keep tabs on ownership and connection details.</p>
+        <ul class="profile-list">
+          <li><span class="label">Owner address</span><span id="owner-address" class="value"></span></li>
+          <li><span class="label">Connected wallet</span><span id="profile-wallet" class="value">Not connected</span></li>
+          <li><span class="label">Chain ID</span><span id="profile-chain" class="value">—</span></li>
+        </ul>
+      </section>
+    </main>
 
-              <section id="nft" class="nft-section">
-                <div class="nft-shell">
-                  <div class="nft-left">
-                    <div class="nft-badge">Premium Access</div>
-                    <div class="nft-card">
-                      <div class="nft-card-header">
-                        <div class="pill">CeloModuleX</div>
-                        <div class="pill soft">CMX</div>
-                      </div>
-                      <div class="nft-visual">
-                        <div class="nft-visual-glow"></div>
-                        <div class="nft-visual-mark">CMX</div>
-                        <div class="nft-visual-pattern"></div>
-                      </div>
-                      <div class="nft-meta-grid">
-                        <div class="meta-block">
-                          <p class="label">Collection</p>
-                          <h3>CeloModuleX Access</h3>
-                          <p class="muted">Unique on-chain membership signaling activity across the Celo ecosystem.</p>
-                        </div>
-                        <div class="meta-block preview">
-                          <p class="label">Metadata preview</p>
-                          <ul>
-                            <li><strong>Access:</strong> Premium</li>
-                            <li><strong>Status:</strong> <span data-premium-status>Inactive</span></li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+    <footer class="footer">CeloModuleX • Built for Celo Mainnet</footer>
 
-                  <div class="nft-right">
-                    <div class="pill accent">NFT Access</div>
-                    <h2>Mint your premium access</h2>
-                    <p class="nft-copy">
-                      Secure your spot with an on-chain NFT backed by its own smart contract. Every mint sends a clear signal that
-                      you&apos;re exploring more than the usual swaps and bridges.
-                    </p>
-
-                    <div class="price-card">
-                      <div>
-                        <p class="label">Current price</p>
-                        <p class="price" id="nft-price">—</p>
-                      </div>
-                      <p class="muted">Secured via contract at 0xa2a5d8c63bD03cfbf01843f2dBdDcc3D9B6158fD</p>
-                    </div>
-
-                    <div class="cta-row stacked">
-                      <button id="mintNftBtn" class="button primary full">Mint Access NFT</button>
-                      <div id="premium-banner" class="premium-banner hidden">Premium unlocked — enjoy discounted module executions.</div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section id="modules" class="card-grid">
-                <article class="card module-card">
-                  <div class="card__header">
-                    <h3>Say GM</h3>
-                    <span class="pill">Free</span>
-                  </div>
-                  <p class="card-text">Broadcast an on-chain GM ping via MainHub.</p>
-                  <button id="gmBtn" class="button full">Send GM</button>
-                </article>
-                <article class="card module-card">
-                  <div class="card__header">
-                    <h3>Donate 0.01 CELO</h3>
-                    <span class="pill">Community</span>
-                  </div>
-                  <p class="card-text">Route a fixed 0.01 CELO donation to the community vault.</p>
-                  <button id="donateBtn" class="button full">Donate</button>
-                </article>
-                <article class="card module-card">
-                  <div class="card__header">
-                    <h3>Deploy Demo</h3>
-                    <span class="pill">Premium</span>
-                  </div>
-                  <p class="card-text">Trigger the hello world deploy action for premium holders.</p>
-                  <button id="deployBtn" class="button full">Deploy</button>
-                </article>
-                <article class="card" style="grid-column: 1 / -1">
-                  <h3>Activity</h3>
-                  <p id="action-result">Waiting for an action…</p>
-                </article>
-              </section>
-
-              <section id="profile" class="card-grid">
-                <article class="card">
-                  <div class="card__header">
-                    <h3>Profile</h3>
-                    <span class="pill">Identity</span>
-                  </div>
-                  <p class="card-text">Use your connected wallet to populate the dashboard.</p>
-                  <ul class="profile-form">
-                    <li>Wallet: <strong id="walletAddressDisplayClone">—</strong></li>
-                    <li>Network: <strong id="networkNameClone">—</strong></li>
-                    <li>Premium: <strong id="premiumStatusClone">Inactive</strong></li>
-                  </ul>
-                </article>
-              </section>
-
-              <section id="stats" class="card-grid">
-                <article class="card">
-                  <div class="card__header">
-                    <h3>Realtime Status</h3>
-                    <span class="pill">Live</span>
-                  </div>
-                  <p class="card-text">
-                    Monitor connection, balances, and module executions without leaving the dashboard.
-                  </p>
-                  <div class="stat"><span>Wallet</span><strong id="stats-wallet">—</strong></div>
-                  <div class="stat"><span>Network</span><strong id="stats-network">—</strong></div>
-                </article>
-              </section>
-            </main>
-      </div>
-    </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js" type="text/javascript"></script>
-    <script src="https://unpkg.com/@walletconnect/universal-provider@2.9.0/dist/index.umd.js" type="text/javascript"></script>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="./app.js"></script>
   </body>
 </html>
