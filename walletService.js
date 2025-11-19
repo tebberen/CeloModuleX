@@ -8,10 +8,14 @@ let connectedAccount
 let connectionType = 'unknown'
 let walletConnectProvider
 
+function primaryRpcUrl(network) {
+  return network.rpcUrls?.[0] || network.rpcUrl
+}
+
 function rpcMap() {
   return {
-    [NETWORKS.mainnet.chainId]: NETWORKS.mainnet.rpcUrl,
-    [NETWORKS.alfajores.chainId]: NETWORKS.alfajores.rpcUrl,
+    [NETWORKS.mainnet.chainId]: primaryRpcUrl(NETWORKS.mainnet),
+    [NETWORKS.alfajores.chainId]: primaryRpcUrl(NETWORKS.alfajores),
   }
 }
 
@@ -116,7 +120,7 @@ async function ensureSupportedNetwork(provider) {
         {
           chainId: desiredChain.chainIdHex,
           chainName: desiredChain.name,
-          rpcUrls: [desiredChain.rpcUrl],
+          rpcUrls: desiredChain.rpcUrls || [desiredChain.rpcUrl],
           nativeCurrency: desiredChain.nativeCurrency,
           blockExplorerUrls: [desiredChain.explorer],
         },
