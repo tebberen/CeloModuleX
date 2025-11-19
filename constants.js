@@ -1,5 +1,9 @@
-export const MAIN_HUB_ADDRESS = '0xad9801c23f3a7ebfea6c33e8575d479169881ff2'
+export const MAIN_HUB_ADDRESS = '0xad9801c23f3f7ebfea6c33e8575d479169881ff2'
 export const ACCESS_PASS_ADDRESS = '0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd'
+export const BASIC_TRANSACTION_FEE = '0.1'
+export const PREMIUM_TRANSACTION_FEE = '0.01'
+export const CELO_YELLOW = '#FBCC5C'
+export const THEME = { mode: 'dark', accent: CELO_YELLOW }
 export const CHAIN_ID = 44787
 
 export const NETWORKS = {
@@ -38,11 +42,35 @@ export const CUSD_CONTRACTS = {
   [NETWORKS.alfajores.chainId]: '0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1',
 }
 
-export const MODULES = {
-  1: { name: 'GM Ping', category: 'Social', type: 'Action', premium: false },
-  2: { name: 'Donate CELO', category: 'Payments', type: 'ValueTransfer', premium: false },
-  3: { name: 'Deploy Hello World', category: 'Developer', type: 'Deployment', premium: true },
-}
+export const MODULES = [
+  {
+    id: 1,
+    name: 'GM Ping',
+    moduleAddress: '0x0000000000000000000000000000000000000000',
+    category: 'Social',
+    moduleType: 'Action',
+    premium: false,
+    version: 1,
+  },
+  {
+    id: 2,
+    name: 'Donate CELO',
+    moduleAddress: '0x0000000000000000000000000000000000000000',
+    category: 'Payments',
+    moduleType: 'ValueTransfer',
+    premium: false,
+    version: 1,
+  },
+  {
+    id: 3,
+    name: 'Deploy Hello World',
+    moduleAddress: '0x0000000000000000000000000000000000000000',
+    category: 'Developer',
+    moduleType: 'Deployment',
+    premium: true,
+    version: 1,
+  },
+]
 
 export const ERC20_ABI = [
   'function name() view returns (string)',
