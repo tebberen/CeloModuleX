@@ -3,35 +3,35 @@
 @tailwind utilities;
 
 :root {
-  --background: 40 100% 88%;
-  --foreground: 27 54% 22%;
-  --card: 38 92% 94%;
-  --card-foreground: 27 54% 22%;
-  --popover: 38 92% 94%;
-  --popover-foreground: 27 54% 22%;
-  --primary: 38 95% 65%;
-  --primary-foreground: 26 58% 18%;
+  --background: 45 100% 97%;
+  --foreground: 27 54% 18%;
+  --card: 45 95% 96%;
+  --card-foreground: 27 54% 18%;
+  --popover: 45 95% 96%;
+  --popover-foreground: 27 54% 18%;
+  --primary: 44 93% 65%;
+  --primary-foreground: 26 58% 16%;
   --secondary: 147 45% 38%;
   --secondary-foreground: 43 100% 97%;
-  --muted: 39 71% 89%;
-  --muted-foreground: 27 42% 32%;
-  --accent: 38 95% 65%;
-  --accent-foreground: 26 58% 18%;
+  --muted: 44 68% 90%;
+  --muted-foreground: 27 42% 30%;
+  --accent: 44 93% 65%;
+  --accent-foreground: 26 58% 16%;
   --destructive: 8 75% 55%;
   --destructive-foreground: 43 100% 97%;
-  --border: 35 70% 82%;
-  --input: 35 70% 82%;
-  --ring: 38 95% 65%;
+  --border: 40 70% 83%;
+  --input: 40 70% 83%;
+  --ring: 44 93% 65%;
   --radius: 1rem;
 }
 
 body {
   background:
-    radial-gradient(circle at 12% 18%, rgba(255, 222, 170, 0.9), transparent 36%),
-    radial-gradient(circle at 88% 12%, rgba(255, 194, 88, 0.55), transparent 42%),
-    radial-gradient(circle at 46% 82%, rgba(255, 214, 138, 0.55), transparent 52%),
-    #fff3d4;
-  color: #38230b;
+    radial-gradient(circle at 12% 18%, rgba(255, 222, 170, 0.75), transparent 36%),
+    radial-gradient(circle at 88% 12%, rgba(255, 204, 92, 0.3), transparent 42%),
+    radial-gradient(circle at 46% 82%, rgba(255, 214, 138, 0.38), transparent 52%),
+    #fffdf8;
+  color: #2f1f0e;
   min-height: 100vh;
   font-feature-settings: 'ss01' on;
 }
