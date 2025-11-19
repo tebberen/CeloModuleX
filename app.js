@@ -23,6 +23,7 @@ const ui = {
   networkBadge: document.getElementById('network-badge'),
   walletAddress: document.getElementById('wallet-address'),
   networkName: document.getElementById('network-name'),
+  networkNameClone: document.getElementById('networkNameClone'),
   celoBalance: document.getElementById('celo-balance'),
   cusdBalance: document.getElementById('cusd-balance'),
   gmButton: document.getElementById('gmBtn'),
@@ -32,9 +33,13 @@ const ui = {
   premiumBadge: document.getElementById('premium-badge'),
   premiumStatus: document.getElementById('premium-status'),
   walletAddressDisplay: document.getElementById('walletAddressDisplay'),
+  walletAddressClone: document.getElementById('walletAddressDisplayClone'),
+  statsWallet: document.getElementById('stats-wallet'),
+  statsNetwork: document.getElementById('stats-network'),
   mintNftBtn: document.getElementById('mintNftBtn'),
   premiumBanner: document.getElementById('premium-banner'),
   nftPrice: document.getElementById('nft-price'),
+  premiumStatusClone: document.getElementById('premiumStatusClone'),
 }
 
 const sections = {
@@ -73,10 +78,7 @@ async function runWithFeedback(button, action) {
 async function connect(handler) {
   try {
     const account = await handler()
-    ui.walletAddress.textContent = shorten(account)
-    if (ui.walletAddressDisplay) {
-      ui.walletAddressDisplay.textContent = shorten(account)
-    }
+    updateWalletDisplays(account)
     setStatus('Wallet connected')
     await refreshNetwork()
     await refreshPremiumStatus(account)
@@ -89,6 +91,21 @@ async function connect(handler) {
 function shorten(address) {
   if (!address) return '—'
   return `${address.slice(0, 6)}…${address.slice(-4)}`
+}
+
+function updateWalletDisplays(account) {
+  const value = shorten(account)
+  if (ui.walletAddress) ui.walletAddress.textContent = value
+  if (ui.walletAddressDisplay) ui.walletAddressDisplay.textContent = value
+  if (ui.walletAddressClone) ui.walletAddressClone.textContent = value
+  if (ui.statsWallet) ui.statsWallet.textContent = value
+}
+
+function updateNetworkDisplays(text) {
+  if (ui.networkBadge) ui.networkBadge.textContent = text
+  if (ui.networkName) ui.networkName.textContent = text
+  if (ui.networkNameClone) ui.networkNameClone.textContent = text
+  if (ui.statsNetwork) ui.statsNetwork.textContent = text
 }
 
 function setActiveLink(target) {
@@ -115,8 +132,9 @@ async function refreshNetwork() {
   const network = await getCurrentNetwork()
   if (!network) return
   const name = NETWORKS.mainnet.chainId === network.chainId ? NETWORKS.mainnet.name : NETWORKS.alfajores.name
-  ui.networkBadge.textContent = name
-  ui.networkName.textContent = `${name} (chain ${network.chainId})`
+  const networkLabel = `${name} (chain ${network.chainId})`
+  updateNetworkDisplays(networkLabel)
+  if (ui.networkBadge) ui.networkBadge.textContent = name
   await refreshBalances(meta.account, network.chainId)
 }
 
@@ -207,6 +225,10 @@ function updatePremiumUI(hasNft) {
     ui.premiumStatus.textContent = hasNft ? 'Active' : 'Inactive'
     ui.premiumStatus.classList.toggle('active', hasNft)
     ui.premiumStatus.classList.toggle('inactive', !hasNft)
+  }
+
+  if (ui.premiumStatusClone) {
+    ui.premiumStatusClone.textContent = hasNft ? 'Active' : 'Inactive'
   }
 
   if (ui.mintNftBtn) {
