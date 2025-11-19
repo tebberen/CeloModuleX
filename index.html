@@ -7,677 +7,178 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <style>
-      :root {
-        --bg: #050608;
-        --surface: #0d1016;
-        --muted: #8a8f9e;
-        --text: #e8ecf4;
-        --accent: #fbcc5c;
-        --danger: #ff6b6b;
-        --border: #1b1f2b;
-        --radius: 14px;
-        --shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        background: radial-gradient(circle at 20% 20%, rgba(251, 204, 92, 0.08), transparent 25%),
-          radial-gradient(circle at 80% 10%, rgba(251, 204, 92, 0.06), transparent 25%),
-          var(--bg);
-        color: var(--text);
-        min-height: 100vh;
-      }
-
-      .app-shell {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 32px 20px 48px;
-      }
-
-      header.branding {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 32px;
-      }
-
-      .logo {
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        font-size: 20px;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .logo-mark {
-        width: 36px;
-        height: 36px;
-        border-radius: 12px;
-        background: var(--accent);
-        color: #050608;
-        display: grid;
-        place-items: center;
-        font-weight: 800;
-      }
-
-      .pill {
-        padding: 6px 12px;
-        background: rgba(251, 204, 92, 0.12);
-        color: var(--accent);
-        border-radius: 999px;
-        border: 1px solid rgba(251, 204, 92, 0.3);
-        font-size: 13px;
-        font-weight: 600;
-      }
-
-      .panel {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 24px;
-        box-shadow: var(--shadow);
-      }
-
-      h1,
-      h2,
-      h3 {
-        margin: 0;
-      }
-
-      h1 {
-        font-size: 32px;
-        margin-bottom: 10px;
-      }
-
-      h2 {
-        font-size: 22px;
-      }
-
-      p {
-        margin: 0;
-      }
-
-      .muted {
-        color: var(--muted);
-      }
-
-      .hero {
-        display: grid;
-        gap: 16px;
-      }
-
-      .primary-btn,
-      .ghost-btn,
-      .inline-btn {
-        border: none;
-        outline: none;
-        cursor: pointer;
-        border-radius: 12px;
-        font-weight: 700;
-        transition: transform 0.1s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
-      }
-
-      .primary-btn {
-        background: var(--accent);
-        color: #050608;
-        padding: 14px 18px;
-        font-size: 15px;
-        box-shadow: 0 12px 30px rgba(251, 204, 92, 0.25);
-      }
-
-      .primary-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 16px 36px rgba(251, 204, 92, 0.35);
-      }
-
-      .ghost-btn {
-        background: transparent;
-        color: var(--text);
-        padding: 10px 14px;
-        border: 1px solid var(--border);
-      }
-
-      .inline-btn {
-        padding: 6px 12px;
-        background: rgba(251, 204, 92, 0.12);
-        color: var(--accent);
-        border: 1px solid rgba(251, 204, 92, 0.3);
-        font-size: 13px;
-      }
-
-      .grid {
-        display: grid;
-        gap: 16px;
-      }
-
-      .grid.two {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      }
-
-      .stats {
-        display: grid;
-        gap: 12px;
-        margin-top: 14px;
-      }
-
-      .stat {
-        display: flex;
-        justify-content: space-between;
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 12px 14px;
-      }
-
-      .module-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 12px;
-      }
-
-      .module-card {
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 14px;
-        background: rgba(255, 255, 255, 0.02);
-        display: grid;
-        gap: 8px;
-      }
-
-      .module-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .label-premium {
-        color: var(--accent);
-        background: rgba(251, 204, 92, 0.12);
-        padding: 4px 10px;
-        border-radius: 10px;
-        border: 1px solid rgba(251, 204, 92, 0.3);
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .label-free {
-        color: #6fe7c2;
-        background: rgba(111, 231, 194, 0.08);
-        padding: 4px 10px;
-        border-radius: 10px;
-        border: 1px solid rgba(111, 231, 194, 0.25);
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      form.profile-form {
-        display: grid;
-        gap: 14px;
-        margin-top: 16px;
-      }
-
-      label {
-        display: grid;
-        gap: 6px;
-        font-weight: 600;
-      }
-
-      input,
-      textarea {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 12px;
-        color: var(--text);
-        font-size: 15px;
-      }
-
-      textarea {
-        resize: vertical;
-        min-height: 80px;
-      }
-
-      .helper {
-        border: 1px dashed var(--border);
-        padding: 12px;
-        border-radius: 12px;
-        color: var(--muted);
-      }
-
-      .hidden {
-        display: none !important;
-      }
-
-      .status {
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.02);
-        color: var(--text);
-        font-size: 14px;
-      }
-
-      .status.error {
-        border-color: rgba(255, 107, 107, 0.5);
-        color: var(--danger);
-      }
-
-      .status.success {
-        border-color: rgba(111, 231, 194, 0.5);
-        color: #6fe7c2;
-      }
-
-      .nft-panel {
-        display: grid;
-        gap: 10px;
-        border: 1px solid rgba(251, 204, 92, 0.25);
-        background: rgba(251, 204, 92, 0.05);
-      }
-
-      .mint-price {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--accent);
-      }
-
-      .badge {
-        padding: 6px 10px;
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 8px;
-        font-size: 13px;
-        border: 1px solid var(--border);
-      }
-
-      .badge.active {
-        border-color: rgba(111, 231, 194, 0.45);
-        color: #6fe7c2;
-      }
-
-      .action-log {
-        min-height: 40px;
-      }
-
-      @media (max-width: 720px) {
-        header.branding {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
-        }
-
-        .primary-btn {
-          width: 100%;
-          text-align: center;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="app-shell">
-      <header class="branding">
-        <div class="logo">
-          <span class="logo-mark">C</span>
-          <span>CeloModuleX</span>
-        </div>
-        <span class="pill">Dark mode · Celo Yellow</span>
-      </header>
-
-      <main class="grid" aria-live="polite">
-        <section id="connect-section" class="panel hero">
+    <div class="page-shell">
+      <nav class="navbar">
+        <div class="nav-left">
+          <div class="logo-mark">XM</div>
           <div>
-            <h1>Launch on-chain modules effortlessly</h1>
-            <p class="muted">
-              Start by connecting your wallet. We will verify your profile, check access eligibility, and
-              route you to the right action.
-            </p>
+            <p class="brand">CeloModuleX</p>
+            <p class="muted">Celo action launcher</p>
           </div>
-          <button id="connect-btn" class="primary-btn">Connect Wallet</button>
-        </section>
+        </div>
+        <div class="nav-center">
+          <a href="#home" class="nav-link" data-target="home">Home</a>
+          <a href="#modules" class="nav-link" data-target="modules">Modules</a>
+          <a href="#nft" class="nav-link" data-target="nft">NFT</a>
+          <a href="#profile" class="nav-link" data-target="profile">Profile</a>
+          <a href="#stats" class="nav-link" data-target="stats">Stats</a>
+        </div>
+        <div class="nav-right">
+          <div>
+            <p class="muted">Network</p>
+            <strong id="network-badge">—</strong>
+          </div>
+          <div>
+            <p class="muted">Wallet</p>
+            <strong id="wallet-address">—</strong>
+          </div>
+          <button id="connect-metamask" class="button primary">Connect</button>
+        </div>
+      </nav>
 
-        <section id="profile-section" class="panel hidden">
-          <div class="hero">
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="user-card">
+            <div class="avatar">XM</div>
             <div>
-              <h2>Create your profile</h2>
-              <p class="muted">Complete these fields to unlock the dashboard experience.</p>
+              <p class="user-label">Active wallet</p>
+              <p class="user-address" id="walletAddressDisplay">—</p>
             </div>
-            <form id="profile-form" class="profile-form">
-              <label>
-                Username
-                <input id="username" name="username" required placeholder="e.g. Celo Builder" />
-              </label>
-              <label>
-                Twitter
-                <input id="twitter" name="twitter" placeholder="@handle" />
-              </label>
-              <label>
-                GitHub
-                <input id="github" name="github" placeholder="github-user" />
-              </label>
-              <label>
-                Talent Protocol
-                <input id="talent" name="talent" placeholder="talent-protocol" />
-              </label>
-              <label>
-                Self ID
-                <input id="selfId" name="selfId" placeholder="self.id" />
-              </label>
-              <button type="submit" class="primary-btn">Create Profile</button>
-            </form>
           </div>
-        </section>
+          <span id="premium-badge" class="badge premium hidden">Premium Active</span>
+          <div class="badge">
+            Status:
+            <span id="premium-status" class="premium-state inactive">Inactive</span>
+          </div>
+          <nav class="side-nav">
+            <a href="#home" class="side-link active" data-target="home">Overview</a>
+            <a href="#modules" class="side-link" data-target="modules">Modules</a>
+            <a href="#nft" class="side-link" data-target="nft">NFT Pass</a>
+            <a href="#profile" class="side-link" data-target="profile">Profile</a>
+            <a href="#stats" class="side-link" data-target="stats">Stats</a>
+          </nav>
+        </aside>
 
-        <section id="dashboard-section" class="grid hidden">
-          <section class="panel">
-            <div class="module-meta" style="margin-bottom: 6px">
-              <h2>Dashboard</h2>
-              <span id="nft-badge" class="badge">NFT: Unknown</span>
-            </div>
-            <p class="muted">Connected experience with live stats and modules.</p>
-            <div class="stats">
-              <div class="stat"><span>Username</span><strong id="stat-username">—</strong></div>
-              <div class="stat"><span>Wallet</span><strong id="stat-address">—</strong></div>
-              <div class="stat"><span>Score</span><strong id="stat-score">0</strong></div>
-              <div class="stat"><span>Total Actions</span><strong id="stat-actions">0</strong></div>
-              <div class="stat"><span>Premium Access</span><strong id="stat-premium">No</strong></div>
-            </div>
-          </section>
-
-          <section class="panel">
-            <div class="module-meta" style="margin-bottom: 10px">
-              <h2>Modules</h2>
-              <span class="muted" id="modules-hint">Select a module to execute.</span>
-            </div>
-            <div id="modules-container" class="module-list"></div>
-          </section>
-
-          <section id="mint-section" class="panel nft-panel hidden">
-            <div class="module-meta">
-              <div>
-                <h3>Access Pass required</h3>
-                <p class="muted">Premium modules need the NFT access pass. Mint to continue.</p>
+        <main class="main-content">
+          <section id="home" class="hero">
+            <div class="hero__content">
+              <p class="eyebrow">The universal engagement layer for Celo</p>
+              <h1>Execute modular actions, reward your community.</h1>
+              <p class="lede">
+                Connect your wallet to unlock personalized stats, premium NFT access, and instant module execution directly on Celo.
+              </p>
+              <div class="cta-row">
+                <button id="start-modules" class="button primary">Browse modules</button>
+                <button id="connect-walletconnect" class="button ghost">WalletConnect</button>
+                <p id="connection-status" class="status">Wallet not connected.</p>
               </div>
-              <span class="label-premium">Premium Access</span>
             </div>
-            <p class="mint-price">Current price: <span id="nft-price">—</span></p>
-            <div class="grid two">
-              <div class="helper">Mint once to unlock all premium executions forever.</div>
-              <button id="mint-btn" class="primary-btn">Mint Access Pass</button>
+            <div class="card-grid">
+              <article class="card">
+                <div class="card__header">
+                  <h3>Network</h3>
+                  <span class="pill" id="network-name">—</span>
+                </div>
+                <p class="card-text">Live balances</p>
+                <div class="stat"><span>CELO</span><strong id="celo-balance">—</strong></div>
+                <div class="stat"><span>cUSD</span><strong id="cusd-balance">—</strong></div>
+              </article>
+              <article class="card">
+                <div class="card__header">
+                  <h3>Premium</h3>
+                  <span class="pill">NFT Access</span>
+                </div>
+                <p class="card-text">Unlock premium modules by minting the access NFT.</p>
+                <div id="premium-banner" class="premium-banner hidden">
+                  Premium unlocked — enjoy discounted module executions.
+                </div>
+              </article>
             </div>
           </section>
 
-          <section class="panel action-log">
-            <div class="module-meta" style="margin-bottom: 10px">
+          <section id="modules" class="card-grid">
+            <article class="card module-card">
+              <div class="card__header">
+                <h3>Say GM</h3>
+                <span class="pill">Free</span>
+              </div>
+              <p class="card-text">Broadcast an on-chain GM ping via MainHub.</p>
+              <button id="gmBtn" class="button full">Send GM</button>
+            </article>
+            <article class="card module-card">
+              <div class="card__header">
+                <h3>Donate 0.01 CELO</h3>
+                <span class="pill">Community</span>
+              </div>
+              <p class="card-text">Route a fixed 0.01 CELO donation to the community vault.</p>
+              <button id="donateBtn" class="button full">Donate</button>
+            </article>
+            <article class="card module-card">
+              <div class="card__header">
+                <h3>Deploy Demo</h3>
+                <span class="pill">Premium</span>
+              </div>
+              <p class="card-text">Trigger the hello world deploy action for premium holders.</p>
+              <button id="deployBtn" class="button full">Deploy</button>
+            </article>
+            <article class="card" style="grid-column: 1 / -1">
               <h3>Activity</h3>
-              <span class="muted">Module execution &amp; mint updates</span>
-            </div>
-            <div id="status" class="status">Waiting for wallet connection.</div>
+              <p id="action-result">Waiting for an action…</p>
+            </article>
           </section>
-        </section>
-      </main>
+
+          <section id="nft" class="card-grid">
+            <article class="card">
+              <div class="card__header">
+                <h3>Mint Access NFT</h3>
+                <span class="pill">Premium</span>
+              </div>
+              <p class="card-text">Mint once to unlock every premium module forever.</p>
+              <p class="price">Price: <span id="nft-price">—</span></p>
+              <button id="mintNftBtn" class="button full">Mint Access NFT</button>
+            </article>
+          </section>
+
+          <section id="profile" class="card-grid">
+            <article class="card">
+              <div class="card__header">
+                <h3>Profile</h3>
+                <span class="pill">Identity</span>
+              </div>
+              <p class="card-text">Use your connected wallet to populate the dashboard.</p>
+              <ul class="profile-form">
+                <li>Wallet: <strong id="walletAddressDisplayClone">—</strong></li>
+                <li>Network: <strong id="networkNameClone">—</strong></li>
+                <li>Premium: <strong id="premiumStatusClone">Inactive</strong></li>
+              </ul>
+            </article>
+          </section>
+
+          <section id="stats" class="card-grid">
+            <article class="card">
+              <div class="card__header">
+                <h3>Realtime Status</h3>
+                <span class="pill">Live</span>
+              </div>
+              <p class="card-text">
+                Monitor connection, balances, and module executions without leaving the dashboard.
+              </p>
+              <div class="stat"><span>Wallet</span><strong id="stats-wallet">—</strong></div>
+              <div class="stat"><span>Network</span><strong id="stats-network">—</strong></div>
+            </article>
+          </section>
+        </main>
+      </div>
     </div>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"
-      type="text/javascript"
-      defer
-    ></script>
-    <script
-      src="https://unpkg.com/@walletconnect/universal-provider@2.9.0/dist/index.umd.js"
-      type="text/javascript"
-      defer
-    ></script>
-    <script type="module">
-      import { MODULES } from './constants.js'
-      import { connectMetaMask, connectWalletConnect } from './walletService.js'
-      import {
-        checkNFTAccess,
-        createProfile,
-        executeModule,
-        getNFTPrice,
-        getUserProfile,
-        mintAccessPass,
-      } from './contractService.js'
-
-      const connectSection = document.getElementById('connect-section')
-      const profileSection = document.getElementById('profile-section')
-      const dashboardSection = document.getElementById('dashboard-section')
-      const connectBtn = document.getElementById('connect-btn')
-      const statusBox = document.getElementById('status')
-      const profileForm = document.getElementById('profile-form')
-      const modulesContainer = document.getElementById('modules-container')
-      const mintSection = document.getElementById('mint-section')
-      const mintBtn = document.getElementById('mint-btn')
-      const nftPrice = document.getElementById('nft-price')
-      const nftBadge = document.getElementById('nft-badge')
-
-      const statUsername = document.getElementById('stat-username')
-      const statAddress = document.getElementById('stat-address')
-      const statScore = document.getElementById('stat-score')
-      const statActions = document.getElementById('stat-actions')
-      const statPremium = document.getElementById('stat-premium')
-
-      let currentAccount = null
-      let currentProfile = null
-      let hasNft = false
-
-      function setStatus(message, tone = 'info') {
-        statusBox.textContent = message
-        statusBox.className = 'status'
-        if (tone === 'error') statusBox.classList.add('error')
-        if (tone === 'success') statusBox.classList.add('success')
-      }
-
-      function toggleView({ connect = false, profile = false, dashboard = false }) {
-        connectSection.classList.toggle('hidden', !connect)
-        profileSection.classList.toggle('hidden', !profile)
-        dashboardSection.classList.toggle('hidden', !dashboard)
-      }
-
-      function showConnectStep() {
-        toggleView({ connect: true })
-      }
-
-      function showProfileStep() {
-        toggleView({ profile: true })
-      }
-
-      function showDashboardStep() {
-        toggleView({ dashboard: true })
-      }
-
-      async function handleConnect() {
-        setStatus('Requesting wallet connection…')
-        try {
-          const account = await connectMetaMask().catch(async (err) => {
-            console.warn('MetaMask connection failed, trying WalletConnect', err)
-            return connectWalletConnect()
-          })
-          currentAccount = account
-          statAddress.textContent = shorten(currentAccount)
-          setStatus('Wallet connected. Checking profile…', 'success')
-          showProfileStep()
-          await loadProfile()
-        } catch (error) {
-          console.error(error)
-          setStatus(error?.message || 'Connection failed', 'error')
-        }
-      }
-
-      async function loadProfile() {
-        if (!currentAccount) return
-        try {
-          const profile = await getUserProfile(currentAccount)
-          currentProfile = profile
-          hasNft = Boolean(profile?.hasNFT)
-          updateStats()
-          if (!profile?.username) {
-            showProfileStep()
-            setStatus('Profile missing. Please create your profile to continue.')
-          } else {
-            showDashboardStep()
-            setStatus('Profile loaded. You can now run modules.', 'success')
-            renderModules()
-            updateNftBadge()
-          }
-        } catch (error) {
-          console.error('Profile load failed', error)
-          setStatus(error?.message || 'Unable to load profile', 'error')
-          showProfileStep()
-        }
-      }
-
-      function updateStats() {
-        statUsername.textContent = currentProfile?.username || '—'
-        statAddress.textContent = shorten(currentAccount)
-        statScore.textContent = currentProfile?.score ?? 0
-        statActions.textContent = currentProfile?.totalActions ?? 0
-        const premiumText = hasNft ? 'Yes (NFT owned)' : 'No (mint required)'
-        statPremium.textContent = premiumText
-      }
-
-      function updateNftBadge() {
-        nftBadge.textContent = hasNft ? 'NFT: Active' : 'NFT: Missing'
-        nftBadge.classList.toggle('active', hasNft)
-        mintSection.classList.toggle('hidden', hasNft)
-      }
-
-      function shorten(address) {
-        if (!address) return '—'
-        return `${address.slice(0, 6)}…${address.slice(-4)}`
-      }
-
-      function renderModules() {
-        modulesContainer.innerHTML = ''
-        MODULES.forEach((module) => {
-          const card = document.createElement('article')
-          card.className = 'module-card'
-
-          const meta = document.createElement('div')
-          meta.className = 'module-meta'
-          const title = document.createElement('h3')
-          title.textContent = module.name
-          const badge = document.createElement('span')
-          badge.className = module.premium ? 'label-premium' : 'label-free'
-          badge.textContent = module.premium ? 'Premium' : 'Free'
-          meta.append(title, badge)
-
-          const category = document.createElement('p')
-          category.className = 'muted'
-          category.textContent = `${module.category} · ${module.moduleType}`
-
-          const button = document.createElement('button')
-          button.className = 'ghost-btn'
-          button.textContent = module.premium ? 'Execute (Premium)' : 'Execute (Free)'
-          button.addEventListener('click', () => handleModuleAction(module, button))
-
-          card.append(meta, category, button)
-          modulesContainer.appendChild(card)
-        })
-      }
-
-      async function handleModuleAction(module, button) {
-        if (!currentAccount) return setStatus('Connect your wallet first.', 'error')
-        if (module.premium) {
-          setStatus('Checking premium access…')
-          const owns = await checkNFTAccess(currentAccount)
-          hasNft = owns
-          updateStats()
-          updateNftBadge()
-          if (!owns) {
-            button.textContent = 'Mint required'
-            button.disabled = true
-            await showMintSection()
-            return setStatus('Premium access required. Mint the NFT to continue.', 'error')
-          }
-        }
-
-        try {
-          button.disabled = true
-          button.textContent = 'Processing…'
-          const tx = await executeModule(module.id)
-          setStatus(`Module ${module.name} executed. Tx: ${tx}`, 'success')
-        } catch (error) {
-          console.error(error)
-          setStatus(error?.message || 'Execution failed', 'error')
-        } finally {
-          button.disabled = false
-          button.textContent = module.premium ? 'Execute (Premium)' : 'Execute (Free)'
-        }
-      }
-
-      async function showMintSection() {
-        mintSection.classList.remove('hidden')
-        try {
-          const price = await getNFTPrice()
-          nftPrice.textContent = `${Number(price.celoPrice).toFixed(2)} CELO`
-        } catch (error) {
-          console.error('Failed to fetch NFT price', error)
-          nftPrice.textContent = 'Unavailable'
-        }
-      }
-
-      async function handleMint() {
-        if (!currentAccount) return setStatus('Connect your wallet first.', 'error')
-        setStatus('Minting access pass…')
-        mintBtn.disabled = true
-        mintBtn.textContent = 'Minting…'
-        try {
-          const tx = await mintAccessPass()
-          setStatus(`Access pass minted. Tx: ${tx}`, 'success')
-          hasNft = true
-          updateNftBadge()
-          renderModules()
-        } catch (error) {
-          console.error(error)
-          setStatus(error?.message || 'Mint failed', 'error')
-        } finally {
-          mintBtn.disabled = false
-          mintBtn.textContent = 'Mint Access Pass'
-        }
-      }
-
-      profileForm.addEventListener('submit', async (event) => {
-        event.preventDefault()
-        if (!currentAccount) return setStatus('Connect your wallet first.', 'error')
-        const data = new FormData(profileForm)
-        const payload = {
-          username: data.get('username'),
-          twitter: data.get('twitter'),
-          github: data.get('github'),
-          talent: data.get('talent'),
-          selfID: data.get('selfId'),
-        }
-        setStatus('Creating profile…')
-        try {
-          await createProfile({
-            username: payload.username,
-            twitter: payload.twitter,
-            github: payload.github,
-            talent: payload.talent,
-            selfID: payload.selfID,
-          })
-          setStatus('Profile created. Loading dashboard…', 'success')
-          await loadProfile()
-        } catch (error) {
-          console.error(error)
-          setStatus(error?.message || 'Unable to create profile', 'error')
-        }
-      })
-
-      connectBtn.addEventListener('click', handleConnect)
-      mintBtn.addEventListener('click', handleMint)
-
-      showConnectStep()
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js" type="text/javascript"></script>
+    <script src="https://unpkg.com/@walletconnect/universal-provider@2.9.0/dist/index.umd.js" type="text/javascript"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>
