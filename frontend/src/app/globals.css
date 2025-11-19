@@ -3,35 +3,37 @@
 @tailwind utilities;
 
 :root {
-  --background: 210 30% 4%;
-  --foreground: 0 0% 100%;
-  --card: 210 25% 8%;
-  --card-foreground: 0 0% 100%;
-  --popover: 210 25% 8%;
-  --popover-foreground: 0 0% 100%;
-  --primary: 46 96% 67%;
-  --primary-foreground: 210 40% 7%;
-  --secondary: 210 20% 14%;
-  --secondary-foreground: 0 0% 100%;
-  --muted: 210 15% 18%;
-  --muted-foreground: 0 0% 78%;
-  --accent: 46 96% 67%;
-  --accent-foreground: 210 40% 7%;
-  --destructive: 0 62% 50%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 210 18% 20%;
-  --input: 210 18% 22%;
-  --ring: 46 96% 67%;
+  --background: 41 92% 95%;
+  --foreground: 27 43% 24%;
+  --card: 39 100% 97%;
+  --card-foreground: 27 43% 24%;
+  --popover: 39 100% 97%;
+  --popover-foreground: 27 43% 24%;
+  --primary: 42 92% 66%;
+  --primary-foreground: 27 43% 18%;
+  --secondary: 146 56% 42%;
+  --secondary-foreground: 41 100% 97%;
+  --muted: 41 60% 90%;
+  --muted-foreground: 27 30% 38%;
+  --accent: 42 92% 66%;
+  --accent-foreground: 27 43% 18%;
+  --destructive: 5 72% 52%;
+  --destructive-foreground: 41 100% 97%;
+  --border: 34 46% 85%;
+  --input: 34 46% 85%;
+  --ring: 42 92% 66%;
   --radius: 1rem;
 }
 
 body {
-  background: radial-gradient(circle at 10% 20%, rgba(251, 204, 92, 0.08), transparent 25%),
-    radial-gradient(circle at 85% 10%, rgba(53, 208, 127, 0.1), transparent 30%),
-    radial-gradient(circle at 40% 80%, rgba(251, 204, 92, 0.06), transparent 25%),
-    #0a0d0c;
-  color: #f8fafc;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(255, 239, 205, 0.9), transparent 35%),
+    radial-gradient(circle at 80% 0%, rgba(255, 215, 163, 0.6), transparent 45%),
+    radial-gradient(circle at 40% 80%, rgba(243, 232, 206, 0.6), transparent 50%),
+    #fff8ed;
+  color: #3d2b12;
   min-height: 100vh;
+  font-feature-settings: 'ss01' on;
 }
 
 a {
@@ -46,11 +48,12 @@ a {
 }
 
 .glass-card {
-  background: linear-gradient(145deg, rgba(18, 22, 21, 0.9), rgba(16, 18, 17, 0.85));
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 18px;
-  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 248, 226, 0.95));
+  border: 1px solid rgba(228, 198, 140, 0.7);
+  border-radius: 22px;
+  box-shadow: 0 25px 60px rgba(247, 201, 114, 0.28);
+  backdrop-filter: blur(12px);
+  color: #3d2b12;
 }
 
 button {
