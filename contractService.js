@@ -8,11 +8,15 @@ import {
   MAIN_HUB_ABI,
   MAIN_HUB_ADDRESS,
   NETWORKS,
+  MODULES,
   PROJECT_OWNER_ADDRESS,
 } from './constants.js'
 import { getProvider, getSigner } from './walletService.js'
 
 const { ethers } = window
+
+const BASE_PREMIUM_FEE = ethers.utils.parseEther('0.01')
+const BASE_STANDARD_FEE = ethers.utils.parseEther('0.1')
 
 const MAIN_HUB_CONTRACTS = {
   [NETWORKS.mainnet.chainId]: MAIN_HUB_ADDRESS,
@@ -69,12 +73,12 @@ export async function fetchCusdBalance(account, chainId) {
 }
 
 export async function sendGmPing(account) {
-  return executeModule({ moduleId: 1, premium: false })
+  return executeModule(1)
 }
 
 export async function donateCelo(amountInEther) {
   const extraValue = ethers.utils.parseEther(amountInEther)
-  return executeModule({ moduleId: 2, premium: false, extraValue, fallbackTarget: DONATION_ADDRESS })
+  return executeModule(2, { extraValue, fallbackTarget: DONATION_ADDRESS })
 }
 
 export async function fetchCeloBalance(account) {
@@ -92,7 +96,7 @@ export async function donate(amountInEther = '0.01') {
 }
 
 export async function deployContract() {
-  return executeModule({ moduleId: 3, premium: true })
+  return executeModule(3)
 }
 
 function getActiveProvider() {
@@ -118,14 +122,30 @@ async function getMainHubContract(withSigner = false) {
   return new ethers.Contract(contractAddress, MAIN_HUB_ABI, signerOrProvider)
 }
 
-async function executeModule({ moduleId, premium = false, extraValue = ethers.BigNumber.from(0), fallbackTarget, data = '0x' }) {
+async function executeModule(moduleId, { extraValue = ethers.BigNumber.from(0), fallbackTarget, data = '0x' } = {}) {
+  const moduleMeta = MODULES[moduleId]
+  if (!moduleMeta) {
+    throw new Error('Module configuration missing for execution')
+  }
+
+  const signer = getSigner()
+  const account = await signer.getAddress()
+  const ownsAccessNft = await hasAccessNft(account)
+
+  if (moduleMeta.premium && !ownsAccessNft) {
+    throw new Error('Premium module requires the NFT Access Pass')
+  }
+
+  const baseFee = ownsAccessNft ? BASE_PREMIUM_FEE : BASE_STANDARD_FEE
+  const normalizedExtra = ethers.BigNumber.isBigNumber(extraValue)
+    ? extraValue
+    : ethers.BigNumber.from(extraValue || 0)
+  const overrides = { value: baseFee.add(normalizedExtra) }
+
   const contract = await getMainHubContract(true)
-  const fee = premium ? await contract.premiumFee() : await contract.basicFee()
-  const overrides = { value: fee.add(extraValue) }
 
   // Allow a direct send if MainHub is unavailable
   if (!contract || !contract.executeModule) {
-    const signer = getSigner()
     const destination = fallbackTarget || PROJECT_OWNER_ADDRESS
     const tx = await signer.sendTransaction({ to: destination, value: overrides.value, data })
     await tx.wait()
@@ -154,4 +174,12 @@ export async function mintAccessPass() {
   const tx = await contract.mintNFT({ value: mintPrice })
   await tx.wait()
   return tx.hash
+}
+
+export function calculateUserScore(userProfile = {}) {
+  const uniqueModulesUsed = Number(userProfile.uniqueModulesUsed ?? 0)
+  const totalActions = Number(userProfile.totalActions ?? 0)
+  const premiumModuleCount = Number(userProfile.premiumModuleCount ?? 0)
+
+  return uniqueModulesUsed * 5 + totalActions * 1 + premiumModuleCount * 10
 }
