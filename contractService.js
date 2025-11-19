@@ -155,7 +155,10 @@ export async function createProfile({ username, twitter, github, talent, selfID 
   return tx.hash
 }
 
-async function executeModule(moduleId, { extraValue = ethers.BigNumber.from(0), data = '0x' } = {}) {
+export async function executeModule(
+  moduleId,
+  { extraValue = ethers.BigNumber.from(0), data = '0x' } = {}
+) {
   const moduleMeta = MODULE_MAP[moduleId]
   if (!moduleMeta) {
     throw new Error('Module configuration missing for execution')
