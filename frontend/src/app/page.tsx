@@ -100,7 +100,7 @@ export default function Home() {
                   Start Using Modules
                 </Button>
               </Link>
-              <div className="flex items-center gap-3 rounded-xl border border-[#F6D7A8] bg-white/80 px-4 py-3 text-[#5C472F] shadow-sm">
+              <div className="flex items-center gap-3 rounded-xl border border-[#F6D7A8] bg-[#FFF1CE] px-4 py-3 text-[#5C472F] shadow-sm">
                 <div className="h-10 w-10 rounded-lg bg-[#FDE9BC] flex items-center justify-center text-[#C18502] font-bold">⚡</div>
                 <div>
                   <div className="text-sm font-semibold text-[#3E2B13]">{isConnected ? 'Wallet Connected' : 'Ready for Celo'}</div>
@@ -109,15 +109,15 @@ export default function Home() {
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="rounded-xl border border-[#F4D8AF] bg-white/90 p-4 text-[#3B2B17] shadow-sm">
+              <div className="rounded-xl border border-[#F4D8AF] bg-[#FFF4D8] p-4 text-[#3B2B17] shadow-sm">
                 <div className="text-xs uppercase text-[#B0822A]">Network</div>
                 <div className="text-lg font-semibold">{chain?.name || 'Celo'}</div>
               </div>
-              <div className="rounded-xl border border-[#F4D8AF] bg-white/90 p-4 text-[#3B2B17] shadow-sm">
+              <div className="rounded-xl border border-[#F4D8AF] bg-[#FFF4D8] p-4 text-[#3B2B17] shadow-sm">
                 <div className="text-xs uppercase text-[#B0822A]">CELO Balance</div>
                 <div className="text-lg font-semibold">{balance ? `${Number(balance.formatted).toFixed(3)} ${balance.symbol}` : '—'}</div>
               </div>
-              <div className="rounded-xl border border-[#F4D8AF] bg-white/90 p-4 text-[#3B2B17] shadow-sm">
+              <div className="rounded-xl border border-[#F4D8AF] bg-[#FFF4D8] p-4 text-[#3B2B17] shadow-sm">
                 <div className="text-xs uppercase text-[#B0822A]">Status</div>
                 <div className="text-lg font-semibold">{isConnected ? 'Ready' : 'Connect to start'}</div>
               </div>
@@ -130,7 +130,7 @@ export default function Home() {
               <span className="rounded-full bg-[#FFE4AE] px-3 py-1 text-xs font-semibold text-[#8A5C05]">Live</span>
             </div>
             <StatsCards />
-            <div className="rounded-2xl border border-[#F2DAB2] bg-white/80 p-4">
+            <div className="rounded-2xl border border-[#F2DAB2] bg-[#FFF4DC] p-4">
               <h4 className="text-sm font-semibold text-[#2F210F] mb-2">Wallet Overview</h4>
               <WalletInfo />
             </div>
@@ -159,24 +159,24 @@ export default function Home() {
               </div>
             </div>
             <div className="grid gap-3 text-sm text-[#5F4B32]">
-              <Link href="/profile" className="flex items-center justify-between rounded-lg border border-[#F0DABA] bg-white/80 px-3 py-2 hover:border-[#EFC46E]">
+              <Link href="/profile" className="flex items-center justify-between rounded-lg border border-[#F0DABA] bg-[#FFF6E3] px-3 py-2 hover:border-[#EFC46E]">
                 <span>Profile</span>
                 <span className="text-xs text-[#A18863]">Manage identity</span>
               </Link>
-              <Link href="/modules" className="flex items-center justify-between rounded-lg border border-[#F0DABA] bg-white/80 px-3 py-2 hover:border-[#EFC46E]">
+              <Link href="/modules" className="flex items-center justify-between rounded-lg border border-[#F0DABA] bg-[#FFF6E3] px-3 py-2 hover:border-[#EFC46E]">
                 <span>Modules</span>
                 <span className="text-xs text-[#A18863]">Launch actions</span>
               </Link>
-              <Link href="/nft" className="flex items-center justify-between rounded-lg border border-[#F0DABA] bg-white/80 px-3 py-2 hover:border-[#EFC46E]">
+              <Link href="/nft" className="flex items-center justify-between rounded-lg border border-[#F0DABA] bg-[#FFF6E3] px-3 py-2 hover:border-[#EFC46E]">
                 <span>NFT</span>
                 <span className="text-xs text-[#A18863]">Access pass</span>
               </Link>
-              <Link href="/stats" className="flex items-center justify-between rounded-lg border border-[#F0DABA] bg-white/80 px-3 py-2 hover:border-[#EFC46E]">
+              <Link href="/stats" className="flex items-center justify-between rounded-lg border border-[#F0DABA] bg-[#FFF6E3] px-3 py-2 hover:border-[#EFC46E]">
                 <span>Stats</span>
                 <span className="text-xs text-[#A18863]">Live counters</span>
               </Link>
             </div>
-            <div className="rounded-xl border border-[#F0D6A5] bg-white/80 p-4 text-xs text-[#5F4B32]">
+            <div className="rounded-xl border border-[#F0D6A5] bg-[#FFF4D8] p-4 text-xs text-[#5F4B32]">
               <div className="flex items-center justify-between">
                 <span>Premium status</span>
                 <span
@@ -231,27 +231,27 @@ export default function Home() {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FCE3A8] text-[#D28A00]">📡</div>
             </div>
             <div className="space-y-3 text-sm text-[#5F4B32]">
-              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-white/80 px-3 py-2">
+              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-[#FFF4D8] px-3 py-2">
                 <span>Network</span>
                 <span className="font-semibold text-[#2F210F]">{chain?.name || 'Celo'}</span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-white/80 px-3 py-2">
+              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-[#FFF4D8] px-3 py-2">
                 <span>Address</span>
                 <span className="font-mono text-xs text-[#8A7554]">{address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Not connected'}</span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-white/80 px-3 py-2">
+              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-[#FFF4D8] px-3 py-2">
                 <span>Balance</span>
                 <span className="font-semibold text-[#2F210F]">{balance ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}` : '—'}</span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-white/80 px-3 py-2">
+              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-[#FFF4D8] px-3 py-2">
                 <span>Total Actions</span>
                 <span className="font-semibold text-[#B77400]">{liveActions}</span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-white/80 px-3 py-2">
+              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-[#FFF4D8] px-3 py-2">
                 <span>User Score</span>
                 <span className="font-semibold text-[#2F210F]">{userRank}</span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-white/80 px-3 py-2">
+              <div className="flex items-center justify-between rounded-lg border border-[#F0D6A5] bg-[#FFF4D8] px-3 py-2">
                 <span>Connection</span>
                 <span className={`flex items-center gap-2 ${isConnected ? 'text-[#2B8A57]' : 'text-[#9B8B74]'}`}>
                   <span className={`h-2.5 w-2.5 rounded-full ${isConnected ? 'bg-[#35D07F]' : 'bg-[#C8B89A]'}`}></span>
