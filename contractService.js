@@ -35,7 +35,27 @@ const NFT_ACCESS_CONTRACTS = {
   [NETWORKS.alfajores.chainId]: ACCESS_PASS_ADDRESS,
 }
 
-const defaultProvider = new ethers.providers.JsonRpcProvider(DEFAULT_NETWORK.rpcUrl)
+function createNetworkFallbackProvider(network = DEFAULT_NETWORK) {
+  const urls = network.rpcUrls?.length ? network.rpcUrls : [network.rpcUrl]
+
+  const buildProvider = url =>
+    new ethers.providers.StaticJsonRpcProvider({ url, timeout: 15000 }, network.chainId)
+
+  if (urls.length === 1) {
+    return buildProvider(urls[0])
+  }
+
+  const configs = urls.map((url, index) => ({
+    provider: buildProvider(url),
+    priority: index + 1,
+    stallTimeout: 1000,
+    weight: 1,
+  }))
+
+  return new ethers.providers.FallbackProvider(configs)
+}
+
+const defaultProvider = createNetworkFallbackProvider(DEFAULT_NETWORK)
 
 const HELLO_WORLD_ABI = [
   {
@@ -114,18 +134,59 @@ function getActiveProvider() {
   }
 }
 
+function parseChainId(chainIdLike) {
+  if (typeof chainIdLike === 'number') return chainIdLike
+  if (typeof chainIdLike === 'string') {
+    if (chainIdLike.startsWith('0x')) {
+      return parseInt(chainIdLike, 16)
+    }
+    const parsed = Number(chainIdLike)
+    if (!Number.isNaN(parsed)) return parsed
+  }
+  return DEFAULT_NETWORK.chainId
+}
+
+async function detectNetwork(signerOrProvider) {
+  const target = signerOrProvider?.provider || signerOrProvider
+  if (!target) return DEFAULT_NETWORK
+
+  if (typeof target.getNetwork === 'function') {
+    return target.getNetwork()
+  }
+
+  if (typeof target.getChainId === 'function') {
+    const chainId = await target.getChainId()
+    return { chainId }
+  }
+
+  if (typeof target.send === 'function') {
+    const chainIdHex = await target.send('eth_chainId', [])
+    return { chainId: parseChainId(chainIdHex) }
+  }
+
+  if (typeof target.request === 'function') {
+    const chainIdHex = await target.request({ method: 'eth_chainId' })
+    return { chainId: parseChainId(chainIdHex) }
+  }
+
+  return DEFAULT_NETWORK
+}
+
+function resolveContractAddress(contractMap, chainId) {
+  return contractMap[chainId] || contractMap[DEFAULT_NETWORK.chainId]
+}
+
 async function getNftContract(withSigner = false) {
   const signerOrProvider = withSigner ? getSigner() : getActiveProvider()
-  const network = await (signerOrProvider.provider || signerOrProvider).getNetwork()
-  const contractAddress =
-    NFT_ACCESS_CONTRACTS[network.chainId] || NFT_ACCESS_CONTRACTS[DEFAULT_NETWORK.chainId]
+  const network = await detectNetwork(signerOrProvider)
+  const contractAddress = resolveContractAddress(NFT_ACCESS_CONTRACTS, network.chainId)
   return new ethers.Contract(contractAddress, ACCESS_PASS_ABI, signerOrProvider)
 }
 
 async function getMainHubContract(withSigner = false) {
   const signerOrProvider = withSigner ? getSigner() : getActiveProvider()
-  const network = await (signerOrProvider.provider || signerOrProvider).getNetwork()
-  const contractAddress = MAIN_HUB_CONTRACTS[network.chainId] || MAIN_HUB_CONTRACTS[DEFAULT_NETWORK.chainId]
+  const network = await detectNetwork(signerOrProvider)
+  const contractAddress = resolveContractAddress(MAIN_HUB_CONTRACTS, network.chainId)
   return new ethers.Contract(contractAddress, MAIN_HUB_ABI, signerOrProvider)
 }
 
