@@ -1,24 +1,28 @@
 import {
+  ACCESS_PASS_ABI,
+  ACCESS_PASS_ADDRESS,
   CUSD_CONTRACTS,
   DEFAULT_NETWORK,
   DONATION_ADDRESS,
   ERC20_ABI,
+  MAIN_HUB_ABI,
+  MAIN_HUB_ADDRESS,
   NETWORKS,
+  PROJECT_OWNER_ADDRESS,
 } from './constants.js'
 import { getProvider, getSigner } from './walletService.js'
 
 const { ethers } = window
 
-const NFT_ACCESS_CONTRACTS = {
-  [NETWORKS.mainnet.chainId]: '0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd',
-  [NETWORKS.alfajores.chainId]: '0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd',
+const MAIN_HUB_CONTRACTS = {
+  [NETWORKS.mainnet.chainId]: MAIN_HUB_ADDRESS,
+  [NETWORKS.alfajores.chainId]: MAIN_HUB_ADDRESS,
 }
 
-const NFT_ACCESS_ABI = [
-  'function hasNFT(address user) view returns (bool)',
-  'function getNFTPrice() view returns (uint256)',
-  'function mintNFT() payable',
-]
+const NFT_ACCESS_CONTRACTS = {
+  [NETWORKS.mainnet.chainId]: ACCESS_PASS_ADDRESS,
+  [NETWORKS.alfajores.chainId]: ACCESS_PASS_ADDRESS,
+}
 
 const defaultProvider = new ethers.providers.JsonRpcProvider(DEFAULT_NETWORK.rpcUrl)
 
@@ -65,21 +69,12 @@ export async function fetchCusdBalance(account, chainId) {
 }
 
 export async function sendGmPing(account) {
-  const signer = getSigner()
-  const data = ethers.utils.hexlify(ethers.utils.toUtf8Bytes('gm'))
-  const tx = await signer.sendTransaction({ to: account, value: 0, data })
-  await tx.wait()
-  return tx.hash
+  return executeModule({ moduleId: 1, premium: false })
 }
 
 export async function donateCelo(amountInEther) {
-  const signer = getSigner()
-  const tx = await signer.sendTransaction({
-    to: DONATION_ADDRESS,
-    value: ethers.utils.parseEther(amountInEther),
-  })
-  await tx.wait()
-  return tx.hash
+  const extraValue = ethers.utils.parseEther(amountInEther)
+  return executeModule({ moduleId: 2, premium: false, extraValue, fallbackTarget: DONATION_ADDRESS })
 }
 
 export async function fetchCeloBalance(account) {
@@ -97,11 +92,7 @@ export async function donate(amountInEther = '0.01') {
 }
 
 export async function deployContract() {
-  const signer = getSigner()
-  const factory = new ethers.ContractFactory(HELLO_WORLD_ABI, HELLO_WORLD_BYTECODE, signer)
-  const contract = await factory.deploy()
-  await contract.deployTransaction.wait()
-  return contract.address
+  return executeModule({ moduleId: 3, premium: true })
 }
 
 function getActiveProvider() {
@@ -117,7 +108,33 @@ async function getNftContract(withSigner = false) {
   const network = await (signerOrProvider.provider || signerOrProvider).getNetwork()
   const contractAddress =
     NFT_ACCESS_CONTRACTS[network.chainId] || NFT_ACCESS_CONTRACTS[DEFAULT_NETWORK.chainId]
-  return new ethers.Contract(contractAddress, NFT_ACCESS_ABI, signerOrProvider)
+  return new ethers.Contract(contractAddress, ACCESS_PASS_ABI, signerOrProvider)
+}
+
+async function getMainHubContract(withSigner = false) {
+  const signerOrProvider = withSigner ? getSigner() : getActiveProvider()
+  const network = await (signerOrProvider.provider || signerOrProvider).getNetwork()
+  const contractAddress = MAIN_HUB_CONTRACTS[network.chainId] || MAIN_HUB_CONTRACTS[DEFAULT_NETWORK.chainId]
+  return new ethers.Contract(contractAddress, MAIN_HUB_ABI, signerOrProvider)
+}
+
+async function executeModule({ moduleId, premium = false, extraValue = ethers.BigNumber.from(0), fallbackTarget, data = '0x' }) {
+  const contract = await getMainHubContract(true)
+  const fee = premium ? await contract.premiumFee() : await contract.basicFee()
+  const overrides = { value: fee.add(extraValue) }
+
+  // Allow a direct send if MainHub is unavailable
+  if (!contract || !contract.executeModule) {
+    const signer = getSigner()
+    const destination = fallbackTarget || PROJECT_OWNER_ADDRESS
+    const tx = await signer.sendTransaction({ to: destination, value: overrides.value, data })
+    await tx.wait()
+    return tx.hash
+  }
+
+  const tx = await contract.executeModule(moduleId, data, overrides)
+  await tx.wait()
+  return tx.hash
 }
 
 export async function hasAccessNft(account) {
