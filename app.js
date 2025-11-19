@@ -5,7 +5,16 @@ import {
   getConnectionMeta,
   getCurrentNetwork,
 } from './walletService.js'
-import { deployContract, donate, fetchCeloBalance, fetchCusdBalance, sendGM } from './contractService.js'
+import {
+  deployContract,
+  donate,
+  fetchCeloBalance,
+  fetchCusdBalance,
+  fetchNftPrice,
+  hasAccessNft,
+  mintAccessPass,
+  sendGM,
+} from './contractService.js'
 
 const ui = {
   connectMetaMask: document.getElementById('connect-metamask'),
@@ -20,6 +29,12 @@ const ui = {
   donateButton: document.getElementById('donateBtn'),
   deployButton: document.getElementById('deployBtn'),
   actionResult: document.getElementById('action-result'),
+  premiumBadge: document.getElementById('premium-badge'),
+  premiumStatus: document.getElementById('premium-status'),
+  walletAddressDisplay: document.getElementById('walletAddressDisplay'),
+  mintNftBtn: document.getElementById('mintNftBtn'),
+  premiumBanner: document.getElementById('premium-banner'),
+  nftPrice: document.getElementById('nft-price'),
 }
 
 const sections = {
@@ -59,8 +74,12 @@ async function connect(handler) {
   try {
     const account = await handler()
     ui.walletAddress.textContent = shorten(account)
+    if (ui.walletAddressDisplay) {
+      ui.walletAddressDisplay.textContent = shorten(account)
+    }
     setStatus('Wallet connected')
     await refreshNetwork()
+    await refreshPremiumStatus(account)
   } catch (err) {
     console.error(err)
     setStatus(err.message || 'Failed to connect', 'error')
@@ -99,6 +118,17 @@ async function refreshNetwork() {
   ui.networkBadge.textContent = name
   ui.networkName.textContent = `${name} (chain ${network.chainId})`
   await refreshBalances(meta.account, network.chainId)
+}
+
+async function refreshPremiumStatus(account) {
+  if (!account) return updatePremiumUI(false)
+  try {
+    const hasNft = await hasAccessNft(account)
+    updatePremiumUI(hasNft)
+  } catch (err) {
+    console.error('Unable to load premium status', err)
+    updatePremiumUI(false)
+  }
 }
 
 async function refreshBalances(account, chainId) {
@@ -155,6 +185,52 @@ async function performDeploy() {
   }
 }
 
+async function performMintAccessPass() {
+  const { account } = getConnectionMeta()
+  if (!account) return setStatus('Connect your wallet first', 'error')
+  ui.actionResult.textContent = 'Minting access NFT…'
+  try {
+    const hash = await mintAccessPass()
+    ui.actionResult.textContent = `Access NFT minted! Tx: ${hash}`
+    updatePremiumUI(true)
+  } catch (err) {
+    ui.actionResult.textContent = err.message || 'Minting failed'
+  }
+}
+
+function updatePremiumUI(hasNft) {
+  if (ui.premiumBadge) {
+    ui.premiumBadge.classList.toggle('hidden', !hasNft)
+  }
+
+  if (ui.premiumStatus) {
+    ui.premiumStatus.textContent = hasNft ? 'Active' : 'Inactive'
+    ui.premiumStatus.classList.toggle('active', hasNft)
+    ui.premiumStatus.classList.toggle('inactive', !hasNft)
+  }
+
+  if (ui.mintNftBtn) {
+    ui.mintNftBtn.textContent = hasNft ? 'Owned' : 'Mint Access NFT'
+    ui.mintNftBtn.disabled = hasNft
+  }
+
+  if (ui.premiumBanner) {
+    ui.premiumBanner.classList.toggle('hidden', !hasNft)
+  }
+}
+
+async function loadNftPrice() {
+  if (!ui.nftPrice) return
+  ui.nftPrice.textContent = 'Loading…'
+  try {
+    const price = await fetchNftPrice()
+    ui.nftPrice.textContent = `${Number(price).toFixed(2)} CELO`
+  } catch (err) {
+    console.error('Unable to fetch NFT price', err)
+    ui.nftPrice.textContent = '—'
+  }
+}
+
 function handleNavigation(event) {
   event.preventDefault()
   const target = event.currentTarget.dataset.target
@@ -187,3 +263,13 @@ ui.deployButton.addEventListener('click', () => {
   console.log('Action triggered: Deploy')
   return runWithFeedback(ui.deployButton, performDeploy)
 })
+
+if (ui.mintNftBtn) {
+  ui.mintNftBtn.addEventListener('click', () => {
+    console.log('Action triggered: Mint NFT')
+    return runWithFeedback(ui.mintNftBtn, performMintAccessPass)
+  })
+}
+
+updatePremiumUI(false)
+loadNftPrice()

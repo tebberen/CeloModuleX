@@ -26,6 +26,10 @@ body {
   display: none !important;
 }
 
+.hidden {
+  display: none !important;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -383,6 +387,14 @@ a {
   border: 1px solid var(--border);
   color: var(--accent);
   font-weight: 700;
+}
+
+.premium-state.active {
+  color: #22c55e;
+}
+
+.premium-state.inactive {
+  color: var(--muted);
 }
 
 .profile-form {

@@ -46,7 +46,7 @@
               <p class="user-address" id="walletAddressDisplay">—</p>
             </div>
           </div>
-          <span class="badge premium" aria-hidden="true">Premium Access</span>
+          <span class="badge premium hidden" id="premium-badge" aria-hidden="true">Premium Access</span>
           <nav class="side-nav">
             <a href="#" class="side-link" data-target="home">Home</a>
             <a href="#modules" class="side-link" data-target="modules">Modules</a>
@@ -127,8 +127,8 @@
               <div class="nft-info">
                 <p class="card-text">Unlock premium modules by minting the official access NFT.</p>
                 <p class="price">Current price: <span id="nft-price">—</span></p>
-                <button class="button primary">Mint Access NFT</button>
-                <div class="premium-banner">Premium Access Active</div>
+                <button class="button primary" id="mintNftBtn">Mint Access NFT</button>
+                <div class="premium-banner hidden" id="premium-banner">Premium Access Active</div>
               </div>
             </div>
           </section>
@@ -190,7 +190,7 @@
               </div>
               <div>
                 <dt>Premium Status</dt>
-                <dd class="premium-state">Active</dd>
+                <dd class="premium-state inactive" id="premium-status">Inactive</dd>
               </div>
             </dl>
           </div>
