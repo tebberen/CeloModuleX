@@ -10,6 +10,8 @@ npm-debug.log*
 dist/
 build/
 .vercel/
+.next/
+frontend/.next/
 
 # Contract artifacts
 contracts/artifacts/

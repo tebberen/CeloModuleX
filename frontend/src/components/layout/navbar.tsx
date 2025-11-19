@@ -19,31 +19,29 @@ export function Navbar() {
   const pathname = usePathname()
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/5 bg-[#0c0f0d]/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full border-b border-[#F4D58A]/60 bg-white/90 backdrop-blur-xl">
       <div className="container-layout flex items-center justify-between py-4">
         <Link href="/" className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FBCC5C] text-lg font-black text-[#0c0f0d] shadow-md">
             XM
           </div>
           <div className="leading-tight">
-            <div className="text-lg font-semibold text-white">CeloModuleX</div>
-            <div className="text-xs uppercase tracking-wide text-white/60">Celo action launcher</div>
+            <div className="text-lg font-semibold text-[#1C1205]">CeloModuleX</div>
+            <div className="text-xs uppercase tracking-wide text-[#8A6B33]">Celo action launcher</div>
           </div>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold">
+        <nav className="hidden items-center gap-8 text-sm font-semibold lg:flex">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={`relative pb-1 transition-colors ${
-                pathname === item.href
-                  ? 'text-[#FBCC5C]'
-                  : 'text-white/70 hover:text-white'
+                pathname === item.href ? 'text-[#C78B16]' : 'text-[#5B4128] hover:text-[#1C1205]'
               }`}
             >
               {item.label}
-              {pathname === item.href && <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-[#FBCC5C] rounded-full"></span>}
+              {pathname === item.href && <span className="absolute inset-x-0 -bottom-1 h-0.5 rounded-full bg-[#C78B16]"></span>}
             </Link>
           ))}
         </nav>
@@ -53,7 +51,7 @@ export function Navbar() {
         </div>
 
         <button
-          className="flex items-center justify-center rounded-full p-2 text-white/80 hover:bg-white/10 lg:hidden"
+          className="flex items-center justify-center rounded-full p-2 text-[#5B4128] hover:bg-black/5 lg:hidden"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
@@ -62,15 +60,15 @@ export function Navbar() {
       </div>
 
       {open && (
-        <div className="border-t border-white/5 bg-[#0c0f0d]/95 backdrop-blur-xl lg:hidden">
+        <div className="border-t border-[#F4D58A]/60 bg-white/95 backdrop-blur-xl lg:hidden">
           <div className="container-layout space-y-4 py-4">
-            <nav className="grid gap-3 text-sm font-semibold">
+            <nav className="grid gap-3 text-sm font-semibold text-[#1C1205]">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className={`${pathname === item.href ? 'text-[#FBCC5C]' : 'text-white/80'}`}
+                  className={`${pathname === item.href ? 'text-[#C78B16]' : 'text-[#5B4128]'}`}
                 >
                   {item.label}
                 </Link>
