@@ -1,22 +1,62 @@
-# CeloModuleX - Modular On-Chain Action Platform
+# CeloModuleX – Web3'ün Merkezi Aksiyon Katmanı
 
-🌍 **The Universal Engagement Layer for Celo Ecosystem**
+CeloModuleX, onlarca farklı on-chain etkileşimi tek bir yüzeyde toplayan, modüler ve çok zincirli bir aksiyon platformudur. Kullanıcılar, yüzlerce akıllı sözleşme fonksiyonunu tek tıkla çalıştırabilirken yatırımcılar sürdürülebilir bir gelir modeline ortak olur.
 
-## Features
-- 🧩 Modular smart contract system
-- 💰 Two-tier fee model (0.1 CELO standard / 0.01 CELO premium)
-- 🎫 NFT Access Pass for discounted transactions
-- 🔗 Multi-chain ready architecture
-- 📊 On-chain analytics and user profiles
+## 1. Problem → Çözüm → Vizyon
 
-## Quick Start
+| Problem | Çözüm | Vizyon |
+| --- | --- | --- |
+| Kullanıcılar swap, bridge, mint gibi birkaç temel işlemle sınırlı kalıyor; yüzlerce niş aksiyon parçalanmış durumda. | MainHub + modül mimarisi, tüm aksiyonları tek arayüzde birleştiriyor. | CeloModuleX'i Celo'dan başlayıp tüm Web3'e yayılan küresel bir on-chain engagement katmanına dönüştürmek. |
+
+## 2. Teknik Derinlik
+
+- **MainHub.sol** tüm modül kaydı, profil yönetimi, ücret toplama ve liderlik skoru mantığını yürütür. Ayrıntılar için [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+- **Modüller** yalnızca kendi işlevlerini uygular, ücret ve erişim kontrolü MainHub tarafından yapılır.
+- **Çok Zincirli Tasarım** her zincirde aynı MainHub mimarisinin dağıtılmasıyla risk dağılımı sağlar.
+
+## 3. Ekonomik Model
+
+1. **Premium NFT Access Pass** – 5 CELO'dan başlayan ve her 50 yeni modülde 2 CELO artan dinamik fiyatlı üyelik. Premium kullanıcılar işlem başına 0.01 CELO öder.
+2. **İşlem Komisyonları** – Standart kullanıcılar 0.1 CELO öder. Tüm ücretler MainHub'da toplanır ve sürdürülebilir gelir yaratır.
+
+Detaylı tablo: [`docs/ECONOMICS.md`](docs/ECONOMICS.md).
+
+## 4. Veri Katmanı ve Liderlik
+
+- MainHub, kullanıcı profilleri ve aksiyon istatistiklerini kaydeder.
+- Liderlik skoru formülü: `Score = (Unique Modules × 5) + (Total Actions × 1) + (Premium Actions × 10)`.
+- Tüm zamanlar, haftalık, aylık ve modül bazlı sıralamalar mevcuttur.
+
+Bkz. [`docs/DATA_LAYER.md`](docs/DATA_LAYER.md).
+
+## 5. Entegrasyonlar ve Yol Haritası
+
+- Celo AI Partner Programı, Talent Protocol, Self XYZ gibi partnerler aracılığıyla yeni modül tipleri eklenir.
+- Yol haritası üç aşamadan oluşur: Başlangıç (50 modül), Genişleme (100 modül, multi-chain testleri), Büyüme (200+ modül, geliştirici programı).
+
+Detaylar: [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
+## 6. Proje Yapısı
+
+```
+contracts/        # MainHub + modül sözleşmeleri (Hardhat)
+frontend/         # Web arayüzü (Next.js + TypeScript)
+scripts/          # Deploy ve yardımcı script'ler
+docs/             # Mimari, ekonomi ve yol haritası dokümantasyonu
+```
+
+## 7. Hızlı Başlangıç
+
 1. `npm install`
-2. Copy `.env.example` to `.env` and configure
-3. `npm run deploy:testnet` - Deploy to Alfajores testnet
-4. `npm run dev` - Start frontend
+2. `.env.example` → `.env`
+3. `npm run deploy:testnet` ile Alfajores'e kontratları dağıtın
+4. `npm run dev` ile frontend'i başlatın
 
-## Project Structure
-- `/contracts` - Smart contracts (Solidity + Hardhat)
-- `/frontend` - Next.js + TypeScript frontend
-- `/scripts` - Deployment & utility scripts
-- `/docs` - Documentation
+## 8. Katkıda Bulunma
+
+- Yeni bir modül eklemek için sadece MainHub'a adres kaydı yapmak yeterli.
+- PR'larınızda modülün `execute` imzasını ve gerekli veri şemasını açıklamayı unutmayın.
+
+## 9. Lisans
+
+Bu depo varsayılan olarak MIT lisansı kullanır; farklı lisans gereksinimleri için proje sahibine ulaşın.
