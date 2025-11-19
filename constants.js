@@ -1,3 +1,7 @@
+export const MAIN_HUB_ADDRESS = '0xad9801c23f3a7ebfea6c33e8575d479169881ff2'
+export const ACCESS_PASS_ADDRESS = '0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd'
+export const CHAIN_ID = 44787
+
 export const NETWORKS = {
   mainnet: {
     chainId: 42220,
@@ -17,7 +21,12 @@ export const NETWORKS = {
   },
 }
 
-export const DEFAULT_NETWORK = NETWORKS.alfajores
+const NETWORK_BY_CHAIN_ID = {
+  [NETWORKS.mainnet.chainId]: NETWORKS.mainnet,
+  [NETWORKS.alfajores.chainId]: NETWORKS.alfajores,
+}
+
+export const DEFAULT_NETWORK = NETWORK_BY_CHAIN_ID[CHAIN_ID] || NETWORKS.alfajores
 // Replace with your own WalletConnect Project ID from Cloud.WalletConnect when deploying.
 export const WALLET_CONNECT_PROJECT_ID = '4530041258341627800'
 
@@ -29,8 +38,11 @@ export const CUSD_CONTRACTS = {
   [NETWORKS.alfajores.chainId]: '0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1',
 }
 
-export const MAIN_HUB_ADDRESS = '0xad9801c23f3a7ebfea6c33e8575d479169881ff2'
-export const ACCESS_PASS_ADDRESS = '0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd'
+export const MODULES = {
+  1: { name: 'GM Ping', category: 'Social', type: 'Action', premium: false },
+  2: { name: 'Donate CELO', category: 'Payments', type: 'ValueTransfer', premium: false },
+  3: { name: 'Deploy Hello World', category: 'Developer', type: 'Deployment', premium: true },
+}
 
 export const ERC20_ABI = [
   'function name() view returns (string)',
