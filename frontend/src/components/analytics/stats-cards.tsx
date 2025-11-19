@@ -76,13 +76,13 @@ export function StatsCards() {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <Card key={i} className="bg-white/5 border-white/10">
+          <Card key={i} className="bg-[#FFF7E2] border-[#F3DCB4]">
             <CardHeader className="pb-2">
-              <div className="h-4 bg-white/10 rounded animate-pulse"></div>
+              <div className="h-4 bg-[#F2E4C6] rounded animate-pulse"></div>
             </CardHeader>
             <CardContent>
-              <div className="h-8 bg-white/10 rounded animate-pulse"></div>
-              <div className="h-3 bg-white/10 rounded animate-pulse mt-2"></div>
+              <div className="h-8 bg-[#F2E4C6] rounded animate-pulse"></div>
+              <div className="h-3 bg-[#F2E4C6] rounded animate-pulse mt-2"></div>
             </CardContent>
           </Card>
         ))}
@@ -93,16 +93,19 @@ export function StatsCards() {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {statsData.map((stat, index) => (
-        <Card key={index} className="relative overflow-hidden bg-white/5 border-white/10">
-          <div className={`absolute top-0 right-0 w-16 h-16 ${stat.color} opacity-20 rounded-full -mr-8 -mt-8`}></div>
+        <Card
+          key={index}
+          className="relative overflow-hidden border-[#F2DAB2] bg-white/90 text-[#2F210F] shadow-sm"
+        >
+          <div className={`absolute top-0 right-0 w-16 h-16 ${stat.color} opacity-15 rounded-full -mr-8 -mt-8`}></div>
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-white/70 uppercase">
+            <CardTitle className="text-xs font-medium text-[#8A744F] uppercase">
               {stat.title}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{stat.value}</div>
-            <p className="text-xs text-white/60 mt-1">{stat.description}</p>
+            <div className="text-2xl font-bold text-[#2F210F]">{stat.value}</div>
+            <p className="text-xs text-[#7C694D] mt-1">{stat.description}</p>
           </CardContent>
         </Card>
       ))}
