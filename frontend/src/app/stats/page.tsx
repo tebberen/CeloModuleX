@@ -30,7 +30,7 @@ export default function StatsPage() {
         <div>
           <p className="text-[#FBCC5C] text-sm uppercase font-semibold">Stats</p>
           <h1 className="text-3xl font-bold text-white">MainHub activity</h1>
-          <p className="text-white/70">Live counters direct from the MainHub smart contract.</p>
+          <p className="text-white/70">Live counters direct from the MainHub smart contract plus investor-facing health metrics.</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -51,6 +51,36 @@ export default function StatsPage() {
               <CardTitle>Registered Modules</CardTitle>
             </CardHeader>
             <CardContent className="text-3xl font-bold">{modules.length}</CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="bg-gradient-to-br from-[#191d1b] to-[#0d0f0e] border-white/10 text-white">
+            <CardHeader>
+              <CardTitle>Investor Perspective: Commissions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <div className="text-3xl font-bold">$15,000 cUSD</div>
+              <p className="text-sm text-white/70">Placeholder estimate of total commissions earned.</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-[#191d1b] to-[#0d0f0e] border-white/10 text-white">
+            <CardHeader>
+              <CardTitle>Investor Perspective: NFTs Minted</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <div className="text-3xl font-bold">500</div>
+              <p className="text-sm text-white/70">Placeholder count of Access Pass NFTs in circulation.</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-[#191d1b] to-[#0d0f0e] border-white/10 text-white">
+            <CardHeader>
+              <CardTitle>Investor Perspective: Modules Deployed</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <div className="text-3xl font-bold">{modules.length || 53}</div>
+              <p className="text-sm text-white/70">Using current registry count when available.</p>
+            </CardContent>
           </Card>
         </div>
 

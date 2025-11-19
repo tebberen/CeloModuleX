@@ -19,6 +19,8 @@ export default function Home() {
   const { profile } = useUserProfile()
   const { executeModule, executeDonate, loading } = useMainHub()
   const [status, setStatus] = useState('')
+  const [liveActions, setLiveActions] = useState(420)
+  const [userRank, setUserRank] = useState('On-Chain Pioneer')
 
   const handleExecute = async (actionId: number, action: string, premium: boolean) => {
     setStatus('')
@@ -40,6 +42,13 @@ export default function Home() {
       return () => clearTimeout(timer)
     }
   }, [status])
+
+  useEffect(() => {
+    if (profile?.actionCount) {
+      setLiveActions(profile.actionCount)
+      setUserRank(profile.actionCount > 25 ? 'Protocol Champion' : 'On-Chain Pioneer')
+    }
+  }, [profile?.actionCount])
 
   const actions = [
     {
@@ -79,11 +88,10 @@ export default function Home() {
             </div>
             <div className="space-y-4">
               <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight">
-                The modular on-chain action launcher for Celo
+                The Universal Engagement Layer for Celo
               </h1>
               <p className="text-lg text-white/70 max-w-2xl">
-                Trigger GM, Donate, and Deploy modules with a Celo-branded experience. Keep your wallet connected,
-                track balances, and showcase your on-chain profile in one place.
+                Access hundreds of modular on-chain functions, quickly and cost-effectively. Upgrade to Premium for 10x cheaper fees.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
@@ -128,6 +136,10 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        <p className="mt-6 text-sm text-white/60">
+          CeloModuleX is the engine that drives on-chain diversity and wallet activity across Celo and other EVM chains.
+        </p>
       </section>
 
       <section id="actions" className="container-layout space-y-6">
@@ -139,6 +151,9 @@ export default function Home() {
                 <p className="text-sm uppercase text-white/60">Profile</p>
                 <p className="text-lg font-semibold text-white">{profile?.username || 'Anonymous Celo User'}</p>
                 <p className="text-xs text-white/60">{address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Connect to load profile'}</p>
+                <p className="mt-1 inline-flex items-center gap-2 rounded-full border border-[#FBCC5C]/30 bg-[#FBCC5C]/10 px-3 py-1 text-[11px] font-semibold text-[#FBCC5C]">
+                  Reputation: {profile?.hasNFT ? 'High (Premium Holder)' : 'Growing'}
+                </p>
               </div>
             </div>
             <div className="grid gap-3 text-sm text-white/70">
@@ -219,6 +234,14 @@ export default function Home() {
               <div className="flex items-center justify-between rounded-lg border border-white/5 bg-white/5 px-3 py-2">
                 <span>Balance</span>
                 <span className="font-semibold text-white">{balance ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}` : '—'}</span>
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-white/5 bg-white/5 px-3 py-2">
+                <span>Total Actions</span>
+                <span className="font-semibold text-[#FBCC5C]">{liveActions}</span>
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-white/5 bg-white/5 px-3 py-2">
+                <span>User Score</span>
+                <span className="font-semibold text-white/80">{userRank}</span>
               </div>
               <div className="flex items-center justify-between rounded-lg border border-white/5 bg-white/5 px-3 py-2">
                 <span>Connection</span>

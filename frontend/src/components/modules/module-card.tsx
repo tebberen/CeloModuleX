@@ -39,10 +39,12 @@ export function ModuleCard({ module }: ModuleCardProps) {
         <CardContent>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Fee:</span>
-              <span className="font-semibold">
-                {module.premium ? '0.01' : '0.1'} CELO
-              </span>
+              <span className="text-gray-600">Standard Fee</span>
+              <span className="font-semibold">0.1 CELO</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Premium Fee</span>
+              <span className="font-semibold text-emerald-500">0.01 CELO</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Version:</span>
