@@ -145,6 +145,10 @@ export async function getUserProfile(account) {
     hasNFT,
   }
 
+  if (!profile.username || profile.username.trim() === '') {
+    return null
+  }
+
   return { ...profile, score: calculateUserScore(profile) }
 }
 

@@ -10,8 +10,6 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-    <script src="https://unpkg.com/@walletconnect/universal-provider@2.9.0/dist/index.umd.js"></script>
     <style>
       :root {
         --bg: #050608;
@@ -428,6 +426,16 @@
       </main>
     </div>
 
+    <script
+      src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"
+      type="text/javascript"
+      defer
+    ></script>
+    <script
+      src="https://unpkg.com/@walletconnect/universal-provider@2.9.0/dist/index.umd.js"
+      type="text/javascript"
+      defer
+    ></script>
     <script type="module">
       import { MODULES } from './constants.js'
       import { connectMetaMask, connectWalletConnect } from './walletService.js'
