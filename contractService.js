@@ -1,7 +1,26 @@
-import { CUSD_CONTRACTS, DONATION_ADDRESS, ERC20_ABI } from './constants.js'
+import {
+  CUSD_CONTRACTS,
+  DEFAULT_NETWORK,
+  DONATION_ADDRESS,
+  ERC20_ABI,
+  NETWORKS,
+} from './constants.js'
 import { getProvider, getSigner } from './walletService.js'
 
 const { ethers } = window
+
+const NFT_ACCESS_CONTRACTS = {
+  [NETWORKS.mainnet.chainId]: '0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd',
+  [NETWORKS.alfajores.chainId]: '0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd',
+}
+
+const NFT_ACCESS_ABI = [
+  'function hasNFT(address user) view returns (bool)',
+  'function getNFTPrice() view returns (uint256)',
+  'function mintNFT() payable',
+]
+
+const defaultProvider = new ethers.providers.JsonRpcProvider(DEFAULT_NETWORK.rpcUrl)
 
 const HELLO_WORLD_ABI = [
   {
@@ -83,4 +102,39 @@ export async function deployContract() {
   const contract = await factory.deploy()
   await contract.deployTransaction.wait()
   return contract.address
+}
+
+function getActiveProvider() {
+  try {
+    return getProvider()
+  } catch (err) {
+    return defaultProvider
+  }
+}
+
+async function getNftContract(withSigner = false) {
+  const signerOrProvider = withSigner ? getSigner() : getActiveProvider()
+  const network = await (signerOrProvider.provider || signerOrProvider).getNetwork()
+  const contractAddress =
+    NFT_ACCESS_CONTRACTS[network.chainId] || NFT_ACCESS_CONTRACTS[DEFAULT_NETWORK.chainId]
+  return new ethers.Contract(contractAddress, NFT_ACCESS_ABI, signerOrProvider)
+}
+
+export async function hasAccessNft(account) {
+  const contract = await getNftContract(false)
+  return contract.hasNFT(account)
+}
+
+export async function fetchNftPrice() {
+  const contract = await getNftContract(false)
+  const rawPrice = await contract.getNFTPrice()
+  return ethers.utils.formatEther(rawPrice)
+}
+
+export async function mintAccessPass() {
+  const contract = await getNftContract(true)
+  const mintPrice = await contract.getNFTPrice()
+  const tx = await contract.mintNFT({ value: mintPrice })
+  await tx.wait()
+  return tx.hash
 }
