@@ -1,11 +1,11 @@
 :root {
-  --bg: #f8f8f8;
-  --panel: #ffffff;
+  --bg: #fff9e5;
+  --panel: #fffbf0;
   --card: #ffffff;
-  --accent: #fbcc5c;
+  --accent: #f4c200;
   --heading: #1a1a1a;
-  --text: #333333;
-  --muted: #555555;
+  --text: #2d240f;
+  --muted: #6b520b;
   --border: rgba(26, 26, 26, 0.08);
   --glow: 0 4px 12px rgba(0, 0, 0, 0.08);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -17,7 +17,7 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: linear-gradient(180deg, #fff9e5 0%, #fff3c4 40%, #fff9e5 100%);
   color: var(--text);
   min-height: 100vh;
 }
@@ -42,9 +42,9 @@ a {
 }
 
 .content-area {
-  width: min(1200px, 100%);
+  width: min(1400px, 100%);
   margin: 0 auto;
-  padding: 20px 24px 40px;
+  padding: 20px 32px 48px;
 }
 
 .navbar {
@@ -62,8 +62,8 @@ a {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 16px;
-  padding: 14px 24px;
-  width: min(1200px, 100%);
+  padding: 14px 32px;
+  width: min(1400px, 100%);
   margin: 0 auto;
 }
 
@@ -97,11 +97,12 @@ a {
 }
 
 .nav-link {
-  padding: 8px 10px;
-  border-radius: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
   color: var(--muted);
-  font-weight: 600;
-  transition: color 0.2s ease, background 0.2s ease;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .nav-link.active {
@@ -132,17 +133,17 @@ a {
 
 .layout {
   display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 20px;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
   flex: 1;
 }
 
 .sidebar {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 10px 28px rgba(244, 194, 0, 0.22);
   height: fit-content;
   position: sticky;
   top: 90px;
@@ -229,11 +230,11 @@ a {
 }
 
 .hero {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 28px;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, rgba(244, 194, 0, 0.14), rgba(244, 194, 0, 0.05));
+  border: 1px solid rgba(244, 194, 0, 0.35);
+  border-radius: 22px;
+  padding: 32px;
+  box-shadow: 0 18px 48px rgba(244, 194, 0, 0.25);
   position: relative;
   overflow: hidden;
 }
@@ -242,8 +243,8 @@ a {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 12% 18%, rgba(251, 204, 92, 0.16), transparent 35%),
-    radial-gradient(circle at 88% 6%, rgba(251, 204, 92, 0.12), transparent 32%);
+  background: radial-gradient(circle at 12% 18%, rgba(244, 194, 0, 0.26), transparent 35%),
+    radial-gradient(circle at 88% 6%, rgba(244, 194, 0, 0.18), transparent 32%);
   pointer-events: none;
 }
 
@@ -253,23 +254,52 @@ a {
   z-index: 1;
 }
 
+.hero-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 18px 0 6px;
+}
+
+.highlight-card {
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(244, 194, 0, 0.38);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 28px rgba(244, 194, 0, 0.18);
+}
+
+.highlight-card h4 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: #1f1708;
+}
+
+.highlight-card p {
+  margin: 0;
+  color: #4b3a16;
+  font-size: 14px;
+}
+
 .hero__content h1 {
   margin: 8px 0 12px;
-  font-size: clamp(26px, 4vw, 40px);
+  font-size: clamp(28px, 4.4vw, 44px);
   color: var(--heading);
+  letter-spacing: -0.01em;
 }
 
 .hero__content .lede {
-  color: var(--muted);
+  color: #3f3319;
   margin: 0 0 18px;
-  max-width: 720px;
+  max-width: 860px;
+  font-weight: 500;
 }
 
 .eyebrow {
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   font-size: 12px;
-  color: var(--accent);
+  color: #9a7600;
   margin: 0;
 }
 
