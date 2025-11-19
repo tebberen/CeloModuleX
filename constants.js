@@ -1,10 +1,10 @@
-export const MAIN_HUB_ADDRESS = '0xad9801c23f3f7ebfea6c33e8575d479169881ff2'
+export const MAIN_HUB_ADDRESS = '0xad9801c23f3a7ebfea6c33e8575d479169881ff2'
 export const ACCESS_PASS_ADDRESS = '0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd'
 export const BASIC_TRANSACTION_FEE = '0.1'
 export const PREMIUM_TRANSACTION_FEE = '0.01'
 export const CELO_YELLOW = '#FBCC5C'
 export const THEME = { mode: 'dark', accent: CELO_YELLOW }
-export const CHAIN_ID = 44787
+export const CHAIN_ID = 42220
 
 export const NETWORKS = {
   mainnet: {

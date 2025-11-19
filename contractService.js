@@ -35,6 +35,22 @@ const NFT_ACCESS_CONTRACTS = {
   [NETWORKS.alfajores.chainId]: ACCESS_PASS_ADDRESS,
 }
 
+async function fetchFeeSchedule() {
+  const contract = await getMainHubContract(false)
+
+  try {
+    const [basicFee, premiumFee] = await Promise.all([
+      contract.basicFee(),
+      contract.premiumFee(),
+    ])
+
+    return { basicFee, premiumFee }
+  } catch (error) {
+    console.error('Falling back to static fee schedule', error)
+    return { basicFee: STANDARD_FEE, premiumFee: PREMIUM_FEE }
+  }
+}
+
 function createNetworkFallbackProvider(network = DEFAULT_NETWORK) {
   const urls = network.rpcUrls?.length ? network.rpcUrls : [network.rpcUrl]
 
@@ -237,7 +253,8 @@ export async function executeModule(
     throw new Error('Premium module requires the NFT Access Pass')
   }
 
-  const baseFee = ownsAccessNft ? PREMIUM_FEE : STANDARD_FEE
+  const { basicFee, premiumFee } = await fetchFeeSchedule()
+  const baseFee = moduleMeta.premium ? premiumFee : basicFee
   const normalizedExtra = ethers.BigNumber.isBigNumber(extraValue)
     ? extraValue
     : ethers.BigNumber.from(extraValue || 0)
@@ -258,15 +275,25 @@ export async function hasAccessNft(account) {
   return checkNFTAccess(account)
 }
 
-export async function getNFTPrice() {
-  const contract = await getMainHubContract(false)
-  const nextModuleId = await contract.nextModuleId()
-  const moduleCount = Math.max(Number(nextModuleId) - 1, 0)
-  const increments = Math.floor(moduleCount / 50)
-  const celoPrice = 5 + increments * 2
-  const priceInWei = ethers.utils.parseEther(celoPrice.toString())
+async function getOnchainNftPriceWei() {
+  const contract = await getNftContract(false)
 
-  return { moduleCount, celoPrice: celoPrice.toString(), priceInWei }
+  try {
+    return await contract.getNFTPrice()
+  } catch (error) {
+    if (typeof contract.currentPrice === 'function') {
+      return contract.currentPrice()
+    }
+
+    throw error
+  }
+}
+
+export async function getNFTPrice() {
+  const priceInWei = await getOnchainNftPriceWei()
+  const celoPrice = Number(ethers.utils.formatEther(priceInWei))
+
+  return { celoPrice, priceInWei }
 }
 
 export async function fetchNftPrice() {
