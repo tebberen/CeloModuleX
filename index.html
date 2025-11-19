@@ -1,10 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CeloModuleX</title>
-    <link rel="stylesheet" href="styles.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,209 +12,649 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="https://unpkg.com/@walletconnect/universal-provider@2.9.0/dist/index.umd.js"></script>
-    <script type="module" src="constants.js"></script>
-    <script type="module" src="walletService.js"></script>
-    <script type="module" src="contractService.js"></script>
-    <script type="module" src="app.js"></script>
+    <style>
+      :root {
+        --bg: #050608;
+        --surface: #0d1016;
+        --muted: #8a8f9e;
+        --text: #e8ecf4;
+        --accent: #fbcc5c;
+        --danger: #ff6b6b;
+        --border: #1b1f2b;
+        --radius: 14px;
+        --shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: radial-gradient(circle at 20% 20%, rgba(251, 204, 92, 0.08), transparent 25%),
+          radial-gradient(circle at 80% 10%, rgba(251, 204, 92, 0.06), transparent 25%),
+          var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      .app-shell {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 20px 48px;
+      }
+
+      header.branding {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+      }
+
+      .logo {
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        font-size: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo-mark {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: var(--accent);
+        color: #050608;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+      }
+
+      .pill {
+        padding: 6px 12px;
+        background: rgba(251, 204, 92, 0.12);
+        color: var(--accent);
+        border-radius: 999px;
+        border: 1px solid rgba(251, 204, 92, 0.3);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        box-shadow: var(--shadow);
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .hero {
+        display: grid;
+        gap: 16px;
+      }
+
+      .primary-btn,
+      .ghost-btn,
+      .inline-btn {
+        border: none;
+        outline: none;
+        cursor: pointer;
+        border-radius: 12px;
+        font-weight: 700;
+        transition: transform 0.1s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+      }
+
+      .primary-btn {
+        background: var(--accent);
+        color: #050608;
+        padding: 14px 18px;
+        font-size: 15px;
+        box-shadow: 0 12px 30px rgba(251, 204, 92, 0.25);
+      }
+
+      .primary-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 16px 36px rgba(251, 204, 92, 0.35);
+      }
+
+      .ghost-btn {
+        background: transparent;
+        color: var(--text);
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+      }
+
+      .inline-btn {
+        padding: 6px 12px;
+        background: rgba(251, 204, 92, 0.12);
+        color: var(--accent);
+        border: 1px solid rgba(251, 204, 92, 0.3);
+        font-size: 13px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+
+      .stats {
+        display: grid;
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .stat {
+        display: flex;
+        justify-content: space-between;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 14px;
+      }
+
+      .module-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 12px;
+      }
+
+      .module-card {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.02);
+        display: grid;
+        gap: 8px;
+      }
+
+      .module-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .label-premium {
+        color: var(--accent);
+        background: rgba(251, 204, 92, 0.12);
+        padding: 4px 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(251, 204, 92, 0.3);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .label-free {
+        color: #6fe7c2;
+        background: rgba(111, 231, 194, 0.08);
+        padding: 4px 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(111, 231, 194, 0.25);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      form.profile-form {
+        display: grid;
+        gap: 14px;
+        margin-top: 16px;
+      }
+
+      label {
+        display: grid;
+        gap: 6px;
+        font-weight: 600;
+      }
+
+      input,
+      textarea {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        color: var(--text);
+        font-size: 15px;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .helper {
+        border: 1px dashed var(--border);
+        padding: 12px;
+        border-radius: 12px;
+        color: var(--muted);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .status {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--text);
+        font-size: 14px;
+      }
+
+      .status.error {
+        border-color: rgba(255, 107, 107, 0.5);
+        color: var(--danger);
+      }
+
+      .status.success {
+        border-color: rgba(111, 231, 194, 0.5);
+        color: #6fe7c2;
+      }
+
+      .nft-panel {
+        display: grid;
+        gap: 10px;
+        border: 1px solid rgba(251, 204, 92, 0.25);
+        background: rgba(251, 204, 92, 0.05);
+      }
+
+      .mint-price {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--accent);
+      }
+
+      .badge {
+        padding: 6px 10px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        font-size: 13px;
+        border: 1px solid var(--border);
+      }
+
+      .badge.active {
+        border-color: rgba(111, 231, 194, 0.45);
+        color: #6fe7c2;
+      }
+
+      .action-log {
+        min-height: 40px;
+      }
+
+      @media (max-width: 720px) {
+        header.branding {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .primary-btn {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div class="page-shell">
-      <nav class="navbar">
-        <div class="nav-left">
-          <span class="brand">CeloModuleX</span>
+    <div class="app-shell">
+      <header class="branding">
+        <div class="logo">
+          <span class="logo-mark">C</span>
+          <span>CeloModuleX</span>
         </div>
-        <div class="nav-center">
-          <a href="#" class="nav-link" data-target="home">Home</a>
-          <a href="#modules" class="nav-link" data-target="modules">Modules</a>
-          <a href="#nft" class="nav-link" data-target="nft">NFT</a>
-          <a href="#profile" class="nav-link" data-target="profile">Profile</a>
-          <a href="#stats" class="nav-link" data-target="stats">Stats</a>
-        </div>
-        <div class="nav-right">
-          <a href="#wallet-modal" class="button connect">Connect Wallet</a>
-          <div class="status-dot" id="network-status"></div>
-        </div>
-      </nav>
+        <span class="pill">Dark mode · Celo Yellow</span>
+      </header>
 
-      <div class="layout">
-        <aside class="sidebar">
-          <div class="user-card">
-            <div class="avatar" id="avatar">C</div>
-            <div>
-              <p class="user-label">Connected Wallet</p>
-              <p class="user-address" id="walletAddressDisplay">—</p>
-            </div>
-          </div>
-          <span class="badge premium hidden" id="premium-badge" aria-hidden="true">Premium Access</span>
-          <nav class="side-nav">
-            <a href="#" class="side-link" data-target="home">Home</a>
-            <a href="#modules" class="side-link" data-target="modules">Modules</a>
-            <a href="#nft" class="side-link" data-target="nft">NFT</a>
-            <a href="#profile" class="side-link" data-target="profile">Profile</a>
-            <a href="#stats" class="side-link" data-target="stats">Stats</a>
-          </nav>
-        </aside>
-
-        <main class="main-content">
-          <section class="hero" id="home">
-            <div class="hero__content">
-              <p class="eyebrow">CeloModuleX</p>
-              <h1>The modular on-chain action launcher for Celo</h1>
-              <p class="lede">
-                Connect your wallet, detect the current network, and trigger modular actions like
-                GM pings or donations directly on Celo Mainnet or Alfajores.
-              </p>
-              <div class="cta-row">
-                <button type="button" class="button primary" id="start-modules">Start Using Modules</button>
-                <p id="connection-status" class="status muted">Not connected</p>
-              </div>
-            </div>
-          </section>
-
-          <section class="modules" id="modules">
-            <section class="card-grid" aria-label="Module actions">
-              <article class="card module-card">
-                <div class="card__header">
-                  <h3>Say GM</h3>
-                  <span class="pill">Module fee: 0 CELO</span>
-                </div>
-                <p class="card-text">Broadcast an on-chain "GM" ping with zero value and UTF-8 calldata.</p>
-                <div class="card-actions">
-                  <button id="gmBtn" class="button">Execute</button>
-                </div>
-                <div class="tag muted">Standard module</div>
-              </article>
-
-              <article class="card module-card">
-                <div class="card__header">
-                  <h3>Donate</h3>
-                  <span class="pill">Module fee: 0.01 CELO</span>
-                </div>
-                <p class="card-text">Send a small donation to the burn address to verify transaction flow.</p>
-                <div class="card-actions">
-                  <button id="donateBtn" class="button">Execute</button>
-                </div>
-                <div class="tag premium">Premium Required</div>
-              </article>
-
-              <article class="card module-card">
-                <div class="card__header">
-                  <h3>Deploy</h3>
-                  <span class="pill">Module fee: 0.02 CELO</span>
-                </div>
-                <p class="card-text">Deploy a simple Hello World contract to the Celo blockchain.</p>
-                <div class="card-actions">
-                  <button id="deployBtn" class="button">Execute</button>
-                </div>
-                <div class="tag muted">Standard module</div>
-              </article>
-            </section>
-
-            <div id="action-result" class="helper"></div>
-          </section>
-
-          <section class="card" id="nft">
-            <header class="card__header">
-              <div>
-                <p class="eyebrow">NFT Access</p>
-                <h2>Mint your access pass</h2>
-              </div>
-              <span class="badge" id="network-badge">Offline</span>
-            </header>
-            <div class="nft-content">
-              <div class="nft-visual">NFT Placeholder</div>
-              <div class="nft-info">
-                <p class="card-text">Unlock premium modules by minting the official access NFT.</p>
-                <p class="price">Current price: <span id="nft-price">—</span></p>
-                <button class="button primary" id="mintNftBtn">Mint Access NFT</button>
-                <div class="premium-banner hidden" id="premium-banner">Premium Access Active</div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card" id="profile">
-            <header class="card__header">
-              <div>
-                <p class="eyebrow">Profile</p>
-                <h2>Your preferences</h2>
-              </div>
-            </header>
-            <form class="profile-form">
-              <label>
-                Display Name
-                <input type="text" placeholder="e.g. Celo Builder" />
-              </label>
-              <label>
-                Bio
-                <textarea rows="3" placeholder="Tell the world about your on-chain journey"></textarea>
-              </label>
-              <label>
-                Notification Email
-                <input type="email" placeholder="you@example.com" />
-              </label>
-              <button type="button" class="button primary">Save Profile</button>
-            </form>
-          </section>
-
-          </main>
-
-        <aside class="stats-panel" id="stats">
-          <div class="card stats-card">
-            <header class="card__header">
-              <div>
-                <p class="eyebrow">Wallet</p>
-                <h2>Live status</h2>
-              </div>
-            </header>
-            <dl class="stats">
-              <div>
-                <dt>Wallet</dt>
-                <dd id="wallet-address">—</dd>
-              </div>
-              <div>
-                <dt>Network</dt>
-                <dd id="network-name">—</dd>
-              </div>
-              <div>
-                <dt>CELO Balance</dt>
-                <dd id="celo-balance">—</dd>
-              </div>
-              <div>
-                <dt>cUSD Balance</dt>
-                <dd id="cusd-balance">—</dd>
-              </div>
-              <div>
-                <dt>Total Actions</dt>
-                <dd id="total-actions">0</dd>
-              </div>
-              <div>
-                <dt>Premium Status</dt>
-                <dd class="premium-state inactive" id="premium-status">Inactive</dd>
-              </div>
-            </dl>
-          </div>
-          <div class="card helper-card">
-            <p>
-              Uses chain RPCs to load live balances and status. Trigger any module to see real-time
-              updates reflected here.
+      <main class="grid" aria-live="polite">
+        <section id="connect-section" class="panel hero">
+          <div>
+            <h1>Launch on-chain modules effortlessly</h1>
+            <p class="muted">
+              Start by connecting your wallet. We will verify your profile, check access eligibility, and
+              route you to the right action.
             </p>
           </div>
-        </aside>
-      </div>
+          <button id="connect-btn" class="primary-btn">Connect Wallet</button>
+        </section>
 
-      <footer class="footer">
-        <p>Built for the Celo community — launch modular actions with confidence.</p>
-      </footer>
+        <section id="profile-section" class="panel hidden">
+          <div class="hero">
+            <div>
+              <h2>Create your profile</h2>
+              <p class="muted">Complete these fields to unlock the dashboard experience.</p>
+            </div>
+            <form id="profile-form" class="profile-form">
+              <label>
+                Username
+                <input id="username" name="username" required placeholder="e.g. Celo Builder" />
+              </label>
+              <label>
+                Twitter
+                <input id="twitter" name="twitter" placeholder="@handle" />
+              </label>
+              <label>
+                GitHub
+                <input id="github" name="github" placeholder="github-user" />
+              </label>
+              <label>
+                Talent Protocol
+                <input id="talent" name="talent" placeholder="talent-protocol" />
+              </label>
+              <label>
+                Self ID
+                <input id="selfId" name="selfId" placeholder="self.id" />
+              </label>
+              <button type="submit" class="primary-btn">Create Profile</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="dashboard-section" class="grid hidden">
+          <section class="panel">
+            <div class="module-meta" style="margin-bottom: 6px">
+              <h2>Dashboard</h2>
+              <span id="nft-badge" class="badge">NFT: Unknown</span>
+            </div>
+            <p class="muted">Connected experience with live stats and modules.</p>
+            <div class="stats">
+              <div class="stat"><span>Username</span><strong id="stat-username">—</strong></div>
+              <div class="stat"><span>Wallet</span><strong id="stat-address">—</strong></div>
+              <div class="stat"><span>Score</span><strong id="stat-score">0</strong></div>
+              <div class="stat"><span>Total Actions</span><strong id="stat-actions">0</strong></div>
+              <div class="stat"><span>Premium Access</span><strong id="stat-premium">No</strong></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="module-meta" style="margin-bottom: 10px">
+              <h2>Modules</h2>
+              <span class="muted" id="modules-hint">Select a module to execute.</span>
+            </div>
+            <div id="modules-container" class="module-list"></div>
+          </section>
+
+          <section id="mint-section" class="panel nft-panel hidden">
+            <div class="module-meta">
+              <div>
+                <h3>Access Pass required</h3>
+                <p class="muted">Premium modules need the NFT access pass. Mint to continue.</p>
+              </div>
+              <span class="label-premium">Premium Access</span>
+            </div>
+            <p class="mint-price">Current price: <span id="nft-price">—</span></p>
+            <div class="grid two">
+              <div class="helper">Mint once to unlock all premium executions forever.</div>
+              <button id="mint-btn" class="primary-btn">Mint Access Pass</button>
+            </div>
+          </section>
+
+          <section class="panel action-log">
+            <div class="module-meta" style="margin-bottom: 10px">
+              <h3>Activity</h3>
+              <span class="muted">Module execution &amp; mint updates</span>
+            </div>
+            <div id="status" class="status">Waiting for wallet connection.</div>
+          </section>
+        </section>
+      </main>
     </div>
 
-    <div id="wallet-modal" class="modal">
-      <div class="modal-content">
-        <a href="#" class="close">×</a>
-        <h2>Connect Wallet</h2>
-        <p class="modal-sub">Select a provider to get started.</p>
-        <button id="connect-metamask" class="button full">Connect with MetaMask</button>
-        <button id="connect-walletconnect" class="button ghost full">Connect with WalletConnect</button>
-      </div>
-    </div>
+    <script type="module">
+      import { MODULES } from './constants.js'
+      import { connectMetaMask, connectWalletConnect } from './walletService.js'
+      import {
+        checkNFTAccess,
+        createProfile,
+        executeModule,
+        getNFTPrice,
+        getUserProfile,
+        mintAccessPass,
+      } from './contractService.js'
+
+      const connectSection = document.getElementById('connect-section')
+      const profileSection = document.getElementById('profile-section')
+      const dashboardSection = document.getElementById('dashboard-section')
+      const connectBtn = document.getElementById('connect-btn')
+      const statusBox = document.getElementById('status')
+      const profileForm = document.getElementById('profile-form')
+      const modulesContainer = document.getElementById('modules-container')
+      const mintSection = document.getElementById('mint-section')
+      const mintBtn = document.getElementById('mint-btn')
+      const nftPrice = document.getElementById('nft-price')
+      const nftBadge = document.getElementById('nft-badge')
+
+      const statUsername = document.getElementById('stat-username')
+      const statAddress = document.getElementById('stat-address')
+      const statScore = document.getElementById('stat-score')
+      const statActions = document.getElementById('stat-actions')
+      const statPremium = document.getElementById('stat-premium')
+
+      let currentAccount = null
+      let currentProfile = null
+      let hasNft = false
+
+      function setStatus(message, tone = 'info') {
+        statusBox.textContent = message
+        statusBox.className = 'status'
+        if (tone === 'error') statusBox.classList.add('error')
+        if (tone === 'success') statusBox.classList.add('success')
+      }
+
+      function toggleView({ connect = false, profile = false, dashboard = false }) {
+        connectSection.classList.toggle('hidden', !connect)
+        profileSection.classList.toggle('hidden', !profile)
+        dashboardSection.classList.toggle('hidden', !dashboard)
+      }
+
+      async function handleConnect() {
+        setStatus('Requesting wallet connection…')
+        try {
+          const account = await connectMetaMask().catch(async (err) => {
+            console.warn('MetaMask connection failed, trying WalletConnect', err)
+            return connectWalletConnect()
+          })
+          currentAccount = account
+          setStatus('Wallet connected. Checking profile…', 'success')
+          await loadProfile()
+        } catch (error) {
+          console.error(error)
+          setStatus(error?.message || 'Connection failed', 'error')
+        }
+      }
+
+      async function loadProfile() {
+        if (!currentAccount) return
+        try {
+          const profile = await getUserProfile(currentAccount)
+          currentProfile = profile
+          hasNft = Boolean(profile?.hasNFT)
+          updateStats()
+          if (!profile?.username) {
+            toggleView({ profile: true })
+            setStatus('Profile missing. Please create your profile to continue.')
+          } else {
+            toggleView({ dashboard: true })
+            setStatus('Profile loaded. You can now run modules.', 'success')
+            renderModules()
+            updateNftBadge()
+          }
+        } catch (error) {
+          console.error('Profile load failed', error)
+          setStatus(error?.message || 'Unable to load profile', 'error')
+        }
+      }
+
+      function updateStats() {
+        statUsername.textContent = currentProfile?.username || '—'
+        statAddress.textContent = shorten(currentAccount)
+        statScore.textContent = currentProfile?.score ?? 0
+        statActions.textContent = currentProfile?.totalActions ?? 0
+        const premiumText = hasNft ? 'Yes (NFT owned)' : 'No (mint required)'
+        statPremium.textContent = premiumText
+      }
+
+      function updateNftBadge() {
+        nftBadge.textContent = hasNft ? 'NFT: Active' : 'NFT: Missing'
+        nftBadge.classList.toggle('active', hasNft)
+        mintSection.classList.toggle('hidden', hasNft)
+      }
+
+      function shorten(address) {
+        if (!address) return '—'
+        return `${address.slice(0, 6)}…${address.slice(-4)}`
+      }
+
+      function renderModules() {
+        modulesContainer.innerHTML = ''
+        MODULES.forEach((module) => {
+          const card = document.createElement('article')
+          card.className = 'module-card'
+
+          const meta = document.createElement('div')
+          meta.className = 'module-meta'
+          const title = document.createElement('h3')
+          title.textContent = module.name
+          const badge = document.createElement('span')
+          badge.className = module.premium ? 'label-premium' : 'label-free'
+          badge.textContent = module.premium ? 'Premium' : 'Free'
+          meta.append(title, badge)
+
+          const category = document.createElement('p')
+          category.className = 'muted'
+          category.textContent = `${module.category} · ${module.moduleType}`
+
+          const button = document.createElement('button')
+          button.className = 'ghost-btn'
+          button.textContent = module.premium ? 'Execute (Premium)' : 'Execute (Free)'
+          button.addEventListener('click', () => handleModuleAction(module, button))
+
+          card.append(meta, category, button)
+          modulesContainer.appendChild(card)
+        })
+      }
+
+      async function handleModuleAction(module, button) {
+        if (!currentAccount) return setStatus('Connect your wallet first.', 'error')
+        if (module.premium) {
+          setStatus('Checking premium access…')
+          const owns = await checkNFTAccess(currentAccount)
+          hasNft = owns
+          updateStats()
+          updateNftBadge()
+          if (!owns) {
+            button.textContent = 'Mint required'
+            button.disabled = true
+            await showMintSection()
+            return setStatus('Premium access required. Mint the NFT to continue.', 'error')
+          }
+        }
+
+        try {
+          button.disabled = true
+          button.textContent = 'Processing…'
+          const tx = await executeModule(module.id)
+          setStatus(`Module ${module.name} executed. Tx: ${tx}`, 'success')
+        } catch (error) {
+          console.error(error)
+          setStatus(error?.message || 'Execution failed', 'error')
+        } finally {
+          button.disabled = false
+          button.textContent = module.premium ? 'Execute (Premium)' : 'Execute (Free)'
+        }
+      }
+
+      async function showMintSection() {
+        mintSection.classList.remove('hidden')
+        try {
+          const price = await getNFTPrice()
+          nftPrice.textContent = `${Number(price.celoPrice).toFixed(2)} CELO`
+        } catch (error) {
+          console.error('Failed to fetch NFT price', error)
+          nftPrice.textContent = 'Unavailable'
+        }
+      }
+
+      async function handleMint() {
+        if (!currentAccount) return setStatus('Connect your wallet first.', 'error')
+        setStatus('Minting access pass…')
+        mintBtn.disabled = true
+        mintBtn.textContent = 'Minting…'
+        try {
+          const tx = await mintAccessPass()
+          setStatus(`Access pass minted. Tx: ${tx}`, 'success')
+          hasNft = true
+          updateNftBadge()
+          renderModules()
+        } catch (error) {
+          console.error(error)
+          setStatus(error?.message || 'Mint failed', 'error')
+        } finally {
+          mintBtn.disabled = false
+          mintBtn.textContent = 'Mint Access Pass'
+        }
+      }
+
+      profileForm.addEventListener('submit', async (event) => {
+        event.preventDefault()
+        if (!currentAccount) return setStatus('Connect your wallet first.', 'error')
+        const data = new FormData(profileForm)
+        const payload = {
+          username: data.get('username'),
+          twitter: data.get('twitter'),
+          github: data.get('github'),
+          talent: data.get('talent'),
+          selfID: data.get('selfId'),
+        }
+        setStatus('Creating profile…')
+        try {
+          await createProfile({
+            username: payload.username,
+            twitter: payload.twitter,
+            github: payload.github,
+            talent: payload.talent,
+            selfID: payload.selfID,
+          })
+          setStatus('Profile created. Loading dashboard…', 'success')
+          await loadProfile()
+        } catch (error) {
+          console.error(error)
+          setStatus(error?.message || 'Unable to create profile', 'error')
+        }
+      })
+
+      connectBtn.addEventListener('click', handleConnect)
+      mintBtn.addEventListener('click', handleMint)
+
+      toggleView({ connect: true })
+    </script>
   </body>
 </html>
