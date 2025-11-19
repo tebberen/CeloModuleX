@@ -1,6 +1,6 @@
 'use client'
 
-import { ConnectButton } from '@/components/wallet/connect-button'
+import { ConnectWalletModal } from '@/components/wallet/connect-wallet-modal'
 import { ModuleGrid } from '@/components/modules/module-grid'
 import { CategoryFilter } from '@/components/modules/category-filter'
 import { MODULE_CATEGORIES } from '@/lib/utils/constants'
@@ -46,7 +46,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                 </div>
               </Link>
             </div>
-            <ConnectButton />
+            <ConnectWalletModal />
           </div>
         </div>
       </div>

@@ -31,3 +31,8 @@ export function formatLargeNumber(num: number): string {
   }
   return num.toString()
 }
+
+export function formatAddress(address?: string | null): string {
+  if (!address) return ''
+  return `${address.slice(0, 6)}...${address.slice(-4)}`
+}

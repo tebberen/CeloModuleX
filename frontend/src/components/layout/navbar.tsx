@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
-import { ConnectButton } from '@/components/wallet/connect-button'
+import { ConnectWalletModal } from '@/components/wallet/connect-wallet-modal'
 
 const navItems = [
   { href: '/', label: 'Home' },
@@ -49,7 +49,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden lg:block">
-          <ConnectButton />
+          <ConnectWalletModal />
         </div>
 
         <button
@@ -77,7 +77,7 @@ export function Navbar() {
               ))}
             </nav>
             <div className="pt-2">
-              <ConnectButton />
+              <ConnectWalletModal />
             </div>
           </div>
         </div>

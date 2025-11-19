@@ -1,6 +1,6 @@
 'use client'
 
-import { ConnectButton } from '@/components/wallet/connect-button'
+import { ConnectWalletModal } from '@/components/wallet/connect-wallet-modal'
 import { UserStats } from '@/components/profile/user-stats'
 import { ActivityFeed } from '@/components/analytics/activity-feed'
 import { Leaderboard } from '@/components/profile/leaderboard'
@@ -28,7 +28,7 @@ export default function Dashboard() {
                 </div>
               </Link>
             </div>
-            <ConnectButton />
+            <ConnectWalletModal />
           </div>
         </div>
       </div>

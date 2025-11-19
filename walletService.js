@@ -102,28 +102,33 @@ function attachEip1193Listeners(provider) {
 }
 
 async function ensureSupportedNetwork(provider) {
+  const desiredChain = DEFAULT_NETWORK
   const network = await provider.getNetwork()
-  const supported = [NETWORKS.mainnet.chainId, NETWORKS.alfajores.chainId]
+  if (network.chainId === desiredChain.chainId) {
+    return
+  }
 
-  if (!supported.includes(network.chainId)) {
-    const desiredChain = DEFAULT_NETWORK
-    try {
-      await provider.send('wallet_switchEthereumChain', [{ chainId: desiredChain.chainIdHex }])
-    } catch (switchError) {
-      if (switchError.code === 4902 || switchError.message?.includes('Unrecognized chain ID')) {
-        await provider.send('wallet_addEthereumChain', [
-          {
-            chainId: desiredChain.chainIdHex,
-            chainName: desiredChain.name,
-            rpcUrls: [desiredChain.rpcUrl],
-            nativeCurrency: desiredChain.nativeCurrency,
-            blockExplorerUrls: [desiredChain.explorer],
-          },
-        ])
-      } else {
-        throw switchError
-      }
+  try {
+    await provider.send('wallet_switchEthereumChain', [{ chainId: desiredChain.chainIdHex }])
+  } catch (switchError) {
+    if (switchError.code === 4902 || switchError.message?.includes('Unrecognized chain ID')) {
+      await provider.send('wallet_addEthereumChain', [
+        {
+          chainId: desiredChain.chainIdHex,
+          chainName: desiredChain.name,
+          rpcUrls: [desiredChain.rpcUrl],
+          nativeCurrency: desiredChain.nativeCurrency,
+          blockExplorerUrls: [desiredChain.explorer],
+        },
+      ])
+    } else {
+      throw switchError
     }
+  }
+
+  const updatedNetwork = await provider.getNetwork()
+  if (updatedNetwork.chainId !== desiredChain.chainId) {
+    throw new Error(`Please switch your wallet to ${desiredChain.name} (${desiredChain.chainId}) to continue.`)
   }
 }
 
