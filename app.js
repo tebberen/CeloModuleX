@@ -42,6 +42,8 @@ const ui = {
   premiumStatusClone: document.getElementById('premiumStatusClone'),
 }
 
+const premiumStatusNodes = Array.from(document.querySelectorAll('[data-premium-status]'))
+
 const sections = {
   home: document.getElementById('home'),
   modules: document.getElementById('modules'),
@@ -226,6 +228,10 @@ function updatePremiumUI(hasNft) {
     ui.premiumStatus.classList.toggle('active', hasNft)
     ui.premiumStatus.classList.toggle('inactive', !hasNft)
   }
+
+  premiumStatusNodes.forEach((node) => {
+    node.textContent = hasNft ? 'Active' : 'Inactive'
+  })
 
   if (ui.premiumStatusClone) {
     ui.premiumStatusClone.textContent = hasNft ? 'Active' : 'Inactive'
