@@ -19,7 +19,7 @@ export function Navbar() {
   const pathname = usePathname()
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#F4D58A]/60 bg-white/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full border-b border-[#E5A623]/60 bg-gradient-to-r from-[#FFDF80]/95 via-[#F7C646]/95 to-[#F1AE1E]/90 shadow-[0_10px_30px_rgba(169,93,0,0.18)] backdrop-blur-xl">
       <div className="container-layout flex items-center justify-between py-4">
         <Link href="/" className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FBCC5C] text-lg font-black text-[#0c0f0d] shadow-md">
@@ -60,7 +60,7 @@ export function Navbar() {
       </div>
 
       {open && (
-        <div className="border-t border-[#F4D58A]/60 bg-white/95 backdrop-blur-xl lg:hidden">
+        <div className="border-t border-[#E5A623]/60 bg-gradient-to-r from-[#FFDF80]/95 via-[#F7C646]/95 to-[#F1AE1E]/92 backdrop-blur-xl lg:hidden">
           <div className="container-layout space-y-4 py-4">
             <nav className="grid gap-3 text-sm font-semibold text-[#1C1205]">
               {navItems.map((item) => (
