@@ -1,22 +1,29 @@
 import {
   ACCESS_PASS_ABI,
   ACCESS_PASS_ADDRESS,
+  BASIC_TRANSACTION_FEE,
   CUSD_CONTRACTS,
   DEFAULT_NETWORK,
   DONATION_ADDRESS,
   ERC20_ABI,
+  MODULES,
   MAIN_HUB_ABI,
   MAIN_HUB_ADDRESS,
   NETWORKS,
-  MODULES,
+  PREMIUM_TRANSACTION_FEE,
   PROJECT_OWNER_ADDRESS,
 } from './constants.js'
 import { getProvider, getSigner } from './walletService.js'
 
 const { ethers } = window
 
-const BASE_PREMIUM_FEE = ethers.utils.parseEther('0.01')
-const BASE_STANDARD_FEE = ethers.utils.parseEther('0.1')
+const PREMIUM_FEE = ethers.utils.parseEther(PREMIUM_TRANSACTION_FEE)
+const STANDARD_FEE = ethers.utils.parseEther(BASIC_TRANSACTION_FEE)
+
+const MODULE_MAP = MODULES.reduce((map, module) => {
+  map[module.id] = module
+  return map
+}, {})
 
 const MAIN_HUB_CONTRACTS = {
   [NETWORKS.mainnet.chainId]: MAIN_HUB_ADDRESS,
@@ -122,56 +129,87 @@ async function getMainHubContract(withSigner = false) {
   return new ethers.Contract(contractAddress, MAIN_HUB_ABI, signerOrProvider)
 }
 
-async function executeModule(moduleId, { extraValue = ethers.BigNumber.from(0), fallbackTarget, data = '0x' } = {}) {
-  const moduleMeta = MODULES[moduleId]
+export async function getUserProfile(account) {
+  const contract = await getMainHubContract(false)
+  const [username, actionCount, twitter, github, talent, selfID, hasNFT] = await contract.getUserProfile(account)
+
+  const profile = {
+    username,
+    twitter,
+    github,
+    talentProtocol: talent,
+    selfID,
+    totalActions: Number(actionCount || 0),
+    uniqueModulesUsed: Number(0),
+    premiumModuleCount: Number(0),
+    hasNFT,
+  }
+
+  return { ...profile, score: calculateUserScore(profile) }
+}
+
+export async function createProfile({ username, twitter, github, talent, selfID }) {
+  const contract = await getMainHubContract(true)
+  const tx = await contract.createProfile(username, twitter, github, talent, selfID)
+  await tx.wait()
+  return tx.hash
+}
+
+async function executeModule(moduleId, { extraValue = ethers.BigNumber.from(0), data = '0x' } = {}) {
+  const moduleMeta = MODULE_MAP[moduleId]
   if (!moduleMeta) {
     throw new Error('Module configuration missing for execution')
   }
 
   const signer = getSigner()
   const account = await signer.getAddress()
-  const ownsAccessNft = await hasAccessNft(account)
+  const ownsAccessNft = await checkNFTAccess(account)
 
   if (moduleMeta.premium && !ownsAccessNft) {
     throw new Error('Premium module requires the NFT Access Pass')
   }
 
-  const baseFee = ownsAccessNft ? BASE_PREMIUM_FEE : BASE_STANDARD_FEE
+  const baseFee = ownsAccessNft ? PREMIUM_FEE : STANDARD_FEE
   const normalizedExtra = ethers.BigNumber.isBigNumber(extraValue)
     ? extraValue
     : ethers.BigNumber.from(extraValue || 0)
   const overrides = { value: baseFee.add(normalizedExtra) }
 
   const contract = await getMainHubContract(true)
-
-  // Allow a direct send if MainHub is unavailable
-  if (!contract || !contract.executeModule) {
-    const destination = fallbackTarget || PROJECT_OWNER_ADDRESS
-    const tx = await signer.sendTransaction({ to: destination, value: overrides.value, data })
-    await tx.wait()
-    return tx.hash
-  }
-
   const tx = await contract.executeModule(moduleId, data, overrides)
   await tx.wait()
   return tx.hash
 }
 
-export async function hasAccessNft(account) {
+export async function checkNFTAccess(account) {
   const contract = await getNftContract(false)
   return contract.hasNFT(account)
 }
 
+export async function hasAccessNft(account) {
+  return checkNFTAccess(account)
+}
+
+export async function getNFTPrice() {
+  const contract = await getMainHubContract(false)
+  const nextModuleId = await contract.nextModuleId()
+  const moduleCount = Math.max(Number(nextModuleId) - 1, 0)
+  const increments = Math.floor(moduleCount / 50)
+  const celoPrice = 5 + increments * 2
+  const priceInWei = ethers.utils.parseEther(celoPrice.toString())
+
+  return { moduleCount, celoPrice: celoPrice.toString(), priceInWei }
+}
+
 export async function fetchNftPrice() {
-  const contract = await getNftContract(false)
-  const rawPrice = await contract.getNFTPrice()
-  return ethers.utils.formatEther(rawPrice)
+  const { celoPrice } = await getNFTPrice()
+  return celoPrice
 }
 
 export async function mintAccessPass() {
   const contract = await getNftContract(true)
-  const mintPrice = await contract.getNFTPrice()
-  const tx = await contract.mintNFT({ value: mintPrice })
+  const { priceInWei } = await getNFTPrice()
+  const tx = await contract.mintNFT({ value: priceInWei })
   await tx.wait()
   return tx.hash
 }
