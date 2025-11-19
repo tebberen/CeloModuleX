@@ -57,7 +57,7 @@
             <span id="premium-badge" class="badge premium hidden">Premium Active</span>
             <div class="badge">
               Status:
-              <span id="premium-status" class="premium-state inactive">Inactive</span>
+            <span id="premium-status" data-premium-status class="premium-state inactive">Inactive</span>
             </div>
             <nav class="side-nav">
               <a href="#home" class="side-link active" data-target="home">Overview</a>
@@ -69,54 +69,96 @@
           </aside>
 
             <main class="main-content">
-              <section id="home" class="hero">
-                <div class="hero__content">
-                  <p class="eyebrow">Sarı tema • Geniş tuval • Güncellenmiş home</p>
-                  <h1>Sarı tonda, tam genişlikte CeloModuleX deneyimi.</h1>
-                  <p class="lede">
-                    Son commit'lerde istemediğiniz boşluklar ve eski home içeriği kalıyordu. Bu sürümde arayüzü sarı tonlara taşıdık,
-                    daha geniş bir tuval açtık ve açılış bölümünü güncelledik. Cüzdanınızı bağlayarak yeni tasarımı tüm modüllerde deneyin.
+              <section id="home" class="hero hero-premium">
+                <div class="hero-shell">
+                  <div class="hero-pill">Chain diversity. Real signals.</div>
+                  <p class="hero-headline">
+                    Aren’t you tired of doing the same GM, the same Swap, the same Bridge every single day?
                   </p>
-                  <div class="hero-highlights">
-                    <div class="highlight-card">
-                      <h4>Daha geniş görünüm</h4>
-                      <p>Sol ve sağ boşluklar azaltıldı; 1400px genişlikte düzen.</p>
-                    </div>
-                    <div class="highlight-card">
-                      <h4>Sarı vurgular</h4>
-                      <p>Arkaplan ve bileşenler artık sıcak sarı palete uyumlu.</p>
-                    </div>
-                    <div class="highlight-card">
-                      <h4>Güncel Home</h4>
-                      <p>Yeni metin ve kartlar, son değişiklikleri net gösterir.</p>
-                    </div>
-                  </div>
-                  <div class="cta-row">
-                    <button id="start-modules" class="button primary">Browse modules</button>
+                  <p class="hero-lede">
+                    Blockchain is so much more than that.<br />
+                    CeloModuleX lets you execute different types of on-chain actions across multiple smart contracts, creating true
+                    chain diversity and a stronger on-chain identity.<br />
+                    Every feature runs on its own unique smart contract — meaning every click you make generates a real, meaningful
+                    on-chain signal.
+                  </p>
+                  <div class="hero-actions">
+                    <button id="start-modules" class="button primary">Explore modules</button>
                     <button id="connect-walletconnect" class="button ghost">WalletConnect</button>
                     <p id="connection-status" class="status">Wallet not connected.</p>
                   </div>
+                  <div class="hero-stats">
+                    <div class="hero-stat-card">
+                      <div class="hero-stat-top">
+                        <span class="pill" id="network-name">—</span>
+                        <span class="pill soft">Network</span>
+                      </div>
+                      <div class="stat"><span>CELO</span><strong id="celo-balance">—</strong></div>
+                      <div class="stat"><span>cUSD</span><strong id="cusd-balance">—</strong></div>
+                    </div>
+                    <div class="hero-stat-card">
+                      <div class="hero-stat-top">
+                        <span class="pill">NFT Access</span>
+                        <span class="pill soft">Premium</span>
+                      </div>
+                      <p class="card-text">Unlock premium modules by minting the access NFT.</p>
+                    </div>
+                  </div>
                 </div>
-                <div class="card-grid">
-                  <article class="card">
-                    <div class="card__header">
-                      <h3>Network</h3>
-                      <span class="pill" id="network-name">—</span>
+              </section>
+
+              <section id="nft" class="nft-section">
+                <div class="nft-shell">
+                  <div class="nft-left">
+                    <div class="nft-badge">Premium Access</div>
+                    <div class="nft-card">
+                      <div class="nft-card-header">
+                        <div class="pill">CeloModuleX</div>
+                        <div class="pill soft">CMX</div>
+                      </div>
+                      <div class="nft-visual">
+                        <div class="nft-visual-glow"></div>
+                        <div class="nft-visual-mark">CMX</div>
+                        <div class="nft-visual-pattern"></div>
+                      </div>
+                      <div class="nft-meta-grid">
+                        <div class="meta-block">
+                          <p class="label">Collection</p>
+                          <h3>CeloModuleX Access</h3>
+                          <p class="muted">Unique on-chain membership signaling activity across the Celo ecosystem.</p>
+                        </div>
+                        <div class="meta-block preview">
+                          <p class="label">Metadata preview</p>
+                          <ul>
+                            <li><strong>Access:</strong> Premium</li>
+                            <li><strong>Status:</strong> <span data-premium-status>Inactive</span></li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
-                    <p class="card-text">Live balances</p>
-                    <div class="stat"><span>CELO</span><strong id="celo-balance">—</strong></div>
-                    <div class="stat"><span>cUSD</span><strong id="cusd-balance">—</strong></div>
-                  </article>
-                  <article class="card">
-                    <div class="card__header">
-                      <h3>Premium</h3>
-                      <span class="pill">NFT Access</span>
+                  </div>
+
+                  <div class="nft-right">
+                    <div class="pill accent">NFT Access</div>
+                    <h2>Mint your premium access</h2>
+                    <p class="nft-copy">
+                      Secure your spot with an on-chain NFT backed by its own smart contract. Every mint sends a clear signal that
+                      you&apos;re exploring more than the usual swaps and bridges.
+                    </p>
+
+                    <div class="price-card">
+                      <div>
+                        <p class="label">Current price</p>
+                        <p class="price" id="nft-price">—</p>
+                      </div>
+                      <p class="muted">Secured via contract at 0xa2a5d8c63bD03cfbf01843f2dBdDcc3D9B6158fD</p>
                     </div>
-                    <p class="card-text">Unlock premium modules by minting the access NFT.</p>
-                    <div id="premium-banner" class="premium-banner hidden">
-                      Premium unlocked — enjoy discounted module executions.
+
+                    <div class="cta-row stacked">
+                      <button id="mintNftBtn" class="button primary full">Mint Access NFT</button>
+                      <div id="premium-banner" class="premium-banner hidden">Premium unlocked — enjoy discounted module executions.</div>
                     </div>
-                  </article>
+                  </div>
                 </div>
               </section>
 
@@ -148,18 +190,6 @@
                 <article class="card" style="grid-column: 1 / -1">
                   <h3>Activity</h3>
                   <p id="action-result">Waiting for an action…</p>
-                </article>
-              </section>
-
-              <section id="nft" class="card-grid">
-                <article class="card">
-                  <div class="card__header">
-                    <h3>Mint Access NFT</h3>
-                    <span class="pill">Premium</span>
-                  </div>
-                  <p class="card-text">Mint once to unlock every premium module forever.</p>
-                  <p class="price">Price: <span id="nft-price">—</span></p>
-                  <button id="mintNftBtn" class="button full">Mint Access NFT</button>
                 </article>
               </section>
 
