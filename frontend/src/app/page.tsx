@@ -43,7 +43,7 @@ export default function Home() {
   return (
     <main className="min-h-screen w-full overflow-hidden bg-gradient-to-b from-[#FFE48B] via-[#FFC640] to-[#F0A600] pb-16 text-[#2B1A06]">
       <section className="w-full py-16">
-        <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 lg:px-10">
+        <div className="mx-auto flex w-full flex-col gap-10 px-4 sm:px-8 lg:px-12">
           <div className="space-y-4 rounded-3xl border border-[#F3B932]/70 bg-gradient-to-r from-[#FFEAA1]/85 via-[#FFD458]/80 to-[#F6B81C]/80 p-8 shadow-[0_18px_60px_rgba(201,123,0,0.25)]">
             <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#F6D766] px-4 py-2 text-xs font-semibold uppercase text-[#7A4E00] shadow-[0_10px_30px_rgba(158,106,0,0.25)]">
               Projeyi Tanıyın
@@ -69,7 +69,7 @@ export default function Home() {
       </section>
 
       <section className="w-full py-4">
-        <div className="mx-auto max-w-6xl px-6 lg:px-10">
+        <div className="mx-auto w-full px-4 sm:px-8 lg:px-12">
           <div className="grid items-center gap-10 rounded-3xl border border-[#F0AE1C]/80 bg-gradient-to-r from-[#FFD86B] via-[#FFC63C] to-[#F9B21F] p-10 shadow-[0_26px_90px_rgba(169,93,0,0.28)] lg:grid-cols-2">
             <div className="space-y-6 text-[#2B1A06]">
               <span className="inline-flex w-fit rounded-full bg-[#F8E7A0] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-[#6C4300] shadow-[0_12px_34px_rgba(124,76,0,0.25)]">
