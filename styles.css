@@ -77,12 +77,32 @@ a {
   gap: 12px;
 }
 
+
 .topbar__actions {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+}
+
+.topbar__actions .pill {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.7);
+  color: #2b2110;
+  padding: 8px 12px;
+  font-weight: 700;
+}
+
+.topbar__actions .btn-primary {
+  padding: 10px 18px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .topbar__actions .pill,
@@ -94,8 +114,9 @@ a {
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: 22px;
-  padding: 28px;
-  max-width: 1300px;
+  padding: 28px 32px;
+  max-width: 1600px;
+  width: 100%;
   margin: 0 auto 48px;
   background: transparent;
 }
@@ -376,7 +397,7 @@ a {
 
 .hero {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1fr;
   gap: 18px;
 }
 
@@ -388,9 +409,7 @@ a {
 }
 
 .hero__stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
+  display: none;
 }
 
 .stat-card {
