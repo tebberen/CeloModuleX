@@ -36,6 +36,7 @@ const state = {
   signer: null,
   account: null,
   chainId: null,
+  injectedProvider: null,
   hasNft: false,
   nftPrice: null,
   nftMessage: '',
@@ -228,6 +229,15 @@ function closeWalletDropdown() {
   toggleWalletDropdown(false)
 }
 
+function getInjectedEthereum() {
+  if (typeof window === 'undefined') return null
+  if (window.ethereum?.providers?.length) {
+    const metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask)
+    return metamaskProvider || window.ethereum.providers[0]
+  }
+  return window.ethereum || null
+}
+
 function getProvider() {
   return state.provider || fallbackProvider
 }
@@ -244,14 +254,16 @@ function getNftContract(providerOrSigner) {
 }
 
 async function connectWallet() {
-  if (typeof window.ethereum === 'undefined') {
+  const injectedProvider = getInjectedEthereum()
+
+  if (!injectedProvider) {
     setNetworkWarning('MetaMask is required to connect to Celo.')
     return
   }
 
   try {
-    const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
-    await window.ethereum.request({ method: 'eth_requestAccounts' })
+    const provider = new ethers.providers.Web3Provider(injectedProvider, 'any')
+    await provider.send('eth_requestAccounts', [])
     const signer = provider.getSigner()
     const account = await signer.getAddress()
     let network = await provider.getNetwork()
@@ -266,6 +278,7 @@ async function connectWallet() {
     state.signer = signer
     state.account = account
     state.chainId = state.chainId ?? network.chainId
+    state.injectedProvider = injectedProvider
     userAddress = account
     syncPremiumFlag(false)
 
@@ -288,6 +301,7 @@ function disconnect() {
   state.signer = null
   state.account = null
   state.chainId = null
+  state.injectedProvider = null
   userAddress = null
   state.hasNft = false
   state.nftPrice = null
@@ -301,9 +315,10 @@ function disconnect() {
 }
 
 async function ensureCeloNetwork(promptAdd = false) {
-  if (!window.ethereum || state.chainId === CELO_CHAIN_ID) return
+  const injectedProvider = getInjectedEthereum()
+  if (!injectedProvider || state.chainId === CELO_CHAIN_ID) return
   try {
-    await window.ethereum.request({
+    await injectedProvider.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: CELO_CHAIN_HEX }],
     })
@@ -312,7 +327,7 @@ async function ensureCeloNetwork(promptAdd = false) {
     console.warn('Network switch failed', err)
     if (promptAdd && err?.code === 4902) {
       try {
-        await window.ethereum.request({
+        await injectedProvider.request({
           method: 'wallet_addEthereumChain',
           params: [CELO_CHAIN_DATA],
         })
@@ -492,10 +507,11 @@ function donate(amount) {
 }
 
 function subscribeToWalletEvents() {
-  if (!window.ethereum || window.ethereum._celoModuleXHooked) return
-  window.ethereum._celoModuleXHooked = true
+  const injectedProvider = getInjectedEthereum()
+  if (!injectedProvider || injectedProvider._celoModuleXHooked) return
+  injectedProvider._celoModuleXHooked = true
 
-  window.ethereum.on('accountsChanged', (accounts) => {
+  injectedProvider.on('accountsChanged', (accounts) => {
     state.account = accounts[0] || null
     userAddress = state.account
     syncPremiumFlag(false)
@@ -503,7 +519,7 @@ function subscribeToWalletEvents() {
     loadNftData()
   })
 
-  window.ethereum.on('chainChanged', (chainIdHex) => {
+  injectedProvider.on('chainChanged', (chainIdHex) => {
     const chainId = parseInt(chainIdHex, 16)
     state.chainId = chainId
     syncPremiumFlag(false)
