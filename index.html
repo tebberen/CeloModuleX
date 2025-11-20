@@ -169,18 +169,36 @@
           </div>
           <button id="refresh-nft" class="btn btn-secondary">Refresh</button>
         </div>
-        <div class="grid">
-          <div class="card">
-            <p class="label">Current price</p>
-            <p class="value" id="nft-price-secondary">—</p>
+        <div class="nft-layout">
+          <div class="card nft-pass-card nft-left">
+            <img
+              src="assets/cx-access-pass.png"
+              alt="CeloModuleX Premium Access Pass"
+              class="nft-pass-image"
+            />
+            <div class="nft-pass-content">
+              <p class="pill badge">Premium</p>
+              <h3>CeloModuleX Premium Access Pass</h3>
+              <p class="muted">Minting the Access Pass NFT unlocks premium modules and boosts your on-chain profile.</p>
+              <ul class="bullet-list">
+                <li>Access advanced modules and extra actions</li>
+                <li>Signal higher engagement across multiple contracts</li>
+                <li>Support the project while boosting your on-chain history</li>
+              </ul>
+            </div>
+            <button class="btn btn-primary nft-mint-cta" id="mint-nft-secondary">Mint Access NFT</button>
           </div>
-          <div class="card">
-            <p class="label">Ownership</p>
-            <p class="value" id="nft-ownership-secondary">Connect wallet to check</p>
+          <div class="nft-right">
+            <p class="muted status-label">Status</p>
+            <div class="card nft-info-card">
+              <p class="label">Current price</p>
+              <p class="value" id="nft-price-secondary">—</p>
+            </div>
+            <div class="card nft-info-card">
+              <p class="label">Ownership</p>
+              <p class="value" id="nft-ownership-secondary">Connect wallet to check</p>
+            </div>
           </div>
-        </div>
-        <div class="actions-row">
-          <button class="btn btn-primary" id="mint-nft-secondary">Mint Access NFT</button>
         </div>
       </section>
 
