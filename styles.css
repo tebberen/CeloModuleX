@@ -289,6 +289,55 @@ a {
   background: linear-gradient(135deg, #ffd463, #f7b623);
 }
 
+.nft-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.nft-pass-card {
+  display: grid;
+  gap: 14px;
+  background: linear-gradient(145deg, #ffebb3, #ffd76b);
+}
+
+.nft-pass-content {
+  display: grid;
+  gap: 8px;
+}
+
+.nft-pass-image {
+  width: 100%;
+  max-width: 100%;
+  border-radius: calc(var(--radius) - 4px);
+  box-shadow: 0 16px 32px rgba(120, 80, 10, 0.22);
+  border: 1px solid rgba(233, 170, 56, 0.6);
+}
+
+.nft-mint-cta {
+  width: 100%;
+  justify-self: stretch;
+  padding: 12px 18px;
+  font-size: 1rem;
+}
+
+.nft-right {
+  display: grid;
+  gap: 10px;
+}
+
+.nft-info-card {
+  background: linear-gradient(145deg, #fff3c6, #ffd874);
+  display: grid;
+  gap: 6px;
+}
+
+.status-label {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
 .nft-highlight__status {
   background: #fffaf0;
   border: 1px solid var(--border);
@@ -432,6 +481,10 @@ a {
 
   .hero,
   .nft-highlight {
+    grid-template-columns: 1fr;
+  }
+
+  .nft-layout {
     grid-template-columns: 1fr;
   }
 
