@@ -1,5 +1,5 @@
 // Core contract data preserved from previous setup
-export const MAIN_HUB_ADDRESS = '0xad9801c23f3a7ebfea6c33e8575d479169881ff2'
+export const MAIN_HUB_ADDRESS = '0xece90BaADe9340826f1D4c77f5A42E6aA95F9B9f'
 export const NFT_ADDRESS = '0xA246446F7E1C5b68C10673dfdf06e3961B1CE325'
 export const OWNER_ADDRESS = '0x09dfa0d77125978997dd9f94a0f870d3f2900da5'
 
