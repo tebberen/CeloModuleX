@@ -317,7 +317,7 @@ async function loadMainHubStats() {
 
 // UI updates for NFT data and premium affordances
 function updateNftUI() {
-  const priceLabel = state.nftPrice ? `${ethers.utils.formatEther(state.nftPrice)} CELO` : '—'
+  const priceLabel = '1 CELO'
   elements.nftPricePrimary?.textContent = priceLabel
   elements.nftPriceSecondary.textContent = priceLabel
 
