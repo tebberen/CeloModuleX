@@ -68,11 +68,12 @@ const elements = {
   profileNft: document.getElementById('profile-nft'),
   profilePremiumPill: document.getElementById('profile-premium-pill'),
   browseModules: document.getElementById('browse-modules'),
-  mintNftButtons: [document.getElementById('mint-nft'), document.getElementById('cmxMintButton')],
+  mintNftButtons: [document.getElementById('cmxMintButton')],
   refreshNft: document.getElementById('refresh-nft'),
   nftMessage: document.getElementById('nft-message'),
   premiumBadges: Array.from(document.querySelectorAll('[data-premium-badge]')),
   premiumSections: Array.from(document.querySelectorAll('[data-premium="true"]')),
+  highlightMintCta: document.getElementById('nft-highlight-cta'),
 }
 
 elements.ownerAddress.textContent = OWNER_ADDRESS
@@ -317,7 +318,7 @@ async function loadMainHubStats() {
 // UI updates for NFT data and premium affordances
 function updateNftUI() {
   const priceLabel = state.nftPrice ? `${ethers.utils.formatEther(state.nftPrice)} CELO` : '—'
-  elements.nftPricePrimary.textContent = priceLabel
+  elements.nftPricePrimary?.textContent = priceLabel
   elements.nftPriceSecondary.textContent = priceLabel
 
   let ownershipText = 'Connect wallet to check ownership'
@@ -331,11 +332,11 @@ function updateNftUI() {
     ownershipText = ownsPass ? 'You already own the pass' : 'No access pass found'
     if (!message && ownsPass) message = 'You already own the Access Pass.'
   }
-  elements.nftOwnershipPrimary.textContent = ownershipText
+  elements.nftOwnershipPrimary?.textContent = ownershipText
   elements.nftOwnershipSecondary.textContent = ownershipText
 
-  elements.nftStatusText.textContent = ownsPass ? '✅ Premium Access Active' : "You don't own this NFT yet"
-  elements.nftStatusPill.classList.toggle('owned', ownsPass)
+  elements.nftStatusText?.textContent = ownsPass ? '✅ Premium Access Active' : "You don't own this NFT yet"
+  elements.nftStatusPill?.classList.toggle('owned', ownsPass)
   elements.profileNft.textContent = ownsPass ? 'Owned' : 'Not owned'
 
   const disableMint = state.chainId !== CELO_CHAIN_ID || !state.account || ownsPass || state.minting
@@ -521,6 +522,11 @@ document.querySelectorAll('.quick-donate').forEach((btn) => {
 elements.browseModules?.addEventListener('click', () => {
   showSection('modules')
   document.getElementById('modules')?.scrollIntoView({ behavior: 'smooth' })
+})
+
+elements.highlightMintCta?.addEventListener('click', () => {
+  showSection('nft')
+  document.getElementById('nft')?.scrollIntoView({ behavior: 'smooth' })
 })
 
 updateConnectionUI()
