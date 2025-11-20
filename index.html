@@ -18,6 +18,7 @@
       <div class="topbar__actions">
         <div class="pill status-pill" id="network-pill">Network: <span id="network-label">Not connected</span></div>
         <div class="pill status-pill premium-pill" id="premium-pill">Premium: <span id="premium-status">Locked</span></div>
+        <span id="cmxPremiumStatus" class="premium-status-pill">Premium: Locked</span>
         <div class="pill address-pill" id="address-pill">Wallet: <span id="current-address">Not connected</span></div>
         <button id="connect-btn" class="btn btn-primary">Connect Wallet</button>
         <button id="disconnect-btn" class="btn btn-ghost">Disconnect</button>
@@ -147,7 +148,7 @@
             <p class="muted">Route small donations to the hub contract and support the ecosystem.</p>
             <button class="btn btn-primary">Open</button>
           </div>
-          <div class="card module-card" data-premium-module>
+          <div class="card module-card" data-premium-module data-premium="true">
             <p class="eyebrow">Build</p>
             <h3>Deploy Module</h3>
             <div class="pill badge premium-chip" data-premium-badge>Premium</div>
@@ -181,6 +182,7 @@
             />
             <div class="nft-pass-content">
               <p class="pill badge">Premium</p>
+              <span id="cmxPremiumCardState" class="premium-card-state">🔒 Premium Access Locked</span>
               <div class="pill premium-access-pill" id="nft-premium-card">Premium Access Locked</div>
               <h3>CeloModuleX Premium Access Pass</h3>
               <p class="muted">Minting the Access Pass NFT unlocks premium modules and boosts your on-chain profile.</p>
@@ -190,7 +192,7 @@
                 <li>Support the project while boosting your on-chain history</li>
               </ul>
             </div>
-            <button class="btn btn-primary nft-mint-cta" id="mint-nft-secondary">Mint Access NFT</button>
+            <button class="btn btn-primary nft-mint-cta" id="cmxMintButton">Mint Access NFT</button>
           </div>
           <div class="nft-right">
             <p class="muted status-label">Status</p>

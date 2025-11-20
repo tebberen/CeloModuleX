@@ -48,6 +48,7 @@ const elements = {
   networkWarning: document.getElementById('network-warning'),
   premiumPill: document.getElementById('premium-pill'),
   premiumStatus: document.getElementById('premium-status'),
+  premiumStatusPill: document.getElementById('cmxPremiumStatus'),
   nftPricePrimary: document.getElementById('nft-price'),
   nftPriceSecondary: document.getElementById('nft-price-secondary'),
   nftOwnershipPrimary: document.getElementById('nft-ownership'),
@@ -56,6 +57,7 @@ const elements = {
   nftStatusPill: document.getElementById('nft-status-pill'),
   nftPremiumHighlight: document.getElementById('nft-premium-highlight'),
   nftPremiumCard: document.getElementById('nft-premium-card'),
+  premiumCardState: document.getElementById('cmxPremiumCardState'),
   ownerAddress: document.getElementById('owner-address'),
   profileWallet: document.getElementById('profile-wallet'),
   profileChain: document.getElementById('profile-chain'),
@@ -63,10 +65,11 @@ const elements = {
   profileNft: document.getElementById('profile-nft'),
   profilePremiumPill: document.getElementById('profile-premium-pill'),
   browseModules: document.getElementById('browse-modules'),
-  mintNftButtons: [document.getElementById('mint-nft'), document.getElementById('mint-nft-secondary')],
+  mintNftButtons: [document.getElementById('mint-nft'), document.getElementById('cmxMintButton')],
   refreshNft: document.getElementById('refresh-nft'),
   nftMessage: document.getElementById('nft-message'),
   premiumBadges: Array.from(document.querySelectorAll('[data-premium-badge]')),
+  premiumSections: Array.from(document.querySelectorAll('[data-premium="true"]')),
 }
 
 elements.ownerAddress.textContent = OWNER_ADDRESS
@@ -131,6 +134,59 @@ function updatePremiumUI() {
   })
 
   elements.nftStatusPill?.classList.toggle('owned', hasPremiumPass)
+
+  updatePremiumStatusUI()
+  updateNftCardState()
+  updatePremiumGates()
+}
+
+// UI helpers for premium state indicators
+function updatePremiumStatusUI() {
+  const pill = elements.premiumStatusPill
+  if (!pill) return
+
+  if (hasPremiumPass) {
+    pill.textContent = 'Premium: Active'
+    pill.classList.add('premium-active')
+    pill.classList.remove('premium-locked')
+  } else {
+    pill.textContent = 'Premium: Locked'
+    pill.classList.add('premium-locked')
+    pill.classList.remove('premium-active')
+  }
+}
+
+function updateNftCardState() {
+  const stateEl = elements.premiumCardState
+  const mintButton = elements.mintNftButtons?.[1]
+
+  if (!stateEl || !mintButton) return
+
+  if (hasPremiumPass) {
+    stateEl.textContent = '✅ Premium Access Active'
+    stateEl.classList.add('premium-active')
+    mintButton.disabled = true
+    mintButton.textContent = 'Already Minted'
+    mintButton.classList.add('btn-disabled')
+  } else {
+    stateEl.textContent = '🔒 Premium Access Locked'
+    stateEl.classList.remove('premium-active')
+    const disableMint = state.minting || !state.account || state.chainId !== CELO_CHAIN_ID
+    mintButton.disabled = disableMint
+    mintButton.textContent = state.minting ? 'Minting…' : 'Mint Access Pass'
+    mintButton.classList.toggle('btn-disabled', false)
+  }
+}
+
+function updatePremiumGates() {
+  elements.premiumSections.forEach((section) => {
+    if (!section) return
+    if (hasPremiumPass) {
+      section.classList.remove('premium-locked-section')
+    } else {
+      section.classList.add('premium-locked-section')
+    }
+  })
 }
 
 function updateConnectionUI() {
@@ -150,6 +206,7 @@ function getProvider() {
   return state.provider || fallbackProvider
 }
 
+// Contract instantiation helpers
 function getMainHubContract(useSigner = false) {
   const provider = useSigner && state.signer ? state.signer : getProvider()
   return new ethers.Contract(MAIN_HUB_ADDRESS, MAIN_HUB_ABI, provider)
@@ -239,6 +296,7 @@ async function loadMainHubStats() {
   }
 }
 
+// UI updates for NFT data and premium affordances
 function updateNftUI() {
   const priceLabel = state.nftPrice ? `${ethers.utils.formatEther(state.nftPrice)} CELO` : '—'
   elements.nftPricePrimary.textContent = priceLabel
@@ -280,10 +338,31 @@ function updateNftUI() {
   updatePremiumUI()
 }
 
-async function loadNftData() {
-  const contract = getNftContract()
+// Helper to read NFT mint price with fallback
+async function fetchNftPrice() {
+  const contract = getNftContract(state.signer || getProvider())
+
   try {
-    const price = await contract.getNFTPrice()
+    return await contract.getNFTPrice()
+  } catch (err) {
+    console.warn('getNFTPrice() lookup failed, trying fallback', err)
+  }
+
+  if (typeof contract.currentPrice === 'function') {
+    try {
+      return await contract.currentPrice()
+    } catch (err) {
+      console.error('Fallback price lookup failed', err)
+    }
+  }
+
+  throw new Error('Unable to fetch NFT price')
+}
+
+async function loadNftData() {
+  const contract = getNftContract(state.signer || getProvider())
+  try {
+    const price = await fetchNftPrice()
     state.nftPrice = price
   } catch (err) {
     console.warn('Price lookup failed', err)
@@ -307,6 +386,7 @@ async function loadNftData() {
     return
   }
 
+  // Premium state fetch (hasNFT)
   try {
     const has = await contract.hasNFT(state.account)
     syncPremiumFlag(has)
@@ -320,7 +400,8 @@ async function loadNftData() {
   updateNftUI()
 }
 
-function handleMintClick() {
+// NFT mint flow (CMXAccessPass.mintNFT)
+async function handleMintClick() {
   if (!state.account || !state.signer) {
     state.nftMessage = 'Connect your wallet before minting.'
     updateNftUI()
@@ -333,37 +414,20 @@ function handleMintClick() {
     return
   }
 
-  console.log('Mint flow will go here')
-  state.nftMessage = 'Mint flow will go here.'
-  updateNftUI()
-}
-
-async function mintAccessNft() {
-  if (!state.account || !state.signer) {
-    state.nftMessage = 'Connect your wallet before minting.'
-    updateNftUI()
-    return
-  }
-
-  if (state.chainId !== CELO_CHAIN_ID) {
-    state.nftMessage = 'Please switch to Celo Mainnet to mint the Access Pass.'
-    updateNftUI()
-    return
-  }
-
   try {
     state.minting = true
     state.nftMessage = ''
     updateNftUI()
 
-    const contract = getNftContract(state.signer)
-    const price = state.nftPrice || (await contract.getNFTPrice())
+    const price = state.nftPrice || (await fetchNftPrice())
+    const contract = getNftContract(state.signer) // signer-backed instance for minting
     const tx = await contract.mintNFT({ value: price })
     state.nftMessage = 'Transaction submitted. Waiting for confirmation...'
     updateNftUI()
+
     await tx.wait()
     await loadNftData()
-    state.nftMessage = 'Access Pass minted'
+    state.nftMessage = 'Access Pass minted successfully!'
   } catch (err) {
     console.error('Mint failed', err)
     state.nftMessage = err?.message || 'Mint failed. Please try again.'
