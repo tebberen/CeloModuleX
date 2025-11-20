@@ -1,12 +1,12 @@
 :root {
-  --bg: #fbcc5c;
-  --card: #ffe29a;
-  --primary: #fbcc5c;
-  --primary-strong: #f3b223;
-  --text: #1a1308;
-  --muted: #4a3c22;
-  --border: #e5b23c;
-  --shadow: 0 12px 28px rgba(159, 116, 15, 0.14);
+  --bg: #fffaf2;
+  --card: #ffffff;
+  --primary: #f3b223;
+  --primary-strong: #e1a215;
+  --text: #1f1a12;
+  --muted: #514a3f;
+  --border: #eadfca;
+  --shadow: 0 14px 36px rgba(17, 16, 10, 0.06);
   --radius: 18px;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: var(--bg);
@@ -19,11 +19,10 @@
 
 body {
   margin: 0;
-  background: linear-gradient(135deg, rgba(243, 178, 35, 0.26), rgba(251, 204, 92, 0.84)),
-    radial-gradient(circle at 85% 10%, rgba(255, 241, 181, 0.5), transparent 30%),
-    var(--bg);
+  background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  line-height: 1.6;
 }
 
 h1,
@@ -53,9 +52,9 @@ a {
   gap: 18px;
   align-items: center;
   padding: 14px 28px;
-  background: linear-gradient(120deg, #f2ae1d, #ffc743);
+  background: linear-gradient(120deg, #f7cb4d, #f3b223);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 6px 22px rgba(130, 90, 10, 0.15);
+  box-shadow: 0 8px 20px rgba(200, 150, 35, 0.15);
 }
 
 .topbar__brand {
@@ -78,6 +77,11 @@ a {
   flex-wrap: wrap;
 }
 
+.topbar__actions .pill,
+.topbar__actions .btn {
+  box-shadow: none;
+}
+
 .layout {
   display: grid;
   grid-template-columns: 320px 1fr;
@@ -85,6 +89,7 @@ a {
   padding: 28px;
   max-width: 1300px;
   margin: 0 auto 48px;
+  background: transparent;
 }
 
 .sidebar {
@@ -109,6 +114,27 @@ a {
   padding: 18px;
   box-shadow: var(--shadow);
   color: var(--text);
+}
+
+/* Utility: elevated featured card styling */
+.featured-card {
+  position: relative;
+  overflow: hidden;
+  border-color: #f1d58f;
+}
+
+.featured-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.6), transparent 40%),
+    radial-gradient(circle at 80% 0%, rgba(255, 229, 157, 0.25), transparent 50%);
+  pointer-events: none;
+}
+
+.featured-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .sidebar-card {
@@ -147,6 +173,7 @@ a {
   align-items: center;
   justify-content: center;
   gap: 6px;
+  color: var(--text);
 }
 
 .btn:hover {
@@ -154,23 +181,55 @@ a {
 }
 
 .btn-disabled {
-  opacity: 0.6;
+  opacity: 1;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  background: #f1efe9;
+  color: transparent;
+  position: relative;
 }
 
 .btn-primary {
   background: linear-gradient(120deg, var(--primary-strong), var(--primary));
-  color: #1c1407;
-  box-shadow: 0 10px 22px rgba(160, 110, 10, 0.25);
+  color: #2a1f0c;
+  box-shadow: 0 10px 22px rgba(212, 168, 58, 0.25);
+}
+
+.btn-primary.btn-disabled::after {
+  /* Utility: replace label when premium access is already owned */
+  content: 'Access Pass Owned';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #3d5a2f;
+  font-weight: 800;
+}
+
+.nft-highlight__status:has(#nft-status-pill.owned) #mint-nft {
+  background: #f1efe9;
+  color: transparent;
+  box-shadow: none;
+  position: relative;
+}
+
+.nft-highlight__status:has(#nft-status-pill.owned) #mint-nft::after {
+  /* Utility: synced owned label for highlight mint CTA */
+  content: 'Access Pass Owned';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #3d5a2f;
+  font-weight: 800;
 }
 
 .btn-secondary {
-  background: #fff8de;
+  background: #f7f4ec;
   color: var(--text);
   border: 1px solid var(--border);
-  box-shadow: 0 6px 12px rgba(130, 90, 10, 0.08);
+  box-shadow: 0 6px 12px rgba(17, 16, 10, 0.04);
 }
 
 .btn-ghost {
@@ -189,7 +248,7 @@ a {
   border-radius: 999px;
   padding: 6px 12px;
   border: 1px solid var(--border);
-  background: #ffedb3;
+  background: #f8f4ea;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -202,19 +261,34 @@ a {
   color: var(--muted);
 }
 
+#nft-status-pill {
+  background: #f1f2f5;
+  border-radius: var(--radius);
+  border: 1px solid #d6d9df;
+  padding: 10px 12px;
+  font-weight: 700;
+  color: #414651;
+}
+
+#nft-status-pill.owned {
+  background: #d9f2d3;
+  border-color: #7ab164;
+  color: #1d3c15;
+}
+
 .premium-pill,
 .premium-chip,
 .premium-access-pill {
-  background: #fff7d6;
-  border-color: #d7a52e;
+  background: #eef0f3;
+  border-color: #d6d9df;
 }
 
 .premium-pill.active,
 .premium-chip.active,
 .premium-access-pill.active {
-  background: #d7f0c2;
-  border-color: #80b249;
-  color: #1f3c0d;
+  background: #d9f2d3;
+  border-color: #7ab164;
+  color: #1d3c15;
 }
 
 .premium-chip {
@@ -230,7 +304,7 @@ a {
   border-radius: 999px;
   padding: 6px 10px;
   border: 1px solid var(--border);
-  background: #fff8de;
+  background: #f7f4ec;
   font-weight: 700;
   color: var(--text);
 }
@@ -241,13 +315,19 @@ a {
   color: #1f3c0d;
 }
 
+.premium-status-pill.premium-locked {
+  background: #eef0f3;
+  border-color: #d6d9df;
+  color: #4c5158;
+}
+
 .premium-card-state {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 6px 10px;
   border-radius: 12px;
-  background: #fff7d6;
+  background: #eef0f3;
   border: 1px dashed var(--border);
   font-weight: 700;
 }
@@ -258,6 +338,10 @@ a {
   color: #1f3c0d;
 }
 
+.premium-card-state:not(.premium-active) {
+  color: #4c5158;
+}
+
 .address-pill .value,
 .status-pill .value {
   font-weight: 700;
@@ -265,19 +349,21 @@ a {
 
 .nav-pill {
   border: 1px solid var(--border);
-  background: #ffe9a0;
+  background: #fff;
   color: var(--text);
   padding: 10px 18px;
   border-radius: 999px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 8px 16px rgba(130, 90, 10, 0.08);
+  box-shadow: 0 8px 16px rgba(17, 16, 10, 0.05);
 }
 
 .nav-pill.active,
 .nav-pill:hover {
-  background: var(--primary-strong);
-  border-color: #d99b1b;
+  background: linear-gradient(120deg, var(--primary-strong), var(--primary));
+  border-color: #e1a215;
+  color: #2a1f0c;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.08), 0 10px 20px rgba(212, 168, 58, 0.18);
 }
 
 .hero {
@@ -302,9 +388,9 @@ a {
 .stat-card {
   padding: 14px;
   border-radius: var(--radius);
-  border: 1px dashed var(--border);
-  background: #ffe7a8;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: 0 10px 20px rgba(17, 16, 10, 0.04);
 }
 
 .label {
@@ -326,9 +412,9 @@ a {
   margin-top: 12px;
   padding: 12px 14px;
   border-radius: var(--radius);
-  background: #f9d36c;
-  color: #4a3002;
-  border: 1px solid #d99b1b;
+  background: #fff7e1;
+  color: #3a2c12;
+  border: 1px solid #e6d6ad;
 }
 
 .notice:empty {
@@ -347,9 +433,10 @@ a {
 .nft-highlight {
   display: grid;
   grid-template-columns: 1fr 360px;
-  gap: 18px;
+  gap: 22px;
   align-items: center;
-  background: linear-gradient(135deg, #ffd463, #f7b623);
+  background: linear-gradient(135deg, #fff8ea 0%, #ffe6ad 55%, #fff8ed 100%);
+  box-shadow: 0 18px 40px rgba(240, 184, 70, 0.15);
 }
 
 .nft-layout {
@@ -362,7 +449,9 @@ a {
 .nft-pass-card {
   display: grid;
   gap: 14px;
-  background: linear-gradient(145deg, #ffebb3, #ffd76b);
+  background: #fff;
+  border-color: #eedfbf;
+  padding: 22px;
 }
 
 .nft-pass-content {
@@ -391,7 +480,8 @@ a {
 }
 
 .nft-info-card {
-  background: linear-gradient(145deg, #fff3c6, #ffd874);
+  background: #fff;
+  border-color: #eadfca;
   display: grid;
   gap: 6px;
 }
@@ -402,7 +492,7 @@ a {
 }
 
 .nft-highlight__status {
-  background: #fffaf0;
+  background: #fff;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
@@ -415,7 +505,7 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff7d6;
+  background: #f8f4ea;
   padding: 12px 14px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -432,8 +522,8 @@ a {
 }
 
 .badge {
-  background: #fff;
-  border: 1px solid var(--border);
+  background: #fffdf8;
+  border: 1px solid #eadfca;
 }
 
 .section-header {
@@ -459,15 +549,16 @@ a {
 .module-card {
   display: grid;
   gap: 8px;
-  background: linear-gradient(145deg, #ffebb3, #ffd76b);
-  border-color: #e5b23c;
+  background: #fff;
+  border-color: #eadfca;
+  box-shadow: 0 10px 20px rgba(17, 16, 10, 0.04);
 }
 
 .premium-locked-section {
   position: relative;
-  opacity: 0.86;
-  filter: saturate(0.9);
-  box-shadow: inset 0 0 0 2px rgba(217, 155, 27, 0.4);
+  opacity: 0.88;
+  filter: saturate(0.92);
+  box-shadow: inset 0 0 0 2px rgba(224, 194, 117, 0.6);
 }
 
 .premium-locked-section::after {
@@ -477,7 +568,7 @@ a {
   right: 12px;
   padding: 4px 10px;
   border-radius: 12px;
-  background: #fff8de;
+  background: #f1f0ed;
   border: 1px dashed var(--border);
   font-weight: 700;
   color: var(--text);
