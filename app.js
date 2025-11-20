@@ -18,6 +18,13 @@ const NFT_CONTRACT_ABI = [
 
 const CELO_CHAIN_ID = 42220
 const CELO_CHAIN_HEX = '0xa4ec'
+const CELO_CHAIN_DATA = {
+  chainId: CELO_CHAIN_HEX,
+  chainName: 'Celo Mainnet',
+  nativeCurrency: { name: 'CELO', symbol: 'CELO', decimals: 18 },
+  rpcUrls: ['https://forno.celo.org'],
+  blockExplorerUrls: ['https://explorer.celo.org/mainnet'],
+}
 const READONLY_RPC = 'https://forno.celo.org'
 
 // Simple in-memory session flags
@@ -244,19 +251,26 @@ async function connectWallet() {
 
   try {
     const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
-    await provider.send('eth_requestAccounts', [])
+    await window.ethereum.request({ method: 'eth_requestAccounts' })
     const signer = provider.getSigner()
     const account = await signer.getAddress()
-    const network = await provider.getNetwork()
+    let network = await provider.getNetwork()
+
+    if (network.chainId !== CELO_CHAIN_ID) {
+      await ensureCeloNetwork(true)
+      network = await provider.getNetwork()
+      state.chainId = network.chainId
+    }
 
     state.provider = provider
     state.signer = signer
     state.account = account
-    state.chainId = network.chainId
+    state.chainId = state.chainId ?? network.chainId
     userAddress = account
     syncPremiumFlag(false)
 
-    const label = `${network.name || 'Unknown'} (chain ${network.chainId})`
+    const chainLabel = state.chainId === CELO_CHAIN_ID ? 'Celo Mainnet (chain 42220)' : `${network.name || 'Unknown'} (chain ${state.chainId})`
+    const label = chainLabel
     setNetworkLabel(label)
     setNetworkWarning(network.chainId === CELO_CHAIN_ID ? '' : 'Please switch to Celo mainnet (42220).')
 
@@ -286,15 +300,28 @@ function disconnect() {
   updateNftUI()
 }
 
-async function ensureCeloNetwork() {
+async function ensureCeloNetwork(promptAdd = false) {
   if (!window.ethereum || state.chainId === CELO_CHAIN_ID) return
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: CELO_CHAIN_HEX }],
     })
+    state.chainId = CELO_CHAIN_ID
   } catch (err) {
     console.warn('Network switch failed', err)
+    if (promptAdd && err?.code === 4902) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [CELO_CHAIN_DATA],
+        })
+        state.chainId = CELO_CHAIN_ID
+      } catch (addErr) {
+        console.warn('Failed to add Celo network', addErr)
+        throw addErr
+      }
+    }
   }
 }
 
