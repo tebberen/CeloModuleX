@@ -64,7 +64,7 @@ Bu depo varsayılan olarak MIT lisansı kullanır; farklı lisans gereksinimleri
 ## 10. Canlı Ağ ve Adresler
 
 - **Varsayılan ağ:** Celo Mainnet (`chainId 42220`). Uygulama, cüzdan bağlanırken otomatik olarak bu ağa geçmenizi ister.
-- **MainHub (aksiyon yöneticisi):** `0xad9801c23f3a7ebfea6c33e8575d479169881ff2`
-- **NFTAccess (premium erişim):** `0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd`
+- **MainHub (aksiyon yöneticisi):** `0xece90BaADe9340826f1D4c77f5A42E6aA95F9B9f`
+- **NFTAccess (premium erişim):** `0xA246446F7E1C5b68C10673dfdf06e3961B1CE325`
 
 Frontend, işlem ücretlerini (`basicFee` / `premiumFee`) ve NFT mint fiyatını zincirden okur; bu nedenle ücret değişiklikleri arayüze anında yansır ve GitHub Pages üzerinde statik barındırmada dahi doğru değerler gösterilir.
