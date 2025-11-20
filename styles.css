@@ -153,6 +153,13 @@ a {
   transform: translateY(-1px);
 }
 
+.btn-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .btn-primary {
   background: linear-gradient(120deg, var(--primary-strong), var(--primary));
   color: #1c1407;
@@ -217,6 +224,38 @@ a {
 
 [data-premium-badge] {
   display: none;
+}
+
+.premium-status-pill {
+  border-radius: 999px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  background: #fff8de;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.premium-status-pill.premium-active {
+  background: #d7f0c2;
+  border-color: #80b249;
+  color: #1f3c0d;
+}
+
+.premium-card-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: #fff7d6;
+  border: 1px dashed var(--border);
+  font-weight: 700;
+}
+
+.premium-card-state.premium-active {
+  background: #d7f0c2;
+  border-color: #80b249;
+  color: #1f3c0d;
 }
 
 .address-pill .value,
@@ -422,6 +461,27 @@ a {
   gap: 8px;
   background: linear-gradient(145deg, #ffebb3, #ffd76b);
   border-color: #e5b23c;
+}
+
+.premium-locked-section {
+  position: relative;
+  opacity: 0.86;
+  filter: saturate(0.9);
+  box-shadow: inset 0 0 0 2px rgba(217, 155, 27, 0.4);
+}
+
+.premium-locked-section::after {
+  content: '\1F512 Premium locked';
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: #fff8de;
+  border: 1px dashed var(--border);
+  font-weight: 700;
+  color: var(--text);
+  font-size: 0.85rem;
 }
 
 .module-card button {
