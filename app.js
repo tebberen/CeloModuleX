@@ -39,6 +39,9 @@ const elements = {
   connect: document.getElementById('connect-btn'),
   disconnect: document.getElementById('disconnect-btn'),
   address: document.getElementById('current-address'),
+  walletDisplay: document.getElementById('wallet-display'),
+  walletAddressButton: document.getElementById('wallet-address'),
+  walletDropdown: document.getElementById('wallet-dropdown'),
   navLinks: Array.from(document.querySelectorAll('.nav-pill')),
   sections: Array.from(document.querySelectorAll('.content')),
   networkLabel: document.getElementById('network-label'),
@@ -93,7 +96,9 @@ function formatAddress(address) {
 }
 
 function setNetworkLabel(label) {
-  elements.networkLabel.textContent = label
+  if (elements.networkLabel) {
+    elements.networkLabel.textContent = label
+  }
   elements.networkStat.textContent = label
   elements.profileNetwork.textContent = label
 }
@@ -198,8 +203,21 @@ function updateConnectionUI() {
   elements.profileWallet.textContent = label
   elements.profileChain.textContent = state.chainId ? state.chainId : '—'
 
-  elements.connect.disabled = connected
-  elements.disconnect.disabled = !connected
+  elements.connect?.classList.toggle('hidden', connected)
+  elements.walletDisplay?.classList.toggle('visible', connected)
+  elements.walletAddressButton?.setAttribute('aria-expanded', 'false')
+  elements.walletDropdown?.classList.remove('open')
+}
+
+function toggleWalletDropdown(open) {
+  if (!elements.walletDropdown || !elements.walletAddressButton) return
+  const shouldOpen = open ?? !elements.walletDropdown.classList.contains('open')
+  elements.walletDropdown.classList.toggle('open', shouldOpen)
+  elements.walletAddressButton.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false')
+}
+
+function closeWalletDropdown() {
+  toggleWalletDropdown(false)
 }
 
 function getProvider() {
@@ -475,7 +493,22 @@ elements.navLinks.forEach((link) => {
 
 elements.connect.addEventListener('click', connectWallet)
 
-elements.disconnect.addEventListener('click', () => disconnect())
+elements.walletAddressButton?.addEventListener('click', (event) => {
+  event.stopPropagation()
+  toggleWalletDropdown()
+})
+
+elements.disconnect.addEventListener('click', () => {
+  disconnect()
+  closeWalletDropdown()
+})
+
+document.addEventListener('click', (event) => {
+  if (!elements.walletDropdown?.classList.contains('open')) return
+  if (!elements.walletDisplay?.contains(event.target)) {
+    closeWalletDropdown()
+  }
+})
 
 elements.refreshNft.addEventListener('click', () => loadNftData())
 

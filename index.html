@@ -8,20 +8,29 @@
   </head>
   <body>
     <header class="topbar">
-      <div class="topbar__brand">CeloModuleX</div>
-      <nav class="topbar__nav" aria-label="Primary">
-        <button class="nav-pill active" data-target="home">Home</button>
-        <button class="nav-pill" data-target="modules">Modules</button>
-        <button class="nav-pill" data-target="nft">NFT</button>
-        <button class="nav-pill" data-target="profile">Profile</button>
-      </nav>
-      <div class="topbar__actions">
-        <div class="pill status-pill" id="network-pill">Network: <span id="network-label">Not connected</span></div>
-        <div class="pill status-pill premium-pill" id="premium-pill">Premium: <span id="premium-status">Locked</span></div>
-        <div class="pill address-pill" id="address-pill">Wallet: <span id="current-address">Not connected</span></div>
-        <button id="connect-btn" class="btn btn-primary">Connect Wallet</button>
-        <button id="disconnect-btn" class="btn btn-ghost">Disconnect</button>
+      <div class="topbar__content">
+        <div class="topbar__brand">CeloModuleX</div>
+        <nav class="topbar__nav" aria-label="Primary">
+          <button class="nav-pill active" data-target="home">Home</button>
+          <button class="nav-pill" data-target="modules">Modules</button>
+          <button class="nav-pill" data-target="nft">NFT</button>
+          <button class="nav-pill" data-target="profile">Profile</button>
+        </nav>
+        <div class="topbar__wallet">
+          <button id="connect-btn" class="wallet-button">Connect Wallet</button>
+          <div class="wallet-display" id="wallet-display">
+            <button class="wallet-address" id="wallet-address" aria-haspopup="true" aria-expanded="false">
+              <span id="current-address">Not connected</span>
+              <span class="wallet-caret">▾</span>
+            </button>
+            <div class="wallet-dropdown" id="wallet-dropdown" role="menu">
+              <div class="dropdown-item muted" aria-live="polite">Network: Celo Mainnet</div>
+              <button class="dropdown-item" id="disconnect-btn" role="menuitem">Disconnect</button>
+            </div>
+          </div>
+        </div>
       </div>
+      <span id="network-label" class="sr-only">Not connected</span>
     </header>
 
     <main class="layout">
