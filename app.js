@@ -12,6 +12,8 @@ const state = {
   chainId: null,
   hasNft: false,
   nftPrice: null,
+  nftMessage: '',
+  minting: false,
 }
 
 const elements = {
@@ -39,6 +41,7 @@ const elements = {
   browseModules: document.getElementById('browse-modules'),
   mintNftButtons: [document.getElementById('mint-nft'), document.getElementById('mint-nft-secondary')],
   refreshNft: document.getElementById('refresh-nft'),
+  nftMessage: document.getElementById('nft-message'),
 }
 
 elements.ownerAddress.textContent = OWNER_ADDRESS
@@ -93,8 +96,8 @@ function getMainHubContract(useSigner = false) {
   return new ethers.Contract(MAIN_HUB_ADDRESS, MAIN_HUB_ABI, provider)
 }
 
-function getNftContract(useSigner = false) {
-  const provider = useSigner && state.signer ? state.signer : getProvider()
+function getNftContract(providerOrSigner) {
+  const provider = providerOrSigner || state.signer || getProvider()
   return new ethers.Contract(NFT_ADDRESS, NFT_ABI, provider)
 }
 
@@ -135,6 +138,9 @@ function disconnect() {
   state.account = null
   state.chainId = null
   state.hasNft = false
+  state.nftPrice = null
+  state.nftMessage = ''
+  state.minting = false
   updateConnectionUI()
   setNetworkLabel('Not connected')
   setNetworkWarning('')
@@ -175,17 +181,37 @@ function updateNftUI() {
   elements.nftPricePrimary.textContent = priceLabel
   elements.nftPriceSecondary.textContent = priceLabel
 
-  const ownershipText = state.account
-    ? state.hasNft
-      ? 'You already own the pass'
-      : 'No access pass found'
-    : 'Connect wallet to check ownership'
+  let ownershipText = 'Connect wallet to check ownership'
+  let message = state.nftMessage || ''
+
+  if (state.chainId && state.chainId !== CELO_CHAIN_ID) {
+    ownershipText = 'Wrong network'
+    message = 'Please switch to Celo Mainnet to mint the Access Pass.'
+  } else if (state.account) {
+    ownershipText = state.hasNft ? 'You already own the pass' : 'No access pass found'
+    if (!message && state.hasNft) message = 'You already own the Access Pass.'
+  }
   elements.nftOwnershipPrimary.textContent = ownershipText
   elements.nftOwnershipSecondary.textContent = ownershipText
 
   elements.nftStatusText.textContent = state.hasNft ? 'You own this NFT' : "You don't own this NFT yet"
   elements.nftStatusPill.classList.toggle('owned', state.hasNft)
   elements.profileNft.textContent = state.hasNft ? 'Owned' : 'Not owned'
+
+  const disableMint = state.chainId !== CELO_CHAIN_ID || !state.account || state.hasNft || state.minting
+  elements.mintNftButtons.forEach((btn) => {
+    if (!btn) return
+    btn.disabled = disableMint
+    btn.textContent = state.minting
+      ? 'Minting…'
+      : state.hasNft
+        ? 'Access Pass minted'
+        : 'Mint Access NFT'
+  })
+
+  if (elements.nftMessage) {
+    elements.nftMessage.textContent = message
+  }
 }
 
 async function loadNftData() {
@@ -200,6 +226,14 @@ async function loadNftData() {
 
   if (!state.account) {
     state.hasNft = false
+    state.nftMessage = ''
+    updateNftUI()
+    return
+  }
+
+  if (state.chainId && state.chainId !== CELO_CHAIN_ID) {
+    state.hasNft = false
+    state.nftMessage = 'Please switch to Celo Mainnet to mint the Access Pass.'
     updateNftUI()
     return
   }
@@ -207,9 +241,11 @@ async function loadNftData() {
   try {
     const has = await contract.hasNFT(state.account)
     state.hasNft = has
+    state.nftMessage = has ? 'You already own the Access Pass.' : ''
   } catch (err) {
     console.warn('Ownership lookup failed', err)
     state.hasNft = false
+    state.nftMessage = 'Unable to check ownership right now.'
   }
 
   updateNftUI()
@@ -217,21 +253,37 @@ async function loadNftData() {
 
 async function mintAccessNft() {
   if (!state.account || !state.signer) {
-    alert('Connect your wallet before minting.')
+    state.nftMessage = 'Connect your wallet before minting.'
+    updateNftUI()
+    return
+  }
+
+  if (state.chainId !== CELO_CHAIN_ID) {
+    state.nftMessage = 'Please switch to Celo Mainnet to mint the Access Pass.'
+    updateNftUI()
     return
   }
 
   try {
-    const contract = getNftContract(true)
+    state.minting = true
+    state.nftMessage = ''
+    updateNftUI()
+
+    const contract = getNftContract(state.signer)
     const price = state.nftPrice || (await contract.getNFTPrice())
     const tx = await contract.mintNFT({ value: price })
+    state.nftMessage = 'Transaction submitted. Waiting for confirmation...'
+    updateNftUI()
     await tx.wait()
-    alert('Mint successful!')
     await loadNftData()
+    state.nftMessage = 'Access Pass minted'
   } catch (err) {
     console.error('Mint failed', err)
-    alert(err?.message || 'Mint failed')
+    state.nftMessage = err?.message || 'Mint failed. Please try again.'
   }
+
+  state.minting = false
+  updateNftUI()
 }
 
 async function refreshData() {

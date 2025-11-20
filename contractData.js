@@ -1,6 +1,6 @@
 // Core contract data preserved from previous setup
 export const MAIN_HUB_ADDRESS = '0xad9801c23f3a7ebfea6c33e8575d479169881ff2'
-export const NFT_ADDRESS = '0xa2a5d8c63bd03cfbf01843f2dbddcc3d9b6158fd'
+export const NFT_ADDRESS = '0xA246446F7E1C5b68C10673dfdf06e3961B1CE325'
 export const OWNER_ADDRESS = '0x09dfa0d77125978997dd9f94a0f870d3f2900da5'
 
 export const MAIN_HUB_ABI = [
@@ -217,7 +217,7 @@ export const MAIN_HUB_ABI = [
 export const NFT_ABI = [
   {
     inputs: [
-      { internalType: 'address', name: 'owner', type: 'address' },
+      { internalType: 'address', name: 'to', type: 'address' },
       { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
     ],
     name: 'approve',
@@ -228,7 +228,6 @@ export const NFT_ABI = [
   {
     inputs: [
       { internalType: 'uint256', name: 'initialPrice', type: 'uint256' },
-      { internalType: 'string', name: 'metadataURI', type: 'string' },
       { internalType: 'address', name: 'initialOwner', type: 'address' },
     ],
     stateMutability: 'nonpayable',
@@ -241,6 +240,8 @@ export const NFT_ABI = [
       { internalType: 'address', name: 'owner', type: 'address' },
     ],
     name: 'ERC721IncorrectOwner',
+    outputs: [],
+    stateMutability: 'pure',
     type: 'error',
   },
   {
@@ -249,16 +250,66 @@ export const NFT_ABI = [
       { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
     ],
     name: 'ERC721InsufficientApproval',
+    outputs: [],
+    stateMutability: 'pure',
     type: 'error',
   },
-  { inputs: [{ internalType: 'address', name: 'approver', type: 'address' }], name: 'ERC721InvalidApprover', type: 'error' },
-  { inputs: [{ internalType: 'address', name: 'operator', type: 'address' }], name: 'ERC721InvalidOperator', type: 'error' },
-  { inputs: [{ internalType: 'address', name: 'owner', type: 'address' }], name: 'ERC721InvalidOwner', type: 'error' },
-  { inputs: [{ internalType: 'address', name: 'receiver', type: 'address' }], name: 'ERC721InvalidReceiver', type: 'error' },
-  { inputs: [{ internalType: 'address', name: 'sender', type: 'address' }], name: 'ERC721InvalidSender', type: 'error' },
-  { inputs: [{ internalType: 'uint256', name: 'tokenId', type: 'uint256' }], name: 'ERC721NonexistentToken', type: 'error' },
-  { inputs: [{ internalType: 'address', name: 'owner', type: 'address' }], name: 'OwnableInvalidOwner', type: 'error' },
-  { inputs: [{ internalType: 'address', name: 'account', type: 'address' }], name: 'OwnableUnauthorizedAccount', type: 'error' },
+  {
+    inputs: [{ internalType: 'address', name: 'approver', type: 'address' }],
+    name: 'ERC721InvalidApprover',
+    outputs: [],
+    stateMutability: 'pure',
+    type: 'error',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'operator', type: 'address' }],
+    name: 'ERC721InvalidOperator',
+    outputs: [],
+    stateMutability: 'pure',
+    type: 'error',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'owner', type: 'address' }],
+    name: 'ERC721InvalidOwner',
+    outputs: [],
+    stateMutability: 'pure',
+    type: 'error',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'receiver', type: 'address' }],
+    name: 'ERC721InvalidReceiver',
+    outputs: [],
+    stateMutability: 'pure',
+    type: 'error',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'sender', type: 'address' }],
+    name: 'ERC721InvalidSender',
+    outputs: [],
+    stateMutability: 'pure',
+    type: 'error',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'tokenId', type: 'uint256' }],
+    name: 'ERC721NonexistentToken',
+    outputs: [],
+    stateMutability: 'pure',
+    type: 'error',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'owner', type: 'address' }],
+    name: 'OwnableInvalidOwner',
+    outputs: [],
+    stateMutability: 'pure',
+    type: 'error',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'OwnableUnauthorizedAccount',
+    outputs: [],
+    stateMutability: 'pure',
+    type: 'error',
+  },
   {
     anonymous: false,
     inputs: [
@@ -320,7 +371,13 @@ export const NFT_ABI = [
     name: 'PriceUpdated',
     type: 'event',
   },
-  { inputs: [], name: 'renounceOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' },
+  {
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
   {
     inputs: [
       { internalType: 'address', name: 'from', type: 'address' },
@@ -406,7 +463,13 @@ export const NFT_ABI = [
     stateMutability: 'view',
     type: 'function',
   },
-  { inputs: [], name: 'currentPrice', outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }], stateMutability: 'view', type: 'function' },
+  {
+    inputs: [],
+    name: 'currentPrice',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
   {
     inputs: [{ internalType: 'uint256', name: 'tokenId', type: 'uint256' }],
     name: 'getApproved',
@@ -414,8 +477,20 @@ export const NFT_ABI = [
     stateMutability: 'view',
     type: 'function',
   },
-  { inputs: [], name: 'getNFTPrice', outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }], stateMutability: 'view', type: 'function' },
-  { inputs: [{ internalType: 'address', name: '', type: 'address' }], name: 'hasMinted', outputs: [{ internalType: 'bool', name: '', type: 'bool' }], stateMutability: 'view', type: 'function' },
+  {
+    inputs: [],
+    name: 'getNFTPrice',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: 'hasMinted',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
   {
     inputs: [{ internalType: 'address', name: 'user', type: 'address' }],
     name: 'hasNFT',
@@ -433,8 +508,20 @@ export const NFT_ABI = [
     stateMutability: 'view',
     type: 'function',
   },
-  { inputs: [], name: 'name', outputs: [{ internalType: 'string', name: '', type: 'string' }], stateMutability: 'view', type: 'function' },
-  { inputs: [], name: 'owner', outputs: [{ internalType: 'address', name: '', type: 'address' }], stateMutability: 'view', type: 'function' },
+  {
+    inputs: [],
+    name: 'name',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'owner',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
   {
     inputs: [{ internalType: 'uint256', name: 'tokenId', type: 'uint256' }],
     name: 'ownerOf',
@@ -449,7 +536,13 @@ export const NFT_ABI = [
     stateMutability: 'view',
     type: 'function',
   },
-  { inputs: [], name: 'symbol', outputs: [{ internalType: 'string', name: '', type: 'string' }], stateMutability: 'view', type: 'function' },
+  {
+    inputs: [],
+    name: 'symbol',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
   {
     inputs: [{ internalType: 'uint256', name: 'tokenId', type: 'uint256' }],
     name: 'tokenURI',
