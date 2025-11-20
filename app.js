@@ -280,7 +280,8 @@ document.querySelectorAll('.quick-donate').forEach((btn) => {
 })
 
 elements.browseModules?.addEventListener('click', () => {
-  document.querySelector('.nft-highlight')?.scrollIntoView({ behavior: 'smooth' })
+  showSection('modules')
+  document.getElementById('modules')?.scrollIntoView({ behavior: 'smooth' })
 })
 
 updateConnectionUI()
