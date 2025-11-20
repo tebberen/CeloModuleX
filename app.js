@@ -360,7 +360,9 @@ async function loadMainHubStats() {
 // UI updates for NFT data and premium affordances
 function updateNftUI() {
   const priceLabel = '1 CELO'
-  elements.nftPricePrimary?.textContent = priceLabel
+  if (elements.nftPricePrimary) {
+    elements.nftPricePrimary.textContent = priceLabel
+  }
   elements.nftPriceSecondary.textContent = priceLabel
 
   let ownershipText = 'Connect wallet to check ownership'
@@ -374,10 +376,14 @@ function updateNftUI() {
     ownershipText = ownsPass ? 'You already own the pass' : 'No access pass found'
     if (!message && ownsPass) message = 'You already own the Access Pass.'
   }
-  elements.nftOwnershipPrimary?.textContent = ownershipText
+  if (elements.nftOwnershipPrimary) {
+    elements.nftOwnershipPrimary.textContent = ownershipText
+  }
   elements.nftOwnershipSecondary.textContent = ownershipText
 
-  elements.nftStatusText?.textContent = ownsPass ? '✅ Premium Access Active' : "You don't own this NFT yet"
+  if (elements.nftStatusText) {
+    elements.nftStatusText.textContent = ownsPass ? '✅ Premium Access Active' : "You don't own this NFT yet"
+  }
   elements.nftStatusPill?.classList.toggle('owned', ownsPass)
   elements.profileNft.textContent = ownsPass ? 'Owned' : 'Not owned'
 
