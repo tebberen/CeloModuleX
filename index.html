@@ -11,6 +11,7 @@
       <div class="topbar__brand">CeloModuleX</div>
       <nav class="topbar__nav" aria-label="Primary">
         <button class="nav-pill active" data-target="home">Home</button>
+        <button class="nav-pill" data-target="modules">Modules</button>
         <button class="nav-pill" data-target="nft">NFT</button>
         <button class="nav-pill" data-target="profile">Profile</button>
       </nav>
@@ -116,6 +117,45 @@
             <p id="nft-ownership" class="ownership">Connect wallet to check ownership</p>
             <div class="status-pill" id="nft-status-pill">Status: <span id="nft-status-text">—</span></div>
             <button id="mint-nft" class="btn btn-primary">Mint Access NFT</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="modules" class="content" aria-label="Modules">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Modules</p>
+            <h2>Modules</h2>
+            <p class="muted">
+              Explore on-chain action modules like GM, Donate, Deploy and more. Each module sends a different type of
+              transaction to a different contract.
+            </p>
+          </div>
+        </div>
+        <div class="modules-grid">
+          <div class="card module-card">
+            <p class="eyebrow">Engage</p>
+            <h3>GM Module</h3>
+            <p class="muted">Send on-chain GM pings and build your daily streak.</p>
+            <button class="btn btn-primary">Open</button>
+          </div>
+          <div class="card module-card">
+            <p class="eyebrow">Support</p>
+            <h3>Donate Module</h3>
+            <p class="muted">Route small donations to the hub contract and support the ecosystem.</p>
+            <button class="btn btn-primary">Open</button>
+          </div>
+          <div class="card module-card">
+            <p class="eyebrow">Build</p>
+            <h3>Deploy Module</h3>
+            <p class="muted">Trigger contract deployments or builder-focused actions.</p>
+            <button class="btn btn-primary">Open</button>
+          </div>
+          <div class="card module-card soon">
+            <p class="eyebrow">Coming soon</p>
+            <h3>More modules</h3>
+            <p class="muted">Additional modules will appear here as they go live.</p>
+            <button class="btn btn-secondary" disabled>Coming soon</button>
           </div>
         </div>
       </section>
