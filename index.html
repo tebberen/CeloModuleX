@@ -68,12 +68,11 @@
         <div class="hero card">
           <div class="hero__text">
             <p class="pill badge">Chain-diverse actions</p>
-            <h1>Execute modular actions, reward your community.</h1>
+            <h1>Same GM, same contract… you don’t have to.</h1>
             <p class="lede">
-              Are you tired of doing the same GM, the same swap, the same bridge every day?
-              Blockchain is so much more.
-              CeloModuleX lets you send different types of transactions to different contracts, creating true chain diversity and a strong on-chain profile.
-              Every feature uses its own smart contract address — so every click produces a real on-chain signal.
+              Most users experience blockchain as a loop of swap–bridge–mint–GM–deploy–stake, all routed through the same few contract addresses.
+              But there’s far more variety and depth available on-chain.
+              CeloModuleX connects each feature in your project to its own smart contract, letting you interact with multiple contracts from a single panel and truly diversify your on-chain experience.
             </p>
             <div class="hero__actions">
               <button id="browse-modules" class="btn btn-primary">Browse modules</button>
@@ -94,16 +93,6 @@
               <p class="value" id="total-actions">—</p>
             </div>
           </div>
-        </div>
-
-        <div class="how-it-works card" id="how-it-works">
-          <h3>How it works</h3>
-          <ul>
-            <li>Connect with your Celo wallet and verify the current network.</li>
-            <li>Trigger modular actions across multiple contracts for on-chain diversity.</li>
-            <li>Track your activity stats and unlock premium modules with the Access NFT.</li>
-          </ul>
-          <div class="notice" id="network-warning"></div>
         </div>
 
         <div class="nft-highlight card featured-card">
@@ -129,6 +118,46 @@
             <div class="status-pill" id="nft-status-pill">Status: <span id="nft-status-text">—</span></div>
             <button id="mint-nft" class="btn btn-primary">Mint Access NFT</button>
           </div>
+        </div>
+
+        <div class="how-it-works card" id="how-it-works">
+          <h3>How it works</h3>
+          <ul class="how-it-steps">
+            <li>
+              <strong>Create your on-chain profile</strong>
+              <p>
+                Connect your Celo wallet, pick a username and set up your profile.
+                This becomes your home base for every GM, deploy and module action you take on-chain.
+              </p>
+            </li>
+            <li>
+              <strong>Start with free core actions</strong>
+              <p>
+                The GM and Deploy modules are always open: any user can use them by only paying the gas fee.
+                No extra commission, just pure on-chain interaction.
+              </p>
+            </li>
+            <li>
+              <strong>Use standard modules as a regular user</strong>
+              <p>
+                Beyond GM and Deploy, 8 additional modules are available to everyone with a simple pay-per-action model.
+                Each time you use one of these modules, you pay a 0.1 CELO fee, while all advanced modules remain locked.
+              </p>
+            </li>
+            <li>
+              <strong>Mint the Premium Access Pass NFT</strong>
+              <p>
+                If you mint the Premium Access Pass NFT, the rules change in your favor:
+              </p>
+              <ul class="bullet-list">
+                <li>GM and Deploy stay gas-only and free of extra fees</li>
+                <li>All other modules (including the advanced ones) unlock for you</li>
+                <li>Each action on any unlocked module now costs just 0.01 CELO instead of 0.1 CELO</li>
+                <li>One NFT, cheaper actions and access to the full modular contract stack.</li>
+              </ul>
+            </li>
+          </ul>
+          <div class="notice" id="network-warning"></div>
         </div>
       </section>
 
