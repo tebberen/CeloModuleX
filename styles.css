@@ -195,6 +195,30 @@ a {
   color: var(--muted);
 }
 
+.premium-pill,
+.premium-chip,
+.premium-access-pill {
+  background: #fff7d6;
+  border-color: #d7a52e;
+}
+
+.premium-pill.active,
+.premium-chip.active,
+.premium-access-pill.active {
+  background: #d7f0c2;
+  border-color: #80b249;
+  color: #1f3c0d;
+}
+
+.premium-chip {
+  display: inline-flex;
+  font-size: 0.85rem;
+}
+
+[data-premium-badge] {
+  display: none;
+}
+
 .address-pill .value,
 .status-pill .value {
   font-weight: 700;

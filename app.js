@@ -1,9 +1,28 @@
 import { ethers } from 'https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js'
-import { MAIN_HUB_ADDRESS, MAIN_HUB_ABI, NFT_ADDRESS, NFT_ABI, OWNER_ADDRESS } from './contractData.js'
+import { MAIN_HUB_ABI, NFT_ABI, OWNER_ADDRESS } from './contractData.js'
+
+// Core contract constants
+const MAIN_HUB_ADDRESS = '0xece90BaADe9340826f1D4c77f5A42E6aA95F9B9f'
+const NFT_CONTRACT_ADDRESS = '0xA246446F7E1C5b68C10673dfdf06e3961B1CE325'
+const NFT_CONTRACT_ABI = [
+  {
+    inputs: [{ internalType: 'address', name: 'user', type: 'address' }],
+    name: 'hasNFT',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  // Keep the extended NFT ABI for price lookups and minting
+  ...NFT_ABI.filter((item) => item?.name !== 'hasNFT'),
+]
 
 const CELO_CHAIN_ID = 42220
 const CELO_CHAIN_HEX = '0xa4ec'
 const READONLY_RPC = 'https://forno.celo.org'
+
+// Simple in-memory session flags
+let userAddress = null
+let hasPremiumPass = false
 
 const state = {
   provider: null,
@@ -27,21 +46,27 @@ const elements = {
   totalUsers: document.getElementById('total-users'),
   totalActions: document.getElementById('total-actions'),
   networkWarning: document.getElementById('network-warning'),
+  premiumPill: document.getElementById('premium-pill'),
+  premiumStatus: document.getElementById('premium-status'),
   nftPricePrimary: document.getElementById('nft-price'),
   nftPriceSecondary: document.getElementById('nft-price-secondary'),
   nftOwnershipPrimary: document.getElementById('nft-ownership'),
   nftOwnershipSecondary: document.getElementById('nft-ownership-secondary'),
   nftStatusText: document.getElementById('nft-status-text'),
   nftStatusPill: document.getElementById('nft-status-pill'),
+  nftPremiumHighlight: document.getElementById('nft-premium-highlight'),
+  nftPremiumCard: document.getElementById('nft-premium-card'),
   ownerAddress: document.getElementById('owner-address'),
   profileWallet: document.getElementById('profile-wallet'),
   profileChain: document.getElementById('profile-chain'),
   profileNetwork: document.getElementById('profile-network'),
   profileNft: document.getElementById('profile-nft'),
+  profilePremiumPill: document.getElementById('profile-premium-pill'),
   browseModules: document.getElementById('browse-modules'),
   mintNftButtons: [document.getElementById('mint-nft'), document.getElementById('mint-nft-secondary')],
   refreshNft: document.getElementById('refresh-nft'),
   nftMessage: document.getElementById('nft-message'),
+  premiumBadges: Array.from(document.querySelectorAll('[data-premium-badge]')),
 }
 
 elements.ownerAddress.textContent = OWNER_ADDRESS
@@ -74,6 +99,40 @@ function setNetworkWarning(message) {
   elements.networkWarning.textContent = message || ''
 }
 
+function syncPremiumFlag(hasPass) {
+  hasPremiumPass = Boolean(hasPass)
+  state.hasNft = hasPremiumPass
+  updatePremiumUI()
+}
+
+function updatePremiumUI() {
+  const statusLabel = hasPremiumPass ? 'Active' : 'Locked'
+  if (elements.premiumStatus) {
+    elements.premiumStatus.textContent = statusLabel
+  }
+  elements.premiumPill?.classList.toggle('active', hasPremiumPass)
+
+  const premiumText = hasPremiumPass ? '✅ Premium Access Active' : '🔒 Premium Access Locked'
+  ;[elements.nftPremiumHighlight, elements.nftPremiumCard].forEach((pill) => {
+    if (!pill) return
+    pill.textContent = premiumText
+    pill.classList.toggle('active', hasPremiumPass)
+  })
+
+  if (elements.profilePremiumPill) {
+    elements.profilePremiumPill.textContent = `Premium: ${statusLabel}`
+    elements.profilePremiumPill.classList.toggle('active', hasPremiumPass)
+  }
+
+  elements.premiumBadges.forEach((badge) => {
+    if (!badge) return
+    badge.style.display = hasPremiumPass ? 'inline-flex' : 'none'
+    badge.classList.toggle('active', hasPremiumPass)
+  })
+
+  elements.nftStatusPill?.classList.toggle('owned', hasPremiumPass)
+}
+
 function updateConnectionUI() {
   const connected = Boolean(state.account)
   const label = connected ? formatAddress(state.account) : 'Not connected'
@@ -98,7 +157,7 @@ function getMainHubContract(useSigner = false) {
 
 function getNftContract(providerOrSigner) {
   const provider = providerOrSigner || state.signer || getProvider()
-  return new ethers.Contract(NFT_ADDRESS, NFT_ABI, provider)
+  return new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_CONTRACT_ABI, provider)
 }
 
 async function connectWallet() {
@@ -118,6 +177,8 @@ async function connectWallet() {
     state.signer = signer
     state.account = account
     state.chainId = network.chainId
+    userAddress = account
+    syncPremiumFlag(false)
 
     const label = `${network.name || 'Unknown'} (chain ${network.chainId})`
     setNetworkLabel(label)
@@ -137,10 +198,12 @@ function disconnect() {
   state.signer = null
   state.account = null
   state.chainId = null
+  userAddress = null
   state.hasNft = false
   state.nftPrice = null
   state.nftMessage = ''
   state.minting = false
+  syncPremiumFlag(false)
   updateConnectionUI()
   setNetworkLabel('Not connected')
   setNetworkWarning('')
@@ -183,35 +246,38 @@ function updateNftUI() {
 
   let ownershipText = 'Connect wallet to check ownership'
   let message = state.nftMessage || ''
+  const ownsPass = hasPremiumPass
 
   if (state.chainId && state.chainId !== CELO_CHAIN_ID) {
     ownershipText = 'Wrong network'
     message = 'Please switch to Celo Mainnet to mint the Access Pass.'
   } else if (state.account) {
-    ownershipText = state.hasNft ? 'You already own the pass' : 'No access pass found'
-    if (!message && state.hasNft) message = 'You already own the Access Pass.'
+    ownershipText = ownsPass ? 'You already own the pass' : 'No access pass found'
+    if (!message && ownsPass) message = 'You already own the Access Pass.'
   }
   elements.nftOwnershipPrimary.textContent = ownershipText
   elements.nftOwnershipSecondary.textContent = ownershipText
 
-  elements.nftStatusText.textContent = state.hasNft ? 'You own this NFT' : "You don't own this NFT yet"
-  elements.nftStatusPill.classList.toggle('owned', state.hasNft)
-  elements.profileNft.textContent = state.hasNft ? 'Owned' : 'Not owned'
+  elements.nftStatusText.textContent = ownsPass ? '✅ Premium Access Active' : "You don't own this NFT yet"
+  elements.nftStatusPill.classList.toggle('owned', ownsPass)
+  elements.profileNft.textContent = ownsPass ? 'Owned' : 'Not owned'
 
-  const disableMint = state.chainId !== CELO_CHAIN_ID || !state.account || state.hasNft || state.minting
+  const disableMint = state.chainId !== CELO_CHAIN_ID || !state.account || ownsPass || state.minting
   elements.mintNftButtons.forEach((btn) => {
     if (!btn) return
     btn.disabled = disableMint
     btn.textContent = state.minting
       ? 'Minting…'
-      : state.hasNft
-        ? 'Access Pass minted'
+      : ownsPass
+        ? 'Already minted'
         : 'Mint Access NFT'
   })
 
   if (elements.nftMessage) {
     elements.nftMessage.textContent = message
   }
+
+  updatePremiumUI()
 }
 
 async function loadNftData() {
@@ -225,14 +291,17 @@ async function loadNftData() {
   }
 
   if (!state.account) {
-    state.hasNft = false
+    userAddress = null
+    syncPremiumFlag(false)
     state.nftMessage = ''
     updateNftUI()
     return
   }
 
+  userAddress = state.account
+
   if (state.chainId && state.chainId !== CELO_CHAIN_ID) {
-    state.hasNft = false
+    syncPremiumFlag(false)
     state.nftMessage = 'Please switch to Celo Mainnet to mint the Access Pass.'
     updateNftUI()
     return
@@ -240,14 +309,32 @@ async function loadNftData() {
 
   try {
     const has = await contract.hasNFT(state.account)
-    state.hasNft = has
+    syncPremiumFlag(has)
     state.nftMessage = has ? 'You already own the Access Pass.' : ''
   } catch (err) {
     console.warn('Ownership lookup failed', err)
-    state.hasNft = false
+    syncPremiumFlag(false)
     state.nftMessage = 'Unable to check ownership right now.'
   }
 
+  updateNftUI()
+}
+
+function handleMintClick() {
+  if (!state.account || !state.signer) {
+    state.nftMessage = 'Connect your wallet before minting.'
+    updateNftUI()
+    return
+  }
+
+  if (state.chainId !== CELO_CHAIN_ID) {
+    state.nftMessage = 'Switch to Celo Mainnet to mint the Access Pass.'
+    updateNftUI()
+    return
+  }
+
+  console.log('Mint flow will go here')
+  state.nftMessage = 'Mint flow will go here.'
   updateNftUI()
 }
 
@@ -300,6 +387,8 @@ function subscribeToWalletEvents() {
 
   window.ethereum.on('accountsChanged', (accounts) => {
     state.account = accounts[0] || null
+    userAddress = state.account
+    syncPremiumFlag(false)
     updateConnectionUI()
     loadNftData()
   })
@@ -307,6 +396,7 @@ function subscribeToWalletEvents() {
   window.ethereum.on('chainChanged', (chainIdHex) => {
     const chainId = parseInt(chainIdHex, 16)
     state.chainId = chainId
+    syncPremiumFlag(false)
     setNetworkLabel(`Chain ${chainId}`)
     setNetworkWarning(chainId === CELO_CHAIN_ID ? '' : 'Please switch to Celo mainnet (42220).')
     ensureCeloNetwork()
@@ -325,7 +415,7 @@ elements.disconnect.addEventListener('click', () => disconnect())
 
 elements.refreshNft.addEventListener('click', () => loadNftData())
 
-elements.mintNftButtons.forEach((btn) => btn?.addEventListener('click', mintAccessNft))
+elements.mintNftButtons.forEach((btn) => btn?.addEventListener('click', handleMintClick))
 
 document.querySelectorAll('.quick-donate').forEach((btn) => {
   btn.addEventListener('click', () => donate(btn.dataset.amount))
